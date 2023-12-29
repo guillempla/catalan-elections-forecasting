@@ -4,7 +4,6 @@ Download data from Socrata Open Data API (SODA) and save it as a CSV file.
 import os
 import logging
 import pandas as pd
-from pandas.api.types import infer_dtype
 from sodapy import Socrata
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -34,7 +33,7 @@ client = Socrata(
     password=SOCRATA_PASSWORD,
 )
 
-results = client.get(SOCRATA_DATASET_ID, limit=1000)
+results = client.get(SOCRATA_DATASET_ID, limit=20000000)
 results_df = pd.DataFrame.from_records(results)
 
 # Automatically infer and convert data types for each column
@@ -50,7 +49,7 @@ print(results_df.dtypes)
 
 
 logging.info("Saving data as CSV.")
-results_df.to_csv("data/data.csv", index=False)
+results_df.to_csv("data/catalan-elections-data.csv", index=False)
 
 
 logging.info("Loading data into PostgreSQL.")

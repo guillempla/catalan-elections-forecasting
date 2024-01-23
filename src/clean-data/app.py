@@ -46,13 +46,15 @@ def divide_id_eleccio(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_election_days(
-    df: pd.DataFrame, df_elections_days: pd.DataFrame
+    df_elections_data: pd.DataFrame, df_elections_days: pd.DataFrame
 ) -> pd.DataFrame:
     """
     Merge election_days dataframe into df.
     """
     logging.info("Merging election_days dataframe.")
-    return df.merge(df_elections_days, on=["nom_eleccio", "year"], how="left")
+    return df_elections_data.merge(
+        df_elections_days, on=["nom_eleccio", "year"], how="left"
+    )
 
 
 def filter_by_election_type(

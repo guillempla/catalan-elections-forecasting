@@ -2,7 +2,6 @@
 Download data from Socrata Open Data API (SODA) and save it as a CSV file.
 """
 import os
-import pprint
 import logging
 import pandas as pd
 from sodapy import Socrata

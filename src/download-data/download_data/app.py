@@ -9,8 +9,6 @@ from sodapy import Socrata
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-pp = pprint.PrettyPrinter(indent=2)
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",

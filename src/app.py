@@ -1,4 +1,5 @@
 import os
+import argparse
 import logging
 from dotenv import load_dotenv
 from download_data import DownloadData
@@ -11,6 +12,28 @@ logging.basicConfig(
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="Download data from the Catalan Elections API."
+    )
+    # Add boolean argument for deciding if the data must be downloaded or not.
+    parser.add_argument(
+        "--download",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Download the data from the Catalan Elections API.",
+    )
+    # Add boolean argument for deciding if the data must be cleaned or not.
+    parser.add_argument(
+        "--clean",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Clean the data from the Catalan Elections API.",
+    )
+
+    args = parser.parse_args()
+    download_data = args.download
+    clean_data = args.clean
+
     logging.info("Loading environment variables.")
 
     load_dotenv()
@@ -32,19 +55,20 @@ def main():
 
     catalan_elections_data_csv_path = os.environ.get("CATALAN_ELECTIONS_DATA_CSV_PATH")
 
-    DownloadData(
-        socrata_domain,
-        socrata_app_token,
-        socrata_email,
-        socrata_password,
-        socrata_dataset_id,
-        catalan_elections_data_csv_path
-        # postgres_username,
-        # postgres_password,
-        # postgres_host,
-        # postgres_catalan_elections_data_db,
-        # postgres_catalan_elections_data_table,
-    ).download_catalan_elections_data()
+    if download_data:
+        DownloadData(
+            socrata_domain,
+            socrata_app_token,
+            socrata_email,
+            socrata_password,
+            socrata_dataset_id,
+            catalan_elections_data_csv_path
+            # postgres_username,
+            # postgres_password,
+            # postgres_host,
+            # postgres_catalan_elections_data_db,
+            # postgres_catalan_elections_data_table,
+        ).download_catalan_elections_data()
 
 
 if __name__ == "__main__":

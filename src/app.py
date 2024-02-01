@@ -14,36 +14,36 @@ def main():
     logging.info("Loading environment variables.")
 
     load_dotenv()
-    SOCRATA_DOMAIN = os.environ.get("SOCRATA_DOMAIN")
-    SOCRATA_DATASET_ID = os.environ.get("SOCRATA_DATASET_ID")
-    SOCRATA_APP_TOKEN = os.environ.get("SOCRATA_APP_TOKEN")
-    SOCRATA_EMAIL = os.environ.get("SOCRATA_EMAIL")
-    SOCRATA_PASSWORD = os.environ.get("SOCRATA_PASSWORD")
+    socrata_domain = os.environ.get("SOCRATA_DOMAIN")
+    socrata_dataset_id = os.environ.get("SOCRATA_DATASET_ID")
+    socrata_app_token = os.environ.get("SOCRATA_APP_TOKEN")
+    socrata_email = os.environ.get("SOCRATA_EMAIL")
+    socrata_password = os.environ.get("SOCRATA_PASSWORD")
 
-    POSTGRES_USERNAME = os.environ.get("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
-    POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
-    POSTGRES_CATALAN_ELECTIONS_DATA_DB = os.environ.get(
+    postgres_username = os.environ.get("POSTGRES_USER")
+    postgres_password = os.environ.get("POSTGRES_PASSWORD")
+    postgres_host = os.environ.get("POSTGRES_HOST")
+    postgres_catalan_elections_data_db = os.environ.get(
         "POSTGRES_CATALAN_ELECTIONS_DATA_DB"
     )
-    POSTGRES_CATALAN_ELECTIONS_DATA_TABLE = os.environ.get(
+    postgres_catalan_elections_data_table = os.environ.get(
         "POSTGRES_CATALAN_ELECTIONS_DATA_TABLE"
     )
 
-    CATALAN_ELECTIONS_DATA_CSV_PATH = os.environ.get("CATALAN_ELECTIONS_DATA_CSV_PATH")
+    catalan_elections_data_csv_path = os.environ.get("CATALAN_ELECTIONS_DATA_CSV_PATH")
 
     DownloadData(
-        SOCRATA_DOMAIN,
-        SOCRATA_APP_TOKEN,
-        SOCRATA_EMAIL,
-        SOCRATA_PASSWORD,
-        SOCRATA_DATASET_ID,
-        CATALAN_ELECTIONS_DATA_CSV_PATH
-        # POSTGRES_USERNAME,
-        # POSTGRES_PASSWORD,
-        # POSTGRES_HOST,
-        # POSTGRES_CATALAN_ELECTIONS_DATA_DB,
-        # POSTGRES_CATALAN_ELECTIONS_DATA_TABLE,
+        socrata_domain,
+        socrata_app_token,
+        socrata_email,
+        socrata_password,
+        socrata_dataset_id,
+        catalan_elections_data_csv_path
+        # postgres_username,
+        # postgres_password,
+        # postgres_host,
+        # postgres_catalan_elections_data_db,
+        # postgres_catalan_elections_data_table,
     ).download_catalan_elections_data()
 
 

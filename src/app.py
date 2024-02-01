@@ -32,19 +32,19 @@ def main():
 
     CATALAN_ELECTIONS_DATA_CSV_PATH = os.environ.get("CATALAN_ELECTIONS_DATA_CSV_PATH")
 
-    DownloadData().download_catalan_elections_data(
+    DownloadData(
         SOCRATA_DOMAIN,
         SOCRATA_APP_TOKEN,
         SOCRATA_EMAIL,
         SOCRATA_PASSWORD,
         SOCRATA_DATASET_ID,
-        CATALAN_ELECTIONS_DATA_CSV_PATH,
-        POSTGRES_USERNAME,
-        POSTGRES_PASSWORD,
-        POSTGRES_HOST,
-        POSTGRES_CATALAN_ELECTIONS_DATA_DB,
-        POSTGRES_CATALAN_ELECTIONS_DATA_TABLE,
-    )
+        CATALAN_ELECTIONS_DATA_CSV_PATH
+        # POSTGRES_USERNAME,
+        # POSTGRES_PASSWORD,
+        # POSTGRES_HOST,
+        # POSTGRES_CATALAN_ELECTIONS_DATA_DB,
+        # POSTGRES_CATALAN_ELECTIONS_DATA_TABLE,
+    ).download_catalan_elections_data()
 
 
 if __name__ == "__main__":

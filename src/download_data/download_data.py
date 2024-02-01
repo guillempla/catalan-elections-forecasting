@@ -1,5 +1,5 @@
 import logging
-from download_data import DownloadCatalanElectionsData
+from .catalan_elections_data import DownloadCatalanElectionsData
 
 
 class DownloadData:

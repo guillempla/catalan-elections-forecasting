@@ -1,3 +1,6 @@
+"""
+Clean data and save it as a CSV file.
+"""
 from typing import List, Dict
 
 import logging

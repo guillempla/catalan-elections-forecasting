@@ -84,12 +84,69 @@ def filter_by_election_type(
     return df[df["type"].isin(elections_type)]
 
 
-def save_data(df: pd.DataFrame, filename: str):
+def create_date_column(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create date column.
+    """
+    logging.info("Creating date column.")
+    df["date"] = pd.to_datetime(df[["year", "month", "day"]])
+    return df
+
+
+def replace_nan_colors(
+    df: pd.DataFrame, column="candidatura_color", color="grey"
+) -> pd.DataFrame:
+    """
+    Replace NaN values in colors columns.
+    """
+    logging.info("Replacing NaN values in colors columns.")
+    df[column].fillna(color, inplace=True)
+    return df
+
+
+def save_data(
+    df: pd.DataFrame, filename: str, save_csv: bool = True, save_picke: bool = True
+) -> None:
+    """
+    Save dataframe as CSV or pickle file.
+    """
+    logging.info("Saving data.")
+    if save_csv:
+        save_csv_data(df, filename)
+    if save_picke:
+        save_pickle_data(df, filename)
+
+
+def save_csv_data(df: pd.DataFrame, filename: str):
     """
     Save dataframe as CSV file.
     """
     logging.info("Saving data as CSV.")
-    df.to_csv(filename, index=False)
+
+    # Check if filename ends with .csv
+    if not filename.endswith(".csv"):
+        filename = filename + ".csv"
+
+    try:
+        df.to_csv(filename, index=False)
+    except (FileNotFoundError, PermissionError) as e:
+        logging.error(e)
+
+
+def save_pickle_data(df: pd.DataFrame, filename: str):
+    """
+    Save dataframe as pickle file.
+    """
+    logging.info("Saving data as pickle.")
+
+    # Check if filename ends with .pkl
+    if not filename.endswith(".pkl"):
+        filename = filename + ".pkl"
+
+    try:
+        df.to_pickle(filename)
+    except (FileNotFoundError, PermissionError) as e:
+        logging.error(e)
 
 
 class CleanData:
@@ -99,15 +156,17 @@ class CleanData:
 
     def __init__(
         self,
-        elections_data_filename: str = "data/raw/catalan-elections-data.csv",
-        elections_days_filename: str = "data/processed/election-days.csv",
-        output_filename: str = "data/processed/catalan-elections-clean-data.csv",
+        elections_data_filename: str = "../data/raw/catalan-elections-data.csv",
+        elections_days_filename: str = "../data/processed/elections_days.csv",
+        output_filename: str = "../data/processed/catalan-elections-clean-data",
         elections_type: List[str] = [
             "M",
             "E",
             "A",
             "G",
         ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+        color_column: str = "candidatura_color",
+        color_default: str = "grey",
     ) -> None:
         """
         Initialize class.
@@ -116,6 +175,8 @@ class CleanData:
         self.elections_days_df = load_csv(elections_days_filename)
         self.output_filename = output_filename
         self.elections_type = elections_type
+        self.color_column = color_column
+        self.color_default = color_default
 
     def clean_elections_data(self):
         """
@@ -128,5 +189,10 @@ class CleanData:
             .pipe(divide_id_eleccio)
             .pipe(filter_by_election_type, elections_type=self.elections_type)
             .pipe(merge_election_days, df_elections_days=self.elections_days_df)
-            .pipe(save_data, filename=self.output_filename)
+            .pipe(create_date_column)
+            .pipe(
+                replace_nan_colors, column=self.color_column, color=self.color_default
+            )
+            .pipe(save_csv_data, filename=self.output_filename)
+            .pipe(save_pickle_data, filename=self.output_filename)
         )

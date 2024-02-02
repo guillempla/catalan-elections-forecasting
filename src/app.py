@@ -3,6 +3,7 @@ import argparse
 import logging
 from dotenv import load_dotenv
 from download_data import DownloadData
+from clean_data import CleanData
 
 logging.basicConfig(
     level=logging.INFO,
@@ -69,6 +70,9 @@ def main():
             # postgres_catalan_elections_data_db,
             # postgres_catalan_elections_data_table,
         ).download_catalan_elections_data()
+
+    if clean_data:
+        CleanData().clean_elections_data()
 
 
 if __name__ == "__main__":

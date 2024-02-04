@@ -9,8 +9,9 @@ class DownloadData:
         socrata_app_token,
         socrata_username,
         socrata_password,
-        dataset_id,
+        socrata_dataset_id,
         csv_path=None,
+        pkl_path=None,
     ):
         logging.info("Starting data download.")
 
@@ -19,8 +20,9 @@ class DownloadData:
             socrata_app_token,
             socrata_username,
             socrata_password,
-            dataset_id,
+            socrata_dataset_id,
             csv_path,
+            pkl_path,
         )
 
     def download_catalan_elections_data(self):

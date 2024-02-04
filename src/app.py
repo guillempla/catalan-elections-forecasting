@@ -54,21 +54,27 @@ def main():
         "POSTGRES_CATALAN_ELECTIONS_DATA_TABLE"
     )
 
-    catalan_elections_data_csv_path = os.environ.get("CATALAN_ELECTIONS_DATA_CSV_PATH")
+    catalan_elections_data_csv_path = (
+        os.environ.get("CATALAN_ELECTIONS_DATA_FILENAME") + ".csv"
+    )
+    catalan_elections_data_pkl_path = (
+        os.environ.get("CATALAN_ELECTIONS_DATA_FILENAME") + ".pkl"
+    )
 
     if download_data:
         DownloadData(
-            socrata_domain,
-            socrata_app_token,
-            socrata_email,
-            socrata_password,
-            socrata_dataset_id,
-            catalan_elections_data_csv_path
-            # postgres_username,
-            # postgres_password,
-            # postgres_host,
-            # postgres_catalan_elections_data_db,
-            # postgres_catalan_elections_data_table,
+            socrata_domain=socrata_domain,
+            socrata_app_token=socrata_app_token,
+            socrata_username=socrata_email,
+            socrata_password=socrata_password,
+            socrata_dataset_id=socrata_dataset_id,
+            csv_path=catalan_elections_data_csv_path,
+            pkl_path=catalan_elections_data_pkl_path,
+            # postgres_username=postgres_username,
+            # postgres_password=postgres_password,
+            # postgres_host=postgres_host,
+            # postgres_catalan_elections_data_db=postgres_catalan_elections_data_db,
+            # postgres_catalan_elections_data_table=postgres_catalan_elections_data_table,
         ).download_catalan_elections_data()
 
     if clean_data:

@@ -44,6 +44,7 @@ class DownloadCatalanElectionsData:
         socrata_password: str,
         dataset_id: str,
         csv_path: Optional[str] = None,
+        pkl_path: Optional[str] = None,
     ) -> None:
         """
         Initialize the DownloadCatalanElectionsData object.
@@ -56,12 +57,15 @@ class DownloadCatalanElectionsData:
             dataset_id (str): The ID of the dataset to download.
             csv_path (Optional[str], optional): The path to save the downloaded data as a CSV file.
                 Defaults to None.
+            pkl_path (Optional[str], optional): The path to save the downloaded data as a CSV file.
+                Defaults to None.
         """
         self.client: Socrata = self.initialize_client(
             socrata_domain, socrata_app_token, socrata_username, socrata_password
         )
         self.dataset_id: str = dataset_id
-        self.path: Optional[str] = csv_path
+        self.csv_path: Optional[str] = csv_path
+        self.pkl_path: Optional[str] = pkl_path
         self.results_df: Optional[pd.DataFrame] = None
         self.nrows: Optional[int] = None
 
@@ -76,8 +80,10 @@ class DownloadCatalanElectionsData:
         self.nrows = self.get_row_count()
         self.results_df = self.get_data()
         self.convert_data_types()
-        if self.path is not None:
-            self.save_as_csv(self.path)
+        if self.csv_path is not None:
+            self.save_as_csv(self.csv_path)
+        if self.pkl_path is not None:
+            self.save_as_pickle(self.pkl_path)
 
     def initialize_client(
         self, domain: str, app_token: str, username: str, password: str
@@ -153,6 +159,16 @@ class DownloadCatalanElectionsData:
         """
         logging.info("Saving data as CSV.")
         self.results_df.to_csv(path, index=False)
+
+    def save_as_pickle(self, path: str) -> None:
+        """
+        Save the data as a pickle file.
+
+        Args:
+            path (str): The path to save the pickle file.
+        """
+        logging.info("Saving data as pickle.")
+        self.results_df.to_pickle(path)
 
     def load_into_postgres(
         self, username: str, password: str, host: str, db_name: str, table_name: str

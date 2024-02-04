@@ -1,6 +1,7 @@
 """
 Clean data and save it as a CSV file.
 """
+
 from typing import List, Dict
 
 import logging
@@ -159,6 +160,8 @@ class CleanData:
         elections_data_filename: str = "../data/raw/catalan-elections-data.csv",
         elections_days_filename: str = "../data/processed/elections_days.csv",
         output_filename: str = "../data/processed/catalan-elections-clean-data",
+        columns_to_drop: List[str] = ["candidat_posicio", "candidatura_logotip"],
+        columns_to_rename: Dict[str, str] = {"secci_": "seccio"},
         elections_type: List[str] = [
             "M",
             "E",
@@ -174,6 +177,8 @@ class CleanData:
         self.df = load_csv(elections_data_filename)
         self.elections_days_df = load_csv(elections_days_filename)
         self.output_filename = output_filename
+        self.columns_to_drop = columns_to_drop
+        self.columns_to_rename = columns_to_rename
         self.elections_type = elections_type
         self.color_column = color_column
         self.color_default = color_default
@@ -184,8 +189,11 @@ class CleanData:
         """
         logging.info("Cleaning elections data.")
         self.df = (
-            self.df.pipe(drop_columns, columns_to_drop=["candidat_posicio"])
-            .pipe(rename_columns, columns_to_rename={"secci_": "seccio"})
+            self.df.pipe(
+                drop_columns,
+                columns_to_drop=self.columns_to_drop,
+            )
+            .pipe(rename_columns, columns_to_rename=self.columns_to_rename)
             .pipe(divide_id_eleccio)
             .pipe(filter_by_election_type, elections_type=self.elections_type)
             .pipe(merge_election_days, df_elections_days=self.elections_days_df)
@@ -193,6 +201,5 @@ class CleanData:
             .pipe(
                 replace_nan_colors, column=self.color_column, color=self.color_default
             )
-            .pipe(save_csv_data, filename=self.output_filename)
-            .pipe(save_pickle_data, filename=self.output_filename)
+            .pipe(save_data, filename=self.output_filename)
         )

@@ -160,7 +160,11 @@ class CleanData:
         elections_data_filename: str = "../data/raw/catalan-elections-data.csv",
         elections_days_filename: str = "../data/processed/elections_days.csv",
         output_filename: str = "../data/processed/catalan-elections-clean-data",
-        columns_to_drop: List[str] = ["candidat_posicio", "candidatura_logotip"],
+        columns_to_drop: List[str] = [
+            "candidat_posicio",
+            "candidatura_logotip",
+            "id_eleccio",
+        ],
         columns_to_rename: Dict[str, str] = {"secci_": "seccio"},
         elections_type: List[str] = [
             "M",

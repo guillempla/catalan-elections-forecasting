@@ -22,6 +22,20 @@ def load_csv(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename)
 
 
+def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create party columns.
+    """
+    logging.info("Creating party columns.")
+    df.loc[df["agrupacio_codi"].notnull(), "party_code"] = df["agrupacio_codi"]
+    df.loc[df["agrupacio_denominacio"].notnull(), "party_name"] = df[
+        "agrupacio_denominacio"
+    ]
+    df.loc[df["agrupacio_sigles"].notnull(), "party_abbr"] = df["agrupacio_sigles"]
+    df["party_color"] = df["candidatura_color"]
+    return df
+
+
 def drop_columns(df: pd.DataFrame, columns_to_drop: List[str]) -> pd.DataFrame:
     """
     Drop columns from dataframe.
@@ -164,6 +178,13 @@ class CleanData:
             "candidat_posicio",
             "candidatura_logotip",
             "id_eleccio",
+            "candidatura_codi",
+            "candidatura_denominacio",
+            "candidatura_sigles",
+            "candidatura_color",
+            "agrupacio_codi",
+            "agrupacio_denominacio",
+            "agrupacio_sigles",
         ],
         columns_to_rename: Dict[str, str] = {"secci_": "seccio"},
         elections_type: List[str] = [
@@ -193,17 +214,15 @@ class CleanData:
         """
         logging.info("Cleaning elections data.")
         self.df = (
-            self.df.pipe(
-                drop_columns,
-                columns_to_drop=self.columns_to_drop,
-            )
-            .pipe(rename_columns, columns_to_rename=self.columns_to_rename)
+            self.df.pipe(create_party_columns)
             .pipe(divide_id_eleccio)
+            .pipe(rename_columns, columns_to_rename=self.columns_to_rename)
             .pipe(filter_by_election_type, elections_type=self.elections_type)
             .pipe(merge_election_days, df_elections_days=self.elections_days_df)
             .pipe(create_date_column)
             .pipe(
                 replace_nan_colors, column=self.color_column, color=self.color_default
             )
+            .pipe(drop_columns, columns_to_drop=self.columns_to_drop)
             .pipe(save_data, filename=self.output_filename)
         )

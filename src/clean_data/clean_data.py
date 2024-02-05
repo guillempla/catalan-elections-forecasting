@@ -31,8 +31,6 @@ def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
     df["party_code"] = np.where(
         df["agrupacio_codi"].notnull(), df["agrupacio_codi"], df["candidatura_codi"]
     )
-    # Convert party_code to integer
-    df["party_code"] = df["party_code"].astype(int)
     df["party_name"] = np.where(
         df["agrupacio_denominacio"].notnull(),
         df["agrupacio_denominacio"],
@@ -55,6 +53,16 @@ def drop_columns(df: pd.DataFrame, columns_to_drop: List[str]) -> pd.DataFrame:
     return df.drop(columns=columns_to_drop)
 
 
+def remove_rows_with_null_values(
+    df: pd.DataFrame, empty_columns: List[str]
+) -> pd.DataFrame:
+    """
+    Remove rows with null values in specified columns.
+    """
+    logging.info("Removing rows with null values in columns: %s", empty_columns)
+    return df.dropna(subset=empty_columns)
+
+
 def rename_columns(df: pd.DataFrame, columns_to_rename: Dict[str, str]) -> pd.DataFrame:
     """
     Rename columns from dataframe.
@@ -70,7 +78,7 @@ def divide_id_eleccio(df: pd.DataFrame) -> pd.DataFrame:
     logging.info("Dividing id_eleccio column.")
     df["type"] = df["id_eleccio"].str[:1]
     df["year"] = df["id_eleccio"].str[1:5].astype(int)
-    df["sequential"] = df["id_eleccio"].str[5:]
+    df["round"] = df["id_eleccio"].str[5:]
     return df
 
 
@@ -127,6 +135,36 @@ def replace_nan_colors(
     """
     logging.info("Replacing NaN values in colors columns.")
     df[column].fillna(color, inplace=True)
+    return df
+
+
+def set_column_type(df: pd.DataFrame, column_types: dict) -> pd.DataFrame:
+    """
+    Set column types according to a dictionary mapping column names to types,
+    with support for nullable integer types to handle NaN values.
+
+    Parameters:
+    - df: pandas DataFrame.
+    - column_types: Dictionary where keys are column names and values are the data types.
+
+    Returns:
+    - DataFrame with updated column types.
+    """
+    logging.info("Setting column type.")
+
+    for column, dtype in column_types.items():
+        if column in df.columns:
+            # Automatically use nullable integer types if dtype is 'int'
+            if dtype == "int" and df[column].isnull().any():
+                dtype = "Int64"
+            try:
+                df[column] = df[column].astype(dtype)
+            except Exception as e:
+                logging.error(e)
+                logging.error("Error setting column type for %s.", column)
+            logging.info("Column %s type set to %s.", column, dtype)
+        else:
+            logging.warning("Column %s not found in DataFrame.", column)
     return df
 
 
@@ -206,6 +244,17 @@ class CleanData:
         ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
         color_column: str = "candidatura_color",
         color_default: str = "grey",
+        columns_types: dict = {
+            "year": "int",
+            "month": "int",
+            "day": "int",
+            "seccio": "int",
+            "vots": "int",
+            "escons": "int",
+            "districte": "int",
+            "party_code": "int",
+        },
+        columns_null_values: List[str] = ["candidatura_sigles"],
     ) -> None:
         """
         Initialize class.
@@ -218,6 +267,8 @@ class CleanData:
         self.elections_type = elections_type
         self.color_column = color_column
         self.color_default = color_default
+        self.columns_types = columns_types
+        self.columns_null_values = columns_null_values
 
     def clean_elections_data(self):
         """
@@ -235,5 +286,7 @@ class CleanData:
                 replace_nan_colors, column=self.color_column, color=self.color_default
             )
             .pipe(drop_columns, columns_to_drop=self.columns_to_drop)
+            .pipe(remove_rows_with_null_values, empty_columns=self.columns_null_values)
+            .pipe(set_column_type, column_types=self.columns_types)
             .pipe(save_data, filename=self.output_filename)
         )

@@ -6,6 +6,7 @@ from typing import List, Dict
 
 import logging
 import pandas as pd
+import numpy as np
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,11 +28,21 @@ def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
     Create party columns.
     """
     logging.info("Creating party columns.")
-    df.loc[df["agrupacio_codi"].notnull(), "party_code"] = df["agrupacio_codi"]
-    df.loc[df["agrupacio_denominacio"].notnull(), "party_name"] = df[
-        "agrupacio_denominacio"
-    ]
-    df.loc[df["agrupacio_sigles"].notnull(), "party_abbr"] = df["agrupacio_sigles"]
+    df["party_code"] = np.where(
+        df["agrupacio_codi"].notnull(), df["agrupacio_codi"], df["candidatura_codi"]
+    )
+    # Convert party_code to integer
+    df["party_code"] = df["party_code"].astype(int)
+    df["party_name"] = np.where(
+        df["agrupacio_denominacio"].notnull(),
+        df["agrupacio_denominacio"],
+        df["candidatura_denominacio"],
+    )
+    df["party_abbr"] = np.where(
+        df["agrupacio_sigles"].notnull(),
+        df["agrupacio_sigles"],
+        df["candidatura_sigles"],
+    )
     df["party_color"] = df["candidatura_color"]
     return df
 

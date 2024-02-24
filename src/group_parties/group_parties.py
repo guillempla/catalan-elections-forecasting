@@ -54,15 +54,25 @@ def add_most_voted_party_code_column(most_voted_matrix, similar_parties):
     Returns:
     - DataFrame, the original dataframe with an added 'most_voted_party_code' column.
     """
-    similar_parties["most_voted_party_code"] = similar_parties.apply(
-        lambda row: most_voted_matrix.at[row["party_1"], row["party_2"]], axis=1
-    )
+    similar_parties["most_voted_party_code"] = None
+    for index, row in similar_parties.iterrows():
+        try:
+            similar_parties.at[index, "most_voted_party_code"] = most_voted_matrix.at[
+                row["party_1"], row["party_2"]
+            ]
+        except:
+            logging.error(
+                f"Error in row {index} with party_1: {row['party_1']} and party_2: {row['party_2']}"
+            )
+            logging.error(f"most_voted_matrix.at[{row['party_1']}, {row['party_2']}]")
+
     return similar_parties
 
 
 def get_party_code_most_votes(party_codes, party_codes_votes):
     """
-    Given a list of party codes, return the party code with the most votes from a list of party codes.
+    Given a list of party codes,
+    return the party code with the most votes from a list of party codes.
 
     Parameters:
     - party_codes: list, a list of party codes.
@@ -71,6 +81,8 @@ def get_party_code_most_votes(party_codes, party_codes_votes):
     try:
         max_code = party_codes_votes.loc[party_codes].idxmax()
     except IndexError:
+        max_code = party_codes[0]
+    except KeyError:
         max_code = party_codes[0]
 
     return max_code

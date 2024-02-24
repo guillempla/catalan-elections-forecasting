@@ -4,6 +4,7 @@ import logging
 from dotenv import load_dotenv
 from download_data import DownloadData
 from clean_data import CleanData
+from group_parties import GroupParties
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,10 +31,18 @@ def main():
         default=False,
         help="Clean the data from the Catalan Elections API.",
     )
+    # Add boolean argument for deciding if the parties must be grouped or not.
+    parser.add_argument(
+        "--group",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Group the parties from the Catalan Elections API.",
+    )
 
     args = parser.parse_args()
     download_data = args.download
     clean_data = args.clean
+    group_parties = args.group
 
     logging.info("Loading environment variables.")
 
@@ -79,6 +88,9 @@ def main():
 
     if clean_data:
         CleanData().clean_elections_data()
+
+    if group_parties:
+        GroupParties().group_parties()
 
 
 if __name__ == "__main__":

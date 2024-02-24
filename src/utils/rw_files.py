@@ -34,11 +34,38 @@ def check_file_exists(filename: str) -> bool:
         return False
 
 
+def check_pkl_extension(filename: str) -> bool:
+    """
+    Check if filename ends with .pkl
+    """
+    return filename.endswith(".pkl")
+
+
+def check_csv_extension(filename: str) -> bool:
+    """
+    Check if filename ends with .csv
+    """
+    return filename.endswith(".csv")
+
+
 def check_directory_exists(directory: str) -> bool:
     """
     Check if directory exists.
     """
     return os.path.exists(directory)
+
+
+def load_data(filename: str) -> pd.DataFrame:
+    """
+    Load data from CSV or pickle file.
+    """
+    if check_csv_extension(filename):
+        return load_csv(filename)
+    elif check_pkl_extension(filename):
+        return load_pickle(filename)
+    else:
+        logging.error("File extension not supported.")
+        raise ValueError("File extension not supported.")
 
 
 def load_csv(filename: str) -> pd.DataFrame:

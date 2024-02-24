@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import textdistance
 from tqdm import tqdm
+from utils.rw_files import load_data, save_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -82,9 +83,10 @@ class GroupParties:
 
     def __init__(
         self,
-        df,
-        distance_function=None,
-        threshold=None,
+        clean_data_filename: str = "../data/processed/catalan-elections-clean-data.pkl",
+        output_filename: str = "../data/processed/catalan-elections-grouped-data",
+        distance_function=textdistance.levenshtein.distance,
+        threshold=0.2,
         column_name="clean_party_name",
         exclude_competed_together=True,
     ) -> None:
@@ -107,7 +109,9 @@ class GroupParties:
             Whether to exclude parties that have competed together in the same election.
             Defaults to True.
         """
-        self.df = df
+        self.clean_data_filename = clean_data_filename
+        self.output_filename = output_filename
+        self.df = load_data(clean_data_filename)
         self.distance_function = distance_function
         self.threshold = threshold
         self.column_name = column_name
@@ -181,7 +185,7 @@ class GroupParties:
 
         # Dropping unnecessary columns for clarity
         final_df = merged_df.drop(["party", "most_voted_party_code"], axis=1)
-        return final_df
+        save_data(final_df, self.output_filename)
 
     def calculate_distance_matrix(self, party_names):
         """Calculate a distance matrix for a list of strings using a distance algorithm

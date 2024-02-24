@@ -7,20 +7,13 @@ from typing import List, Dict
 import logging
 import pandas as pd
 import numpy as np
+from utils.rw_files import load_csv, save_data
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-
-
-def load_csv(filename: str) -> pd.DataFrame:
-    """
-    Load data from CSV file.
-    """
-    logging.info("Loading data from CSV.")
-    return pd.read_csv(filename)
 
 
 def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -166,51 +159,6 @@ def set_column_type(df: pd.DataFrame, column_types: dict) -> pd.DataFrame:
         else:
             logging.warning("Column %s not found in DataFrame.", column)
     return df
-
-
-def save_data(
-    df: pd.DataFrame, filename: str, save_csv: bool = True, save_picke: bool = True
-) -> None:
-    """
-    Save dataframe as CSV or pickle file.
-    """
-    logging.info("Saving data.")
-    if save_csv:
-        save_csv_data(df, filename)
-    if save_picke:
-        save_pickle_data(df, filename)
-
-
-def save_csv_data(df: pd.DataFrame, filename: str):
-    """
-    Save dataframe as CSV file.
-    """
-    logging.info("Saving data as CSV.")
-
-    # Check if filename ends with .csv
-    if not filename.endswith(".csv"):
-        filename = filename + ".csv"
-
-    try:
-        df.to_csv(filename, index=False)
-    except (FileNotFoundError, PermissionError) as e:
-        logging.error(e)
-
-
-def save_pickle_data(df: pd.DataFrame, filename: str):
-    """
-    Save dataframe as pickle file.
-    """
-    logging.info("Saving data as pickle.")
-
-    # Check if filename ends with .pkl
-    if not filename.endswith(".pkl"):
-        filename = filename + ".pkl"
-
-    try:
-        df.to_pickle(filename)
-    except (FileNotFoundError, PermissionError) as e:
-        logging.error(e)
 
 
 class CleanData:

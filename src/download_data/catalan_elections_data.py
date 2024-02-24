@@ -27,6 +27,7 @@ import pandas as pd
 from sodapy import Socrata
 from sqlalchemy import create_engine
 from typing import Optional
+from utils.rw_files import save_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -66,6 +67,9 @@ class DownloadCatalanElectionsData:
         self.dataset_id: str = dataset_id
         self.csv_path: Optional[str] = csv_path
         self.pkl_path: Optional[str] = pkl_path
+        self.path: Optional[str] = (
+            self.csv_path.replace(".csv", "") if self.csv_path else None
+        )
         self.results_df: Optional[pd.DataFrame] = None
         self.nrows: Optional[int] = None
 
@@ -80,10 +84,11 @@ class DownloadCatalanElectionsData:
         self.nrows = self.get_row_count()
         self.results_df = self.get_data()
         self.convert_data_types()
-        if self.csv_path is not None:
-            self.save_as_csv(self.csv_path)
-        if self.pkl_path is not None:
-            self.save_as_pickle(self.pkl_path)
+        save_csv = self.csv_path is not None
+        save_pickle = self.pkl_path is not None
+        save_data(
+            self.results_df, self.path, save_csv=save_csv, save_pickle=save_pickle
+        )
 
     def initialize_client(
         self, domain: str, app_token: str, username: str, password: str
@@ -149,26 +154,6 @@ class DownloadCatalanElectionsData:
                     self.results_df[column], errors="ignore"
                 )
         self.results_df = self.results_df.convert_dtypes()
-
-    def save_as_csv(self, path: str) -> None:
-        """
-        Save the data as a CSV file.
-
-        Args:
-            path (str): The path to save the CSV file.
-        """
-        logging.info("Saving data as CSV.")
-        self.results_df.to_csv(path, index=False)
-
-    def save_as_pickle(self, path: str) -> None:
-        """
-        Save the data as a pickle file.
-
-        Args:
-            path (str): The path to save the pickle file.
-        """
-        logging.info("Saving data as pickle.")
-        self.results_df.to_pickle(path)
 
     def load_into_postgres(
         self, username: str, password: str, host: str, db_name: str, table_name: str

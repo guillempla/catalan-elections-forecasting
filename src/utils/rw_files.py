@@ -13,9 +13,10 @@ logging.basicConfig(
 )
 
 
-def check_file_extension(filename: str, extension: str) -> str:
+def fix_file_extension(filename: str, extension: str) -> str:
     """
-    Check if filename ends with a specific extension.
+    Check if filename ends with a specific extension,
+    if not the extension is added to the filename.
     """
     if not filename.endswith(extension):
         filename = filename + extension
@@ -57,7 +58,7 @@ def load_pickle(filename: str) -> pd.DataFrame:
 
 
 def save_data(
-    df: pd.DataFrame, filename: str, save_csv: bool = True, save_picke: bool = True
+    df: pd.DataFrame, filename: str, save_csv: bool = True, save_pickle: bool = True
 ) -> None:
     """
     Save dataframe as CSV or pickle file.
@@ -65,7 +66,7 @@ def save_data(
     logging.info("Saving data.")
     if save_csv:
         save_csv_data(df, filename)
-    if save_picke:
+    if save_pickle:
         save_pickle_data(df, filename)
 
 

@@ -7,6 +7,7 @@ from typing import List, Dict
 import logging
 import pandas as pd
 import numpy as np
+from unidecode import unidecode
 from utils.rw_files import load_csv, save_data
 
 logging.basicConfig(
@@ -14,6 +15,25 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+
+def clean_party_name(party_name: str) -> str:
+    """
+    Cleans the given party name by converting it to lowercase, removing diacritics,
+    and removing parentheses, commas, and hyphens.
+
+    Args:
+        party_name (str): The party name to be cleaned.
+
+    Returns:
+        str: The cleaned party name.
+    """
+    party_name = party_name.lower()
+    party_name = unidecode(party_name)
+    party_name = (
+        party_name.replace("(", "").replace(")", "").replace(",", "").replace("-", "")
+    )
+    return party_name
 
 
 def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -35,6 +55,8 @@ def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
         df["candidatura_sigles"],
     )
     df["party_color"] = df["candidatura_color"]
+    df["clean_party_name"] = df["party_name"].apply(clean_party_name)
+    df["clean_party_abbr"] = df["party_abbr"].apply(clean_party_name)
     return df
 
 
@@ -54,6 +76,17 @@ def remove_rows_with_null_values(
     """
     logging.info("Removing rows with null values in columns: %s", empty_columns)
     return df.dropna(subset=empty_columns)
+
+
+def replace_rows_with_null_values(
+    df: pd.DataFrame, empty_columns: List[str], value: str
+) -> pd.DataFrame:
+    """
+    Replace rows with null values in specified columns.
+    """
+    logging.info("Replacing rows with null values in columns: %s", empty_columns)
+    df[empty_columns] = df[empty_columns].fillna(value)
+    return df
 
 
 def rename_columns(df: pd.DataFrame, columns_to_rename: Dict[str, str]) -> pd.DataFrame:
@@ -224,7 +257,12 @@ class CleanData:
         """
         logging.info("Cleaning elections data.")
         self.df = (
-            self.df.pipe(create_party_columns)
+            self.df.pipe(
+                replace_rows_with_null_values,
+                empty_columns=self.columns_null_values,
+                value="",
+            )
+            .pipe(create_party_columns)
             .pipe(divide_id_eleccio)
             .pipe(rename_columns, columns_to_rename=self.columns_to_rename)
             .pipe(filter_by_election_type, elections_type=self.elections_type)
@@ -234,7 +272,6 @@ class CleanData:
                 replace_nan_colors, column=self.color_column, color=self.color_default
             )
             .pipe(drop_columns, columns_to_drop=self.columns_to_drop)
-            .pipe(remove_rows_with_null_values, empty_columns=self.columns_null_values)
             .pipe(set_column_type, column_types=self.columns_types)
             .pipe(save_data, filename=self.output_filename)
         )

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from download_data import DownloadData
 from clean_data import CleanData
 from group_parties import GroupParties
+from typing import List
 
 logging.basicConfig(
     level=logging.INFO,
@@ -48,7 +49,10 @@ def main():
 
     load_dotenv()
     socrata_domain = os.environ.get("SOCRATA_DOMAIN")
-    socrata_dataset_id = os.environ.get("SOCRATA_DATASET_ID")
+    socrata_elections_results_id = os.environ.get("SOCRATA_ELECTIONS_RESULTS_ID")
+    socrata_elections_participation_id = os.environ.get(
+        "SOCRATA_ELECTIONS_PARTICIPATION_ID"
+    )
     socrata_app_token = os.environ.get("SOCRATA_APP_TOKEN")
     socrata_email = os.environ.get("SOCRATA_EMAIL")
     socrata_password = os.environ.get("SOCRATA_PASSWORD")
@@ -63,27 +67,47 @@ def main():
         "POSTGRES_CATALAN_ELECTIONS_DATA_TABLE"
     )
 
-    catalan_elections_data_csv_path = (
-        os.environ.get("CATALAN_ELECTIONS_DATA_FILENAME") + ".csv"
+    catalan_elections_results_csv_path = (
+        os.environ.get("CATALAN_ELECTIONS_RESULTS_FILENAME") + ".csv"
     )
-    catalan_elections_data_pkl_path = (
-        os.environ.get("CATALAN_ELECTIONS_DATA_FILENAME") + ".pkl"
+    catalan_elections_results_pkl_path = (
+        os.environ.get("CATALAN_ELECTIONS_RESULTS_FILENAME") + ".pkl"
+    )
+    catalan_elections_participation_csv_path = (
+        os.environ.get("CATALAN_ELECTIONS_PARTICIPATION_FILENAME") + ".csv"
+    )
+    catalan_elections_participation_pkl_path = (
+        os.environ.get("CATALAN_ELECTIONS_PARTICIPATION_FILENAME") + ".pkl"
     )
 
     if download_data:
+        dataset_configs: List[dict] = []
+
+        dataset_configs.append(
+            {
+                "socrata_domain": socrata_domain,
+                "socrata_app_token": socrata_app_token,
+                "socrata_username": socrata_email,
+                "socrata_password": socrata_password,
+                "socrata_dataset_id": socrata_elections_results_id,
+                "csv_path": catalan_elections_results_csv_path,
+                "pkl_path": catalan_elections_results_pkl_path,
+            }
+        )
+        dataset_configs.append(
+            {
+                "socrata_domain": socrata_domain,
+                "socrata_app_token": socrata_app_token,
+                "socrata_username": socrata_email,
+                "socrata_password": socrata_password,
+                "socrata_dataset_id": socrata_elections_participation_id,
+                "csv_path": catalan_elections_participation_csv_path,
+                "pkl_path": catalan_elections_participation_pkl_path,
+            }
+        )
+
         DownloadData(
-            socrata_domain=socrata_domain,
-            socrata_app_token=socrata_app_token,
-            socrata_username=socrata_email,
-            socrata_password=socrata_password,
-            socrata_dataset_id=socrata_dataset_id,
-            csv_path=catalan_elections_data_csv_path,
-            pkl_path=catalan_elections_data_pkl_path,
-            # postgres_username=postgres_username,
-            # postgres_password=postgres_password,
-            # postgres_host=postgres_host,
-            # postgres_catalan_elections_data_db=postgres_catalan_elections_data_db,
-            # postgres_catalan_elections_data_table=postgres_catalan_elections_data_table,
+            dataset_configs=dataset_configs,
         ).download_catalan_elections_data()
 
     if clean_data:

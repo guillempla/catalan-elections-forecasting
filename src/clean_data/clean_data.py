@@ -234,7 +234,7 @@ class CleanData:
             self.run_rename_columns = self.columns_to_rename is not None
             self.run_filter_by_election_type = self.elections_type is not None
             self.run_merge_election_days = self.elections_days_df is not None
-            self.run_create_date_column = config.get("create_data_column")
+            self.run_create_date_column = config.get("create_date_column")
             self.run_replace_nan_colors = self.color_column is not None
             self.run_drop_columns = self.columns_to_drop is not None
             self.run_set_column_type = self.columns_types is not None

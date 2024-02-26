@@ -111,7 +111,52 @@ def main():
         ).download_catalan_elections_data()
 
     if clean_data:
-        CleanData().clean_elections_data()
+        clean_configs: List[dict] = []
+
+        clean_configs.append(
+            {
+                "elections_data_filename": catalan_elections_results_pkl_path,
+                "elections_days_filename": "../data/processed/elections_days.csv",
+                "output_filename": "../data/processed/catalan-elections-clean-data",
+                "columns_to_drop": [
+                    "candidat_posicio",
+                    "candidatura_logotip",
+                    "id_eleccio",
+                    "candidatura_codi",
+                    "candidatura_denominacio",
+                    "candidatura_sigles",
+                    "candidatura_color",
+                    "agrupacio_codi",
+                    "agrupacio_denominacio",
+                    "agrupacio_sigles",
+                ],
+                "columns_to_rename": {"secci_": "seccio"},
+                "elections_type": [
+                    "M",
+                    "E",
+                    "A",
+                    "G",
+                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+                "color_column": "candidatura_color",
+                "color_default": "grey",
+                "columns_types": {
+                    "year": "int",
+                    "month": "int",
+                    "day": "int",
+                    "seccio": "int",
+                    "vots": "int",
+                    "escons": "int",
+                    "districte": "int",
+                    "party_code": "int",
+                },
+                "columns_null_values": ["candidatura_sigles"],
+                "create_party_column": True,
+                "divide_id_eleccio": True,
+                "create_date_column": True,
+            }
+        )
+
+        CleanData(clean_configs=clean_configs).clean_elections_data()
 
     if group_parties:
         GroupParties().group_parties()

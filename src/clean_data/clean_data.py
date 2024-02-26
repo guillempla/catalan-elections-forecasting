@@ -8,7 +8,7 @@ import logging
 import pandas as pd
 import numpy as np
 from unidecode import unidecode
-from utils.rw_files import load_csv, save_data
+from utils.rw_files import load_data, save_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -201,77 +201,78 @@ class CleanData:
 
     def __init__(
         self,
-        elections_data_filename: str = "../data/raw/catalan-elections-data.csv",
-        elections_days_filename: str = "../data/processed/elections_days.csv",
-        output_filename: str = "../data/processed/catalan-elections-clean-data",
-        columns_to_drop: List[str] = [
-            "candidat_posicio",
-            "candidatura_logotip",
-            "id_eleccio",
-            "candidatura_codi",
-            "candidatura_denominacio",
-            "candidatura_sigles",
-            "candidatura_color",
-            "agrupacio_codi",
-            "agrupacio_denominacio",
-            "agrupacio_sigles",
-        ],
-        columns_to_rename: Dict[str, str] = {"secci_": "seccio"},
-        elections_type: List[str] = [
-            "M",
-            "E",
-            "A",
-            "G",
-        ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
-        color_column: str = "candidatura_color",
-        color_default: str = "grey",
-        columns_types: dict = {
-            "year": "int",
-            "month": "int",
-            "day": "int",
-            "seccio": "int",
-            "vots": "int",
-            "escons": "int",
-            "districte": "int",
-            "party_code": "int",
-        },
-        columns_null_values: List[str] = ["candidatura_sigles"],
+        clean_configs: List[Dict],
     ) -> None:
         """
         Initialize class.
         """
-        self.df = load_csv(elections_data_filename)
-        self.elections_days_df = load_csv(elections_days_filename)
-        self.output_filename = output_filename
-        self.columns_to_drop = columns_to_drop
-        self.columns_to_rename = columns_to_rename
-        self.elections_type = elections_type
-        self.color_column = color_column
-        self.color_default = color_default
-        self.columns_types = columns_types
-        self.columns_null_values = columns_null_values
+
+        for config in clean_configs:
+            self.elections_data_filename = config.get(["elections_data_filename"])
+            self.elections_days_filename = config.get(["elections_days_filename"])
+
+            if self.elections_data_filename is None:
+                raise ValueError("Elections data filename cannot be empty.")
+            self.df = load_data(self.elections_data_filename)
+
+            self.elections_days_df = None
+            if self.elections_days_filename is not None:
+                self.elections_days_df = load_data(self.elections_days_filename)
+
+            self.output_filename = config.get("output_filename")
+            self.columns_to_drop = config.get("columns_to_drop")
+            self.columns_to_rename = config.get("columns_to_rename")
+            self.elections_type = config.get("elections_type")
+            self.color_column = config.get("color_column")
+            self.color_default = config.get("color_default")
+            self.columns_types = config.get("columns_types")
+            self.columns_null_values = config.get("columns_null_values")
+
+            self.run_columns_null_values = self.columns_null_values is not None
+            self.run_create_party_column = config.get("create_party_column")
+            self.run_divide_id_eleccio = config.get("divide_id_eleccio")
+            self.run_rename_columns = self.columns_to_rename is not None
+            self.run_filter_by_election_type = self.elections_type is not None
+            self.run_merge_election_days = self.elections_days_df is not None
+            self.run_create_date_column = config.get("create_data_column")
+            self.run_replace_nan_colors = self.color_column is not None
+            self.run_drop_columns = self.columns_to_drop is not None
+            self.run_set_column_type = self.columns_types is not None
+
+            self.clean_elections_data()
 
     def clean_elections_data(self):
         """
         Clean elections data.
         """
-        logging.info("Cleaning elections data.")
-        self.df = (
-            self.df.pipe(
-                replace_rows_with_null_values,
-                empty_columns=self.columns_null_values,
-                value="",
+        logging.info(f"Cleaning elections data.")
+        if self.run_columns_null_values:
+            self.df = replace_rows_with_null_values(
+                self.df, empty_columns=self.columns_null_values, value=""
             )
-            .pipe(create_party_columns)
-            .pipe(divide_id_eleccio)
-            .pipe(rename_columns, columns_to_rename=self.columns_to_rename)
-            .pipe(filter_by_election_type, elections_type=self.elections_type)
-            .pipe(merge_election_days, df_elections_days=self.elections_days_df)
-            .pipe(create_date_column)
-            .pipe(
-                replace_nan_colors, column=self.color_column, color=self.color_default
+        if self.run_create_party_column:
+            self.df = create_party_columns(self.df)
+        if self.run_divide_id_eleccio:
+            self.df = divide_id_eleccio(self.df)
+        if self.run_rename_columns:
+            self.df = rename_columns(self.df, columns_to_rename=self.columns_to_rename)
+        if self.run_filter_by_election_type:
+            self.df = filter_by_election_type(
+                self.df, elections_type=self.elections_type
             )
-            .pipe(drop_columns, columns_to_drop=self.columns_to_drop)
-            .pipe(set_column_type, column_types=self.columns_types)
-            .pipe(save_data, filename=self.output_filename)
-        )
+        if self.run_merge_election_days:
+            self.df = merge_election_days(
+                self.df, df_elections_days=self.elections_days_df
+            )
+        if self.run_create_date_column:
+            self.df = create_date_column(self.df)
+        if self.run_replace_nan_colors:
+            self.df = replace_nan_colors(
+                self.df, column=self.color_column, color=self.color_default
+            )
+        if self.run_drop_columns:
+            self.df = drop_columns(self.df, columns_to_drop=self.columns_to_drop)
+        if self.run_set_column_type:
+            self.df = set_column_type(self.df, column_types=self.columns_types)
+
+        save_data(self.df, self.output_filename)

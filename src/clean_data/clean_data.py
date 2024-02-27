@@ -208,8 +208,8 @@ class CleanData:
         """
 
         for config in clean_configs:
-            self.elections_data_filename = config.get(["elections_data_filename"])
-            self.elections_days_filename = config.get(["elections_days_filename"])
+            self.elections_data_filename = config.get("elections_data_filename")
+            self.elections_days_filename = config.get("elections_days_filename")
 
             if self.elections_data_filename is None:
                 raise ValueError("Elections data filename cannot be empty.")

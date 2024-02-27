@@ -117,7 +117,7 @@ def main():
             {
                 "elections_data_filename": catalan_elections_results_pkl_path,
                 "elections_days_filename": "../data/processed/elections_days.csv",
-                "output_filename": "../data/processed/catalan-elections-clean-data",
+                "output_filename": "../data/processed/catalan-elections-clean-data-test",
                 "columns_to_drop": [
                     "candidat_posicio",
                     "candidatura_logotip",
@@ -156,7 +156,7 @@ def main():
             }
         )
 
-        CleanData(clean_configs=clean_configs).clean_elections_data()
+        CleanData(clean_configs=clean_configs)
 
     if group_parties:
         GroupParties().group_parties()

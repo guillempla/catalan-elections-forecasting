@@ -155,6 +155,40 @@ def main():
                 "create_date_column": True,
             }
         )
+        clean_configs.append(
+            {
+                "elections_data_filename": catalan_elections_participation_pkl_path,
+                "elections_days_filename": "../data/processed/elections_days.csv",
+                "output_filename": "../data/processed/catalan-elections-clean-participation-test",
+                "create_party_column": False,
+                "divide_id_eleccio": True,
+                "elections_type": [
+                    "M",
+                    "E",
+                    "A",
+                    "G",
+                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+                "create_date_column": True,
+                "columns_to_drop": [
+                    "vots_primer_avan",
+                    "vots_segon_avan",
+                    "hora_primer_avan",
+                    "hora_segon_avan",
+                    "vots_candidatures",
+                    "abstencio",
+                    "nombre_meses",
+                ],
+                "columns_types": {
+                    "year": "int",
+                    "month": "int",
+                    "day": "int",
+                    "seccio": "int",
+                    "votants": "int",
+                    "escons": "int",
+                    "districte": "int",
+                },
+            }
+        )
 
         CleanData(clean_configs=clean_configs)
 

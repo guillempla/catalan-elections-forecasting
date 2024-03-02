@@ -160,7 +160,7 @@ def replace_nan_colors(
     Replace NaN values in colors columns.
     """
     logging.info("Replacing NaN values in colors columns.")
-    df[column].fillna(color, inplace=True)
+    df[column] = df[column].replace(np.nan, color)
     return df
 
 

@@ -60,11 +60,16 @@ def add_most_voted_party_code_column(most_voted_matrix, similar_parties):
             similar_parties.at[index, "most_voted_party_code"] = most_voted_matrix.at[
                 row["party_1"], row["party_2"]
             ]
-        except:
+        except Exception as e:
             logging.error(
-                f"Error in row {index} with party_1: {row['party_1']} and party_2: {row['party_2']}"
+                "Error in row %s with party_1: %s and party_2: %s",
+                index,
+                row["party_1"],
+                row["party_2"],
             )
-            logging.error(f"most_voted_matrix.at[{row['party_1']}, {row['party_2']}]")
+            logging.error(
+                "most_voted_matrix.at[%s, %s]", row["party_1"], row["party_2"]
+            )
 
     return similar_parties
 

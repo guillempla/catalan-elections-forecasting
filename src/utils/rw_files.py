@@ -5,6 +5,9 @@ Utils functions to read and write files
 import logging
 import os
 import pandas as pd
+import zipfile
+import requests
+from typing import Optional
 
 logging.basicConfig(
     level=logging.INFO,
@@ -127,3 +130,37 @@ def save_pickle_data(df: pd.DataFrame, filename: str):
         df.to_pickle(filename)
     except (FileNotFoundError, PermissionError) as e:
         logging.error(e)
+
+
+def download_file(url: str, save_path: str) -> None:
+    """
+    Downloads a file from a given URL and saves it to a specified path.
+
+    Parameters:
+    - url (str): The URL of the file to download.
+    - save_path (str): The full path to save the file to.
+    """
+    try:
+        response = requests.get(url, timeout=20)  # Add timeout argument
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        with open(save_path, "wb") as file:
+            file.write(response.content)
+        logging.info("Downloaded file saved to %s", save_path)
+    except requests.RequestException as e:
+        logging.error("Error downloading file: %s", e)
+
+
+def unzip_file(zip_path: str, extract_to: Optional[str]) -> None:
+    """
+    Extracts a ZIP file to a specified directory.
+
+    Parameters:
+    - zip_path (str): The path of the ZIP file to extract.
+    - extract_to (str, optional): The directory to extract the contents to.
+    """
+    try:
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(extract_to)
+        logging.info("Extracted %s to %s", os.path.basename(zip_path), extract_to)
+    except zipfile.BadZipFile as e:
+        logging.error("Error extracting the ZIP file: %s", e)

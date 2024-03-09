@@ -1,7 +1,9 @@
 """
 Download data from Socrata Open Data API (SODA) and save it as a CSV file.
 
-This module provides a class, DownloadCatalanElectionsData, that allows you to download data from the Socrata Open Data API (SODA) and save it as a CSV file. It also provides functionality to convert data types and load the data into a PostgreSQL database.
+This module provides a class, DownloadCatalanElectionsData,
+that allows you to download data from the Socrata Open Data API (SODA) and save it as a CSV file.
+It also provides functionality to convert data types and load the data into a PostgreSQL database.
 
 Example usage:
     downloader = DownloadCatalanElectionsData(
@@ -22,11 +24,11 @@ Example usage:
     )
 """
 
+from typing import Optional
 import logging
 import pandas as pd
 from sodapy import Socrata
 from sqlalchemy import create_engine
-from typing import Optional
 from utils.rw_files import save_data
 
 logging.basicConfig(
@@ -73,7 +75,7 @@ class DownloadCatalanElectionsData:
         self.results_df: Optional[pd.DataFrame] = None
         self.nrows: Optional[int] = None
 
-    def download_catalan_elections_data(self) -> None:
+    def download(self) -> None:
         """
         Download the Catalan elections data from the Socrata API.
 

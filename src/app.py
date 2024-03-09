@@ -16,7 +16,7 @@ logging.basicConfig(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Download data from the Catalan Elections API."
+        description="Download and trasnform data from the Catalan Elections API."
     )
     # Add boolean argument for deciding if the data must be downloaded or not.
     parser.add_argument(
@@ -84,18 +84,11 @@ def main():
         dataset_configs: List[dict] = []
 
         dataset_configs.append(
-            {
-                "socrata_domain": socrata_domain,
-                "socrata_app_token": socrata_app_token,
-                "socrata_username": socrata_email,
-                "socrata_password": socrata_password,
-                "socrata_dataset_id": socrata_elections_results_id,
-                "csv_path": catalan_elections_results_csv_path,
-                "pkl_path": catalan_elections_results_pkl_path,
-            }
+            {"dataset_type": "gis", "year": "2019", "output_path": "../data/raw/"}
         )
         dataset_configs.append(
             {
+                "dataset_type": "socrata",
                 "socrata_domain": socrata_domain,
                 "socrata_app_token": socrata_app_token,
                 "socrata_username": socrata_email,
@@ -103,6 +96,18 @@ def main():
                 "socrata_dataset_id": socrata_elections_participation_id,
                 "csv_path": catalan_elections_participation_csv_path,
                 "pkl_path": catalan_elections_participation_pkl_path,
+            }
+        )
+        dataset_configs.append(
+            {
+                "dataset_type": "socrata",
+                "socrata_domain": socrata_domain,
+                "socrata_app_token": socrata_app_token,
+                "socrata_username": socrata_email,
+                "socrata_password": socrata_password,
+                "socrata_dataset_id": socrata_elections_results_id,
+                "csv_path": catalan_elections_results_csv_path,
+                "pkl_path": catalan_elections_results_pkl_path,
             }
         )
 
@@ -115,13 +120,46 @@ def main():
 
         clean_configs.append(
             {
+                "elections_data_filename": catalan_elections_participation_pkl_path,
+                "elections_days_filename": "../data/processed/elections_days.csv",
+                "output_filename": "../data/processed/catalan-elections-clean-participation",
+                "create_party_column": False,
+                "divide_id_eleccio": True,
+                "elections_type": [
+                    "M",
+                    "E",
+                    "A",
+                    "G",
+                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+                "create_date_column": True,
+                "columns_to_drop": [
+                    "vots_primer_avan",
+                    "vots_segon_avan",
+                    "hora_primer_avan",
+                    "hora_segon_avan",
+                    "vots_candidatures",
+                    "abstencio",
+                    "nombre_meses",
+                ],
+                "columns_types": {
+                    "year": "int",
+                    "month": "int",
+                    "day": "int",
+                    "seccio": "int",
+                    "votants": "int",
+                    "escons": "int",
+                    "districte": "int",
+                },
+            }
+        )
+        clean_configs.append(
+            {
                 "elections_data_filename": catalan_elections_results_pkl_path,
                 "elections_days_filename": "../data/processed/elections_days.csv",
-                "output_filename": "../data/processed/catalan-elections-clean-data-test",
+                "output_filename": "../data/processed/catalan-elections-clean-data",
                 "columns_to_drop": [
                     "candidat_posicio",
                     "candidatura_logotip",
-                    "id_eleccio",
                     "candidatura_codi",
                     "candidatura_denominacio",
                     "candidatura_sigles",
@@ -155,45 +193,11 @@ def main():
                 "create_date_column": True,
             }
         )
-        clean_configs.append(
-            {
-                "elections_data_filename": catalan_elections_participation_pkl_path,
-                "elections_days_filename": "../data/processed/elections_days.csv",
-                "output_filename": "../data/processed/catalan-elections-clean-participation-test",
-                "create_party_column": False,
-                "divide_id_eleccio": True,
-                "elections_type": [
-                    "M",
-                    "E",
-                    "A",
-                    "G",
-                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
-                "create_date_column": True,
-                "columns_to_drop": [
-                    "vots_primer_avan",
-                    "vots_segon_avan",
-                    "hora_primer_avan",
-                    "hora_segon_avan",
-                    "vots_candidatures",
-                    "abstencio",
-                    "nombre_meses",
-                ],
-                "columns_types": {
-                    "year": "int",
-                    "month": "int",
-                    "day": "int",
-                    "seccio": "int",
-                    "votants": "int",
-                    "escons": "int",
-                    "districte": "int",
-                },
-            }
-        )
 
         CleanData(clean_configs=clean_configs)
 
     if group_parties:
-        GroupParties().group_parties()
+        GroupParties(exclude_competed_together=False).group_parties()
 
 
 if __name__ == "__main__":

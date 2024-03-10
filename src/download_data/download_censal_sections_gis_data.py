@@ -54,28 +54,30 @@ class DownloadCensalSectionsGisData:
             year (str): The year of the data to download.
             output_path (str): The path to save the data.
         """
-        self.url = URLS[year]
+        self.year = year
+        self.url = URLS[self.year]
         self.output_path = output_path
 
     def download(self) -> None:
         """
         Download the Censal Sections GIS data from the IEC website and save it.
         """
-        logging.info("Downloading GIS data from %s.", self.url)
+        logging.info("Downloading %s GIS data from %s.", self.year, self.url)
 
         # Determine the filename from the URL and set the download path
         filename = self.url.split("/")[-1]
+        base_filename = filename.replace(".zip", "")
         save_path = os.path.join(self.output_path, filename)
-        print(save_path)
 
         # Download the file
         download_file(self.url, save_path)
 
-        # TODO extract to a folder
+        # Extract on a folder
+        output_path = os.path.join(self.output_path, base_filename)
 
         # Unzip the file
-        unzip_file(save_path, self.output_path)  # Specify the extraction path
+        unzip_file(save_path, output_path)
 
-        # Optionally, remove the ZIP file after extraction
+        # Remove the ZIP file after extraction
         os.remove(save_path)
         logging.info("Removed %s.", filename)

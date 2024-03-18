@@ -11,7 +11,7 @@ from utils.rw_files import download_file, unzip_file
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - Download Censal Sections GIS Data - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 

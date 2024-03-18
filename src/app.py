@@ -1,15 +1,15 @@
 import os
 import argparse
 import logging
+from typing import List
 from dotenv import load_dotenv
 from download_data import DownloadData
 from clean_data import CleanData
 from group_parties import GroupParties
-from typing import List
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - Main - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
@@ -57,15 +57,15 @@ def main():
     socrata_email = os.environ.get("SOCRATA_EMAIL")
     socrata_password = os.environ.get("SOCRATA_PASSWORD")
 
-    postgres_username = os.environ.get("POSTGRES_USER")
-    postgres_password = os.environ.get("POSTGRES_PASSWORD")
-    postgres_host = os.environ.get("POSTGRES_HOST")
-    postgres_catalan_elections_data_db = os.environ.get(
-        "POSTGRES_CATALAN_ELECTIONS_DATA_DB"
-    )
-    postgres_catalan_elections_data_table = os.environ.get(
-        "POSTGRES_CATALAN_ELECTIONS_DATA_TABLE"
-    )
+    # postgres_username = os.environ.get("POSTGRES_USER")
+    # postgres_password = os.environ.get("POSTGRES_PASSWORD")
+    # postgres_host = os.environ.get("POSTGRES_HOST")
+    # postgres_catalan_elections_data_db = os.environ.get(
+    #     "POSTGRES_CATALAN_ELECTIONS_DATA_DB"
+    # )
+    # postgres_catalan_elections_data_table = os.environ.get(
+    #     "POSTGRES_CATALAN_ELECTIONS_DATA_TABLE"
+    # )
 
     catalan_elections_results_csv_path = (
         os.environ.get("CATALAN_ELECTIONS_RESULTS_FILENAME") + ".csv"
@@ -156,6 +156,7 @@ def main():
             {
                 "elections_data_filename": catalan_elections_results_pkl_path,
                 "elections_days_filename": "../data/processed/elections_days.csv",
+                "elections_participation_filename": "../data/processed/catalan-elections-clean-participation.pkl",
                 "output_filename": "../data/processed/catalan-elections-clean-data",
                 "columns_to_drop": [
                     "candidat_posicio",

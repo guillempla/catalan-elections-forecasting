@@ -12,7 +12,7 @@ from utils.rw_files import load_data, save_data
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - Clean Data - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
@@ -194,6 +194,56 @@ def set_column_type(df: pd.DataFrame, column_types: dict) -> pd.DataFrame:
     return df
 
 
+def merge_participation_data(
+    df: pd.DataFrame, df_participation: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Merge participation data into df.
+    """
+    logging.info("Merging participation data.")
+    return df.merge(
+        df_participation[
+            [
+                "id_eleccio",
+                "territori_codi",
+                "districte",
+                "seccio",
+                "cens_electoral",
+                "vots_valids",
+                "vots_blancs",
+                "vots_nuls",
+                "votants",
+            ]
+        ],
+        on=["id_eleccio", "territori_codi", "districte", "seccio"],
+        how="left",
+    )
+
+
+def create_vote_percentage_column(
+    df: pd.DataFrame, remove_na: bool = True
+) -> pd.DataFrame:
+    """
+    Create votes percentages.
+    """
+    logging.info("Creating votes percentages.")
+
+    # Make a copy of the DataFrame to ensure we're not working on a view/slice
+    df_modified = df.copy()
+
+    if remove_na:
+        df_modified.dropna(subset=["vots_valids"], inplace=True)
+    elif df_modified["vots_valids"].isna().any():
+        logging.warning("'vots_valids' contains NA values. Replacing with 0.")
+        df_modified["vots_valids"].fillna(0, inplace=True)
+
+    df_modified["valid_votes_percentage"] = (
+        df_modified["vots"] / df_modified["vots_valids"] * 100
+    )
+
+    return df_modified
+
+
 class CleanData:
     """
     Clean data.
@@ -210,6 +260,9 @@ class CleanData:
         for config in clean_configs:
             self.elections_data_filename = config.get("elections_data_filename")
             self.elections_days_filename = config.get("elections_days_filename")
+            self.elections_participation_filename = config.get(
+                "elections_participation_filename"
+            )
 
             if self.elections_data_filename is None:
                 raise ValueError("Elections data filename cannot be empty.")
@@ -218,6 +271,12 @@ class CleanData:
             self.elections_days_df = None
             if self.elections_days_filename is not None:
                 self.elections_days_df = load_data(self.elections_days_filename)
+
+            self.elections_participation_df = None
+            if self.elections_participation_filename is not None:
+                self.elections_participation_df = load_data(
+                    self.elections_participation_filename
+                )
 
             self.output_filename = config.get("output_filename")
             self.columns_to_drop = config.get("columns_to_drop")
@@ -238,6 +297,9 @@ class CleanData:
             self.run_replace_nan_colors = self.color_column is not None
             self.run_drop_columns = self.columns_to_drop is not None
             self.run_set_column_type = self.columns_types is not None
+            self.run_merge_participation_data = (
+                self.elections_participation_df is not None
+            )
 
             self.clean_elections_data()
 
@@ -245,7 +307,7 @@ class CleanData:
         """
         Clean elections data.
         """
-        logging.info(f"Cleaning elections data.")
+        logging.info("Cleaning elections data.")
         if self.run_columns_null_values:
             self.df = replace_rows_with_null_values(
                 self.df, empty_columns=self.columns_null_values, value=""
@@ -274,5 +336,11 @@ class CleanData:
             self.df = drop_columns(self.df, columns_to_drop=self.columns_to_drop)
         if self.run_set_column_type:
             self.df = set_column_type(self.df, column_types=self.columns_types)
+
+        if self.run_merge_participation_data:
+            self.df = merge_participation_data(
+                self.df, df_participation=self.elections_participation_df
+            )
+            self.df = create_vote_percentage_column(self.df)
 
         save_data(self.df, self.output_filename)

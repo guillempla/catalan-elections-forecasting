@@ -2,8 +2,7 @@
 Group parties and save it as a CSV or Picke file.
 """
 
-from typing import List, Dict
-
+from typing import List, Dict, Union
 import logging
 import pandas as pd
 import numpy as np
@@ -18,7 +17,7 @@ logging.basicConfig(
 )
 
 
-def extract_true_pairs(similar_parties_matrix):
+def extract_true_pairs(similar_parties_matrix: pd.DataFrame) -> pd.DataFrame:
     """
     Extract pairs of parties with True values from a similarity matrix.
 
@@ -43,7 +42,9 @@ def extract_true_pairs(similar_parties_matrix):
     return parties_table
 
 
-def add_most_voted_party_code_column(most_voted_matrix, similar_parties):
+def add_most_voted_party_code_column(
+    most_voted_matrix: pd.DataFrame, similar_parties: pd.DataFrame
+) -> pd.DataFrame:
     """
     Adds a 'most_voted_party_code' column to the similar_parties dataframe.
 
@@ -60,7 +61,7 @@ def add_most_voted_party_code_column(most_voted_matrix, similar_parties):
             similar_parties.at[index, "most_voted_party_code"] = most_voted_matrix.at[
                 row["party_1"], row["party_2"]
             ]
-        except Exception as e:
+        except Exception:
             logging.error(
                 "Error in row %s with party_1: %s and party_2: %s",
                 index,
@@ -74,7 +75,9 @@ def add_most_voted_party_code_column(most_voted_matrix, similar_parties):
     return similar_parties
 
 
-def get_party_code_most_votes(party_codes, party_codes_votes):
+def get_party_code_most_votes(
+    party_codes: List[str], party_codes_votes: pd.DataFrame
+) -> str:
     """
     Given a list of party codes,
     return the party code with the most votes from a list of party codes.
@@ -82,6 +85,9 @@ def get_party_code_most_votes(party_codes, party_codes_votes):
     Parameters:
     - party_codes: list, a list of party codes.
     - party_codes_votes: DataFrame, a list of party codes with their votes.
+
+    Returns:
+    - str, the party code with the most votes.
     """
     try:
         max_code = party_codes_votes.loc[party_codes].idxmax()
@@ -102,23 +108,27 @@ class GroupParties:
         self,
         clean_data_filename: str = "../data/processed/catalan-elections-clean-data.pkl",
         output_filename: str = "../data/processed/catalan-elections-grouped-data",
-        distance_function=textdistance.levenshtein.distance,
-        threshold=0.2,
-        column_name="clean_party_name",
-        exclude_competed_together=True,
+        distance_function: Union[str, callable] = textdistance.levenshtein.distance,
+        threshold: float = 0.2,
+        column_name: str = "clean_party_name",
+        exclude_competed_together: bool = True,
     ) -> None:
         """
         Initialize the GroupParties class.
 
         Parameters:
-        - df: DataFrame
-            The input DataFrame containing the party data.
-        - distance_function: function, optional
+        - clean_data_filename: str, optional
+            The filename of the clean data file.
+        - output_filename: str, optional
+            The filename of the output file.
+        - distance_function: str or callable, optional
             The distance function used to compare party names.
-            If not provided, the default distance function will be used.
+            If a string is provided, it should be the name of a distance function from the textdistance library.
+            If a callable is provided, it should be a custom distance function that takes two strings as input and returns a float.
+            Defaults to textdistance.levenshtein.distance.
         - threshold: float, optional
             The threshold value used to determine if two party names are similar.
-            If not provided, the default threshold will be used.
+            Defaults to 0.2.
         - column_name: str, optional
             The name of the column in the DataFrame that contains the party names.
             Defaults to "clean_party_name".
@@ -134,18 +144,12 @@ class GroupParties:
         self.column_name = column_name
         self.exclude_competed_together = exclude_competed_together
 
-    def group_parties(self):
+    def group_parties(self) -> None:
         """
         Joins parties in the df dataframe based on the distance_function and threshold.
 
-        Parameters:
-        - df: DataFrame, dataframe with party1 and party2 columns.
-        - distance_function: function, a distance function from the textdistance library.
-        - threshold: float, the threshold for the distance function.
-        - column: str, the name of the column in the DataFrame containing the party strings.
-
         Returns:
-        - DataFrame, the original dataframe with an added 'most_voted_party_code' column.
+        - None
         """
         logging.info("Grouping parties codes.")
         # Filter the df to only include those parties that have competed in municipal elections
@@ -204,16 +208,15 @@ class GroupParties:
         final_df = merged_df.drop(["party", "most_voted_party_code"], axis=1)
         save_data(final_df, self.output_filename)
 
-    def calculate_distance_matrix(self, party_names):
-        """Calculate a distance matrix for a list of strings using a distance algorithm
-
-        Set to max_distance for the diagonal and below the diagonal
-        to avoid taking into account a value 2 times
+    def calculate_distance_matrix(self, party_names: List[str]) -> pd.DataFrame:
+        """
+        Calculate a distance matrix for a list of strings using a distance algorithm.
 
         Args:
-        party_names: A list with the party names (or abreviations) to calculate the distance matrix for
-        distance_algorithm: A distance algorithm from the textdistance library
-        column_name: The name of the column in the DataFrame containing the party strings
+        - party_names: List[str], a list with the party names (or abbreviations) to calculate the distance matrix for.
+
+        Returns:
+        - pd.DataFrame, a distance matrix.
         """
         n = len(party_names)
 
@@ -236,17 +239,20 @@ class GroupParties:
         # Convert the NumPy array to a pandas DataFrame
         return pd.DataFrame(distance_matrix, index=party_names, columns=party_names)
 
-    def get_party_codes_votes(self, territory="CA"):
+    def get_party_codes_votes(self, territory: str = "CA") -> pd.DataFrame:
         """
         Get the party codes and their sum of votes for a list of party names.
 
         Parameters:
-        - df: DataFrame, the original dataframe with party information.
         - territory: str, the territorial level to filter the dataframe.
+
+        Returns:
+        - pd.DataFrame, the party codes with their sum of votes.
         """
         # Filter the df by id_nivell_territorial equal to territory
         filtered_df = self.df[self.df["id_nivell_territorial"] == territory]
         # Get the party_codes with their sum of votes
+        # (code omitted for brevity)
         party_codes_votes = filtered_df.groupby("party_code")["vots"].sum()
         return party_codes_votes
 

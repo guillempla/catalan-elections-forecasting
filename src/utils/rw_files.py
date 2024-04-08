@@ -5,6 +5,7 @@ Utils functions to read and write files
 import logging
 import os
 import pandas as pd
+import geopandas as gpd
 import zipfile
 import requests
 from typing import Optional
@@ -51,6 +52,13 @@ def check_csv_extension(filename: str) -> bool:
     return filename.endswith(".csv")
 
 
+def check_shp_extension(filename: str) -> bool:
+    """
+    Check if filename ends with .shp
+    """
+    return filename.endswith(".shp")
+
+
 def check_directory_exists(directory: str) -> bool:
     """
     Check if directory exists.
@@ -58,24 +66,26 @@ def check_directory_exists(directory: str) -> bool:
     return os.path.exists(directory)
 
 
-def load_data(filename: str) -> pd.DataFrame:
+def load_data(filename: str) -> pd.DataFrame | gpd.GeoDataFrame:
     """
     Load data from CSV or pickle file.
     """
     if check_csv_extension(filename):
         return load_csv(filename)
-    elif check_pkl_extension(filename):
+    if check_pkl_extension(filename):
         return load_pickle(filename)
-    else:
-        logging.error("File extension not supported.")
-        raise ValueError("File extension not supported.")
+    if check_shp_extension(filename):
+        return load_shape(filename)
+
+    logging.error("File extension not supported.")
+    raise ValueError("File extension not supported.")
 
 
 def load_csv(filename: str) -> pd.DataFrame:
     """
     Load data from CSV file.
     """
-    logging.info("Loading data from CSV.")
+    logging.info("Loading CSV data %s", filename)
     return pd.read_csv(filename)
 
 
@@ -83,8 +93,16 @@ def load_pickle(filename: str) -> pd.DataFrame:
     """
     Load data from pickle file.
     """
-    logging.info("Loading data from pickle.")
+    logging.info("Loading pickle data %s", filename)
     return pd.read_pickle(filename)
+
+
+def load_shape(filename: str) -> gpd.GeoDataFrame:
+    """
+    Load data from shape file.
+    """
+    logging.info("Loading shape data %s", filename)
+    return gpd.read_file(filename)
 
 
 def save_data(

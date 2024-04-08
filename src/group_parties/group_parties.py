@@ -2,7 +2,7 @@
 Group parties and save it as a CSV or Picke file.
 """
 
-from typing import List, Dict, Union
+from typing import List, Union
 import logging
 import pandas as pd
 import numpy as np

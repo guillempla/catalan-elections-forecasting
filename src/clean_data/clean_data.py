@@ -8,6 +8,7 @@ import logging
 import pandas as pd
 import numpy as np
 from unidecode import unidecode
+from utils.municipal_code_control_digit import MunicipalCodeControlDigit
 from utils.rw_files import load_data, save_data
 
 logging.basicConfig(
@@ -57,6 +58,36 @@ def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
     df["party_color"] = df["candidatura_color"]
     df["clean_party_name"] = df["party_name"].apply(clean_party_name)
     df["clean_party_abbr"] = df["party_abbr"].apply(clean_party_name)
+    return df
+
+
+def create_mundissec_column(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create mundissec column.
+    """
+    logging.info("Creating mundissec columns.")
+
+    # Initialize the mundissec column with None
+    df["mundissec"] = None
+
+    # Filter rows where id_nivell_territorial is in the specified list
+    filter_rows = df["id_nivell_territorial"].isin(["DM", "ME", "MU", "SE"])
+
+    # Calculate control code only for the filtered rows
+    control_code = (
+        df.loc[filter_rows, "territori_codi"]
+        .astype(int)
+        .apply(MunicipalCodeControlDigit.calculate)
+        .astype(str)
+    )
+
+    # Update the calculation of mundissec only for rows that meet the condition
+    territori_codi = (
+        df.loc[filter_rows, "territori_codi"].astype(str) + control_code
+    ).str.zfill(5)
+    districte = df.loc[filter_rows, "districte"].astype(str).str.zfill(2)
+    seccio = df.loc[filter_rows, "seccio"].astype(str).str.zfill(3)
+    df.loc[filter_rows, "mundissec"] = territori_codi + districte + seccio
     return df
 
 
@@ -150,6 +181,20 @@ def create_date_column(df: pd.DataFrame) -> pd.DataFrame:
     """
     logging.info("Creating date column.")
     df["date"] = pd.to_datetime(df[["year", "month", "day"]])
+    return df
+
+
+def create_date_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create date columns.
+    """
+    logging.info("Creating date columns.")
+    df["data_eleccio"] = pd.to_datetime(
+        df["data_eleccio"]
+    )  # Convert data_eleccio to datetime
+    df["year"] = df["data_eleccio"].dt.year
+    df["month"] = df["data_eleccio"].dt.month
+    df["day"] = df["data_eleccio"].dt.day
     return df
 
 
@@ -289,11 +334,13 @@ class CleanData:
 
             self.run_columns_null_values = self.columns_null_values is not None
             self.run_create_party_column = config.get("create_party_column")
+            self.run_create_mundissec_column = config.get("create_mundissec_column")
             self.run_divide_id_eleccio = config.get("divide_id_eleccio")
             self.run_rename_columns = self.columns_to_rename is not None
             self.run_filter_by_election_type = self.elections_type is not None
             self.run_merge_election_days = self.elections_days_df is not None
             self.run_create_date_column = config.get("create_date_column")
+            self.run_create_date_columns = config.get("create_date_columns")
             self.run_replace_nan_colors = self.color_column is not None
             self.run_drop_columns = self.columns_to_drop is not None
             self.run_set_column_type = self.columns_types is not None
@@ -312,12 +359,14 @@ class CleanData:
             self.df = replace_rows_with_null_values(
                 self.df, empty_columns=self.columns_null_values, value=""
             )
-        if self.run_create_party_column:
-            self.df = create_party_columns(self.df)
-        if self.run_divide_id_eleccio:
-            self.df = divide_id_eleccio(self.df)
         if self.run_rename_columns:
             self.df = rename_columns(self.df, columns_to_rename=self.columns_to_rename)
+        if self.run_create_party_column:
+            self.df = create_party_columns(self.df)
+        if self.run_create_mundissec_column:
+            self.df = create_mundissec_column(self.df)
+        if self.run_divide_id_eleccio:
+            self.df = divide_id_eleccio(self.df)
         if self.run_filter_by_election_type:
             self.df = filter_by_election_type(
                 self.df, elections_type=self.elections_type
@@ -328,6 +377,8 @@ class CleanData:
             )
         if self.run_create_date_column:
             self.df = create_date_column(self.df)
+        if self.run_create_date_columns:
+            self.df = create_date_columns(self.df)
         if self.run_replace_nan_colors:
             self.df = replace_nan_colors(
                 self.df, column=self.color_column, color=self.color_default

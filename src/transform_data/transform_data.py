@@ -52,11 +52,6 @@ class TransformData:
         """
         Transform censal sections data and results data into a single output dataframe
         """
-        # Filter results data by the column "id_nivell_territorial". Keep only "SE" values
-        self.results_df = filter_dataframe_by_column(
-            self.results_df, "id_nivell_territorial", ["SE"]
-        )
-
         self.results_df = self.results_df.apply(create_unique_id, axis=1)
 
         # Select only the necessary columns (electoral section ID + newly created columns)

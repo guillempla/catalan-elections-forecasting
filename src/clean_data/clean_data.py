@@ -151,28 +151,30 @@ def merge_election_days(
     )
 
 
-def filter_by_election_type(
-    df: pd.DataFrame, elections_type: List[str]
-) -> pd.DataFrame:
+def filter_by_column(df: pd.DataFrame, column: str, values: List[str]) -> pd.DataFrame:
     """
-    Filter dataframe by election type.
+    Filter dataframe by column.
     """
-    logging.info("Filtering by election type.")
+    logging.info("Filtering by column %s.", column)
 
-    # Check if election_type is a list
-    if not isinstance(elections_type, list):
-        raise TypeError("election_type must be a list.")
+    # Check if column is in DataFrame
+    if column not in df.columns:
+        raise ValueError(f"Column {column} not found in DataFrame.")
 
-    # Check if election_type is empty
-    if not elections_type:
-        raise ValueError("election_type cannot be empty.")
+    # Check if values is a list
+    if not isinstance(values, list):
+        raise TypeError("values must be a list.")
 
-    # Check if election_type contains valid values
-    valid_election_type = df["type"].unique()
-    if not all(elem in valid_election_type for elem in elections_type):
-        raise ValueError("election_type contains invalid values.")
+    # Check if values is empty
+    if not values:
+        raise ValueError("values cannot be empty.")
 
-    return df[df["type"].isin(elections_type)]
+    # Check if values contains valid values
+    valid_values = df[column].unique()
+    if not all(elem in valid_values for elem in values):
+        raise ValueError("invalid values.")
+
+    return df[df[column].isin(values)]
 
 
 def create_date_column(df: pd.DataFrame) -> pd.DataFrame:
@@ -240,13 +242,39 @@ def set_column_type(df: pd.DataFrame, column_types: dict) -> pd.DataFrame:
 
 
 def merge_participation_data(
-    df: pd.DataFrame, df_participation: pd.DataFrame
+    df_votes: pd.DataFrame, df_participation: pd.DataFrame
 ) -> pd.DataFrame:
     """
     Merge participation data into df.
     """
     logging.info("Merging participation data.")
-    return df.merge(
+
+    # Filter out rows with null values in id_eleccio, territori_codi, districte, seccio
+    # to avoid problems on merge
+    if (
+        df_votes[["id_eleccio", "territori_codi", "districte", "seccio"]]
+        .isnull()
+        .values.any()
+    ):
+        logging.warning(
+            "Null values found in df_votes' columns: id_eleccio, territori_codi, districte, seccio."
+        )
+        df_votes = df_votes.dropna(
+            subset=["id_eleccio", "territori_codi", "districte", "seccio"]
+        )
+    if (
+        df_participation[["id_eleccio", "territori_codi", "districte", "seccio"]]
+        .isnull()
+        .values.any()
+    ):
+        logging.warning(
+            "Null values found in df_participation's columns: id_eleccio, territori_codi, districte, seccio in df_participation."
+        )
+        df_participation = df_participation.dropna(
+            subset=["id_eleccio", "territori_codi", "districte", "seccio"]
+        )
+
+    return df_votes.merge(
         df_participation[
             [
                 "id_eleccio",
@@ -265,7 +293,7 @@ def merge_participation_data(
     )
 
 
-def create_vote_percentage_column(
+def create_valid_votes_percentage_column(
     df: pd.DataFrame, remove_na: bool = True
 ) -> pd.DataFrame:
     """
@@ -273,17 +301,47 @@ def create_vote_percentage_column(
     """
     logging.info("Creating votes percentages.")
 
+    return create_percentage_column(df, "vots", "vots_valids", remove_na)
+
+
+def create_census_percentage_column(
+    df: pd.DataFrame, remove_na: bool = True
+) -> pd.DataFrame:
+    """
+    Create votes percentages.
+    """
+    logging.info("Creating votes percentages.")
+
+    return create_percentage_column(df, "vots", "cens_electoral", remove_na)
+
+
+def create_total_votes_percentage_column(
+    df: pd.DataFrame, remove_na: bool = True
+) -> pd.DataFrame:
+    """
+    Create votes percentages.
+    """
+    logging.info("Creating votes percentages.")
+
+    return create_percentage_column(df, "vots", "votants", remove_na)
+
+
+def create_percentage_column(
+    df: pd.DataFrame, votes_column, divisor_column, remove_na: bool = True
+) -> pd.DataFrame:
+    logging.info("Creating votes percentages.")
+
     # Make a copy of the DataFrame to ensure we're not working on a view/slice
     df_modified = df.copy()
 
     if remove_na:
-        df_modified.dropna(subset=["vots_valids"], inplace=True)
-    elif df_modified["vots_valids"].isna().any():
-        logging.warning("'vots_valids' contains NA values. Replacing with 0.")
-        df_modified["vots_valids"].fillna(0, inplace=True)
+        df_modified.dropna(subset=[divisor_column], inplace=True)
+    elif df_modified[divisor_column].isna().any():
+        logging.warning("'%s' contains NA values. Replacing with 0.", divisor_column)
+        df_modified[divisor_column].fillna(0, inplace=True)
 
-    df_modified["valid_votes_percentage"] = (
-        df_modified["vots"] / df_modified["vots_valids"] * 100
+    df_modified[f"{divisor_column}_percentage"] = (
+        df_modified[votes_column] / df_modified[divisor_column] * 100
     )
 
     return df_modified
@@ -327,6 +385,7 @@ class CleanData:
             self.columns_to_drop = config.get("columns_to_drop")
             self.columns_to_rename = config.get("columns_to_rename")
             self.elections_type = config.get("elections_type")
+            self.territorial_levels = config.get("territorial_levels")
             self.color_column = config.get("color_column")
             self.color_default = config.get("color_default")
             self.columns_types = config.get("columns_types")
@@ -338,6 +397,7 @@ class CleanData:
             self.run_divide_id_eleccio = config.get("divide_id_eleccio")
             self.run_rename_columns = self.columns_to_rename is not None
             self.run_filter_by_election_type = self.elections_type is not None
+            self.run_filter_by_territorial_level = self.territorial_levels is not None
             self.run_merge_election_days = self.elections_days_df is not None
             self.run_create_date_column = config.get("create_date_column")
             self.run_create_date_columns = config.get("create_date_columns")
@@ -361,16 +421,20 @@ class CleanData:
             )
         if self.run_rename_columns:
             self.df = rename_columns(self.df, columns_to_rename=self.columns_to_rename)
+        if self.run_filter_by_territorial_level:
+            self.df = filter_by_column(
+                self.df, column="id_nivell_territorial", values=self.territorial_levels
+            )
+        if self.run_divide_id_eleccio:
+            self.df = divide_id_eleccio(self.df)
+        if self.run_filter_by_election_type:
+            self.df = filter_by_column(
+                self.df, column="type", values=self.elections_type
+            )
         if self.run_create_party_column:
             self.df = create_party_columns(self.df)
         if self.run_create_mundissec_column:
             self.df = create_mundissec_column(self.df)
-        if self.run_divide_id_eleccio:
-            self.df = divide_id_eleccio(self.df)
-        if self.run_filter_by_election_type:
-            self.df = filter_by_election_type(
-                self.df, elections_type=self.elections_type
-            )
         if self.run_merge_election_days:
             self.df = merge_election_days(
                 self.df, df_elections_days=self.elections_days_df
@@ -392,6 +456,8 @@ class CleanData:
             self.df = merge_participation_data(
                 self.df, df_participation=self.elections_participation_df
             )
-            self.df = create_vote_percentage_column(self.df)
+            self.df = create_valid_votes_percentage_column(self.df)
+            self.df = create_census_percentage_column(self.df)
+            self.df = create_total_votes_percentage_column(self.df)
 
         save_data(self.df, self.output_filename)

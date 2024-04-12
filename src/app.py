@@ -163,7 +163,8 @@ def main():
                     "E",
                     "A",
                     "G",
-                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals,
+                "territorial_levels": ["SE"],  # SE: Secció censal
                 "create_date_column": True,
                 "columns_to_drop": [
                     "vots_primer_avan",
@@ -210,6 +211,7 @@ def main():
                     "A",
                     "G",
                 ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+                "territorial_levels": ["SE"],  # SE: Secció censal
                 "color_column": "candidatura_color",
                 "color_default": "grey",
                 "columns_types": {

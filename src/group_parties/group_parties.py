@@ -108,8 +108,8 @@ class GroupParties:
         self,
         clean_data_filename: str = "../data/processed/catalan-elections-clean-data.pkl",
         output_filename: str = "../data/processed/catalan-elections-grouped-data",
-        distance_function: Union[str, callable] = textdistance.levenshtein.distance,
-        threshold: float = 0.2,
+        distance_function: callable = textdistance.jaro_winkler.distance,
+        threshold: float = 0.15,
         column_name: str = "clean_party_name",
         exclude_competed_together: bool = True,
     ) -> None:
@@ -123,9 +123,8 @@ class GroupParties:
             The filename of the output file.
         - distance_function: str or callable, optional
             The distance function used to compare party names.
-            If a string is provided, it should be the name of a distance function from the textdistance library.
-            If a callable is provided, it should be a custom distance function that takes two strings as input and returns a float.
-            Defaults to textdistance.levenshtein.distance.
+            It should be a distance function that takes two strings as input and returns a float.
+            Defaults to textdistance.jaro_winkler.distance.
         - threshold: float, optional
             The threshold value used to determine if two party names are similar.
             Defaults to 0.2.
@@ -152,10 +151,7 @@ class GroupParties:
         - None
         """
         logging.info("Grouping parties codes.")
-        # Filter the df to only include those parties that have competed in municipal elections
-        # This is done to have the same list of parties as in the competed_together_matrix
-        df_filtered = self.df[self.df["id_nivell_territorial"] == "MU"]
-        party_names = sorted(df_filtered[self.column_name].unique().tolist())
+        party_names = sorted(self.df[self.column_name].unique().tolist())
         distance_matrix = self.calculate_distance_matrix(party_names)
         boolean_distance_matrix = distance_matrix < self.threshold
         most_voted_matrix = self.calculate_most_voted_party_code_matrix()
@@ -172,6 +168,8 @@ class GroupParties:
         similar_parties = add_most_voted_party_code_column(
             most_voted_matrix, similar_parties
         )
+
+        print(similar_parties)
 
         # Combine both party columns and flatten the dataset
         # while keeping the 'most_voted_party_code'
@@ -197,7 +195,7 @@ class GroupParties:
             right_on="party",
         )
 
-        # Create the "joined_code" self.column_name
+        # Create the "joined_code" column
         merged_df["joined_code"] = np.where(
             merged_df["most_voted_party_code"].isnull(),
             merged_df["party_code"],
@@ -239,21 +237,15 @@ class GroupParties:
         # Convert the NumPy array to a pandas DataFrame
         return pd.DataFrame(distance_matrix, index=party_names, columns=party_names)
 
-    def get_party_codes_votes(self, territory: str = "CA") -> pd.DataFrame:
+    def get_party_codes_votes(self) -> pd.DataFrame:
         """
         Get the party codes and their sum of votes for a list of party names.
-
-        Parameters:
-        - territory: str, the territorial level to filter the dataframe.
 
         Returns:
         - pd.DataFrame, the party codes with their sum of votes.
         """
-        # Filter the df by id_nivell_territorial equal to territory
-        filtered_df = self.df[self.df["id_nivell_territorial"] == territory]
         # Get the party_codes with their sum of votes
-        # (code omitted for brevity)
-        party_codes_votes = filtered_df.groupby("party_code")["vots"].sum()
+        party_codes_votes = self.df.groupby("party_code")["vots"].sum()
         return party_codes_votes
 
     def get_codes_from_names(self, df_grouped, party_name):
@@ -295,8 +287,7 @@ class GroupParties:
         - df: DataFrame, the original dataframe with party information.
         """
         # Get the party names
-        df_filtered = self.df[self.df["id_nivell_territorial"] == "MU"]
-        party_names = df_filtered["clean_party_name"].unique()
+        party_names = self.df["clean_party_name"].unique()
 
         # Precalculate the sum of votes for each party code
         party_codes_votes = self.get_party_codes_votes()
@@ -328,13 +319,17 @@ class GroupParties:
         return most_voted_matrix
 
     def parties_competed_together_matrix(self):
-        # Filter DataFrame for territorial level "MU"
-        df_filtered = self.df[self.df["id_nivell_territorial"] == "MU"]
+        """
+        Calculate a boolean matrix indicating whether parties have competed together in elections.
 
+        Returns:
+            pd.DataFrame: A boolean matrix where each cell represents whether the corresponding parties
+                          have competed together in any election. The matrix is symmetric, with True
+                          indicating that the parties have competed together and False indicating no
+                          competition.
+        """
         # Group by party name and aggregate unique election identifiers into sets
-        party_elections = df_filtered.groupby(self.column_name)["nom_eleccio"].apply(
-            set
-        )
+        party_elections = self.df.groupby(self.column_name)["nom_eleccio"].apply(set)
 
         # Get a sorted list of unique party names for consistent ordering
         party_names = sorted(party_elections.index)

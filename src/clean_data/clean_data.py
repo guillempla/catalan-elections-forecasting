@@ -299,8 +299,6 @@ def create_valid_votes_percentage_column(
     """
     Create votes percentages.
     """
-    logging.info("Creating votes percentages.")
-
     return create_percentage_column(df, "vots", "vots_valids", remove_na)
 
 
@@ -310,8 +308,6 @@ def create_census_percentage_column(
     """
     Create votes percentages.
     """
-    logging.info("Creating votes percentages.")
-
     return create_percentage_column(df, "vots", "cens_electoral", remove_na)
 
 
@@ -321,15 +317,13 @@ def create_total_votes_percentage_column(
     """
     Create votes percentages.
     """
-    logging.info("Creating votes percentages.")
-
     return create_percentage_column(df, "vots", "votants", remove_na)
 
 
 def create_percentage_column(
     df: pd.DataFrame, votes_column, divisor_column, remove_na: bool = True
 ) -> pd.DataFrame:
-    logging.info("Creating votes percentages.")
+    logging.info("Creating %s_percentage.", divisor_column)
 
     # Make a copy of the DataFrame to ensure we're not working on a view/slice
     df_modified = df.copy()

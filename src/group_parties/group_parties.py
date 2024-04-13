@@ -169,8 +169,6 @@ class GroupParties:
             most_voted_matrix, similar_parties
         )
 
-        print(similar_parties)
-
         # Combine both party columns and flatten the dataset
         # while keeping the 'most_voted_party_code'
         parties_flattened = (
@@ -323,10 +321,10 @@ class GroupParties:
         Calculate a boolean matrix indicating whether parties have competed together in elections.
 
         Returns:
-            pd.DataFrame: A boolean matrix where each cell represents whether the corresponding parties
-                          have competed together in any election. The matrix is symmetric, with True
-                          indicating that the parties have competed together and False indicating no
-                          competition.
+            pd.DataFrame: A boolean matrix where each cell represents whether the corresponding
+                          parties have competed together in any election. The matrix is symmetric,
+                          with True indicating that the parties have competed together
+                          and False indicating no competition.
         """
         # Group by party name and aggregate unique election identifiers into sets
         party_elections = self.df.groupby(self.column_name)["nom_eleccio"].apply(set)

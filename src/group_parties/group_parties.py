@@ -326,8 +326,16 @@ class GroupParties:
                           with True indicating that the parties have competed together
                           and False indicating no competition.
         """
-        # Group by party name and aggregate unique election identifiers into sets
-        party_elections = self.df.groupby(self.column_name)["nom_eleccio"].apply(set)
+        # Create a new column that combines the election name and censal section ID
+        # into a single string
+        self.df["combined"] = (
+            self.df["nom_eleccio"] + " " + self.df["mundissec"].astype(str)
+        )
+
+        # Group by the specified party name and aggregate the combined column into a set
+        party_elections = self.df.groupby(self.column_name)["combined"].agg(set)
+
+        print(party_elections)
 
         # Get a sorted list of unique party names for consistent ordering
         party_names = sorted(party_elections.index)
@@ -344,10 +352,49 @@ class GroupParties:
             elections_i = party_elections[party_name_i]
             for j in range(i + 1, matrix_size):
                 party_name_j = party_names[j]
+                elections_j = party_elections[party_name_j]
                 # Compare sets of election IDs for common elements
                 # Set the cell to True if there's an intersection
                 bool_matrix.at[party_name_i, party_name_j] = bool_matrix.at[
                     party_name_j, party_name_i
-                ] = not elections_i.isdisjoint(party_elections[party_name_j])
+                ] = not elections_i.isdisjoint(elections_j)
+
+                # if (
+                #     (party_name_i == "iniciativa feminista")
+                #     and (
+                #         party_name_j
+                #         == "iniciativa per catalunya verds  esquerra unida i alternativa: l'esquerra plural"
+                #     )
+                # ) or (
+                #     (
+                #         party_name_i
+                #         == "iniciativa per catalunya verds  esquerra unida i alternativa: l'esquerra plural"
+                #     )
+                #     and (party_name_j == "iniciativa feminista")
+                # ):
+                #     print(
+                #         party_name_i,
+                #         " | ",
+                #         party_name_j,
+                #         " | ",
+                #         bool_matrix.at[party_name_i, party_name_j],
+                #         " | ",
+                #         elections_i,
+                #         "| ",
+                #         elections_j,
+                #     )
+
+                # if party_name_i == "iniciativa feminista":
+                #     print(
+                #         party_name_i,
+                #         " | ",
+                #         party_name_j,
+                #         " | ",
+                #         bool_matrix.at[party_name_i, party_name_j],
+                #         " | ",
+                #         elections_i,
+                #         "| ",
+                #         elections_j,
+                #     )
 
         return bool_matrix

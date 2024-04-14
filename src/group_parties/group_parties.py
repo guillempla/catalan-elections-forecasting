@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import textdistance
 from tqdm import tqdm
+from group_parties.party import Party
 from utils.rw_files import load_data, save_data
 
 logging.basicConfig(
@@ -15,6 +16,13 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+
+def most_common(series):
+    modes = series.mode()
+    if not modes.empty:
+        return modes[0]
+    return None
 
 
 def extract_true_pairs(similar_parties_matrix: pd.DataFrame) -> pd.DataFrame:
@@ -135,13 +143,15 @@ class GroupParties:
             Whether to exclude parties that have competed together in the same election.
             Defaults to True.
         """
-        self.clean_data_filename = clean_data_filename
-        self.output_filename = output_filename
         self.df = load_data(clean_data_filename)
+        self.output_filename = output_filename
         self.distance_function = distance_function
         self.threshold = threshold
         self.column_name = column_name
         self.exclude_competed_together = exclude_competed_together
+        self.party_codes = self.df["party_code"].unique()
+        self.parties_dict: dict[str, Party] = self._initialize_parties_dict()
+        print(self.parties_dict)
 
     def group_parties(self) -> None:
         """
@@ -168,7 +178,9 @@ class GroupParties:
         similar_parties = add_most_voted_party_code_column(
             most_voted_matrix, similar_parties
         )
+        print(similar_parties)
 
+        # TODO: Check the algorism below this line, it's probably wrong. Check the notes.
         # Combine both party columns and flatten the dataset
         # while keeping the 'most_voted_party_code'
         parties_flattened = (
@@ -178,11 +190,15 @@ class GroupParties:
             .drop("level_1", axis=1)
             .drop_duplicates(subset=["party"])  # Removing duplicate party entries
         )
+        print(parties_flattened)
+
+        # TODO: Check this lines. They are probably unnecessary as they leave the same dataframe (unique_parties) as parties_flattened.
         # Creating a new dataset with unique party names
         # and their associated 'most_voted_party_code'
         unique_parties = parties_flattened.drop_duplicates(
             "party", keep="first"
         ).reset_index(drop=True)
+        print(unique_parties)
 
         # Merge 'self.df' with 'unique_parties' on "clean_party_name" and "party"
         merged_df = pd.merge(
@@ -203,6 +219,42 @@ class GroupParties:
         # Dropping unnecessary columns for clarity
         final_df = merged_df.drop(["party", "most_voted_party_code"], axis=1)
         save_data(final_df, self.output_filename)
+
+    def _initialize_parties_dict(self) -> dict[str, Party]:
+        """
+        Initialize a dictionary with party names as keys and Party objects as values.
+
+        Returns:
+        - dict[str, Party], a dictionary with party names as keys and Party objects as values.
+        """
+        # Aggregate the dataframe using custom function for mode
+        aggregated_df = (
+            self.df.groupby("party_code")
+            .agg(
+                {
+                    "party_name": most_common,  # Most common name
+                    "party_abbr": most_common,
+                    "clean_party_name": most_common,
+                    "clean_party_abbr": most_common,
+                    "vots": "sum",  # Summing votes for each party code
+                }
+            )
+            .reset_index()
+        )
+
+        # Create a dictionary of Party objects
+        party_dict = {
+            row["party_code"]: Party(
+                party_name=row["party_name"],
+                party_abbr=row["party_abbr"],
+                party_code=row["party_code"],
+                party_clean_name=row["clean_party_name"],
+                party_clean_abbr=row["clean_party_abbr"],
+                votes=row["vots"],
+            )
+            for _, row in aggregated_df.iterrows()
+        }
+        return party_dict
 
     def calculate_distance_matrix(self, party_names: List[str]) -> pd.DataFrame:
         """
@@ -285,7 +337,7 @@ class GroupParties:
         - df: DataFrame, the original dataframe with party information.
         """
         # Get the party names
-        party_names = self.df["clean_party_name"].unique()
+        party_names = self.df[self.column_name].unique()
 
         # Precalculate the sum of votes for each party code
         party_codes_votes = self.get_party_codes_votes()
@@ -335,8 +387,6 @@ class GroupParties:
         # Group by the specified party name and aggregate the combined column into a set
         party_elections = self.df.groupby(self.column_name)["combined"].agg(set)
 
-        print(party_elections)
-
         # Get a sorted list of unique party names for consistent ordering
         party_names = sorted(party_elections.index)
 
@@ -358,43 +408,5 @@ class GroupParties:
                 bool_matrix.at[party_name_i, party_name_j] = bool_matrix.at[
                     party_name_j, party_name_i
                 ] = not elections_i.isdisjoint(elections_j)
-
-                # if (
-                #     (party_name_i == "iniciativa feminista")
-                #     and (
-                #         party_name_j
-                #         == "iniciativa per catalunya verds  esquerra unida i alternativa: l'esquerra plural"
-                #     )
-                # ) or (
-                #     (
-                #         party_name_i
-                #         == "iniciativa per catalunya verds  esquerra unida i alternativa: l'esquerra plural"
-                #     )
-                #     and (party_name_j == "iniciativa feminista")
-                # ):
-                #     print(
-                #         party_name_i,
-                #         " | ",
-                #         party_name_j,
-                #         " | ",
-                #         bool_matrix.at[party_name_i, party_name_j],
-                #         " | ",
-                #         elections_i,
-                #         "| ",
-                #         elections_j,
-                #     )
-
-                # if party_name_i == "iniciativa feminista":
-                #     print(
-                #         party_name_i,
-                #         " | ",
-                #         party_name_j,
-                #         " | ",
-                #         bool_matrix.at[party_name_i, party_name_j],
-                #         " | ",
-                #         elections_i,
-                #         "| ",
-                #         elections_j,
-                #     )
 
         return bool_matrix

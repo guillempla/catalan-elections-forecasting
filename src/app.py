@@ -235,7 +235,7 @@ def main():
         CleanData(clean_configs=clean_configs)
 
     if group_parties:
-        GroupParties(exclude_competed_together=False).group_parties()
+        GroupParties(exclude_competed_together=True).group_parties()
 
 
 if __name__ == "__main__":

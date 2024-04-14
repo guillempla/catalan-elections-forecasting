@@ -193,6 +193,16 @@ def main():
                 "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
                 "elections_participation_filename": "../data/processed/catalan-elections-clean-participation.pkl",
                 "output_filename": "../data/processed/catalan-elections-clean-data",
+                "fix_party_codes": {
+                    "1083": {
+                        "code_column": "candidatura_codi",
+                        "name_column": "candidatura_denominacio",
+                    },
+                    "1084": {
+                        "code_column": "candidatura_codi",
+                        "name_column": "candidatura_denominacio",
+                    },
+                },
                 "columns_to_drop": [
                     "candidat_posicio",
                     "candidatura_logotip",

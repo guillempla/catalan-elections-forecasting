@@ -18,6 +18,30 @@ logging.basicConfig(
 )
 
 
+def fix_party_codes(df: pd.DataFrame, party_codes_to_fix: Dict) -> pd.DataFrame:
+    """
+    Fix party codes.
+    """
+    logging.info("Fixing party codes.")
+    df1 = df.copy()
+    for party_code, party_columns in party_codes_to_fix.items():
+        party_code_int = int(party_code)
+        new_code = int(party_code + "1")
+        code_column = party_columns.get("code_column")
+        name_column = party_columns.get("name_column")
+
+        # Select rows to update based on the unique name_column values associated with the party_code
+        unique_names = df1[df1[code_column] == party_code_int][name_column].unique()
+        for name in unique_names:
+            df1.loc[
+                (df1[code_column] == party_code_int) & (df1[name_column] == name),
+                code_column,
+            ] = new_code
+            new_code += 1
+
+    return df1
+
+
 def clean_party_name(party_name: str) -> str:
     """
     Cleans the given party name by converting it to lowercase, removing diacritics,
@@ -43,15 +67,23 @@ def create_party_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     logging.info("Creating party columns.")
     df["party_code"] = np.where(
-        df["agrupacio_codi"].notnull(), df["agrupacio_codi"], df["candidatura_codi"]
+        (df["agrupacio_codi"].notnull() & (df["agrupacio_codi"] != "")),
+        df["agrupacio_codi"],
+        df["candidatura_codi"],
     )
+    # Convert party_code to integer if not empty, handle empty strings or potential nulls after where condition
+    df["party_code"] = (
+        df["party_code"].replace("", np.nan).astype(float).astype("Int64")
+    )
+
     df["party_name"] = np.where(
-        df["agrupacio_denominacio"].notnull(),
+        (df["agrupacio_denominacio"].notnull() & (df["agrupacio_denominacio"] != "")),
         df["agrupacio_denominacio"],
         df["candidatura_denominacio"],
     )
+
     df["party_abbr"] = np.where(
-        df["agrupacio_sigles"].notnull(),
+        (df["agrupacio_sigles"].notnull() & (df["agrupacio_sigles"] != "")),
         df["agrupacio_sigles"],
         df["candidatura_sigles"],
     )
@@ -376,6 +408,7 @@ class CleanData:
                 )
 
             self.output_filename = config.get("output_filename")
+            self.party_codes_to_fix = config.get("fix_party_codes")
             self.columns_to_drop = config.get("columns_to_drop")
             self.columns_to_rename = config.get("columns_to_rename")
             self.elections_type = config.get("elections_type")
@@ -385,6 +418,7 @@ class CleanData:
             self.columns_types = config.get("columns_types")
             self.columns_null_values = config.get("columns_null_values")
 
+            self.run_fix_party_codes = self.party_codes_to_fix is not None
             self.run_columns_null_values = self.columns_null_values is not None
             self.run_create_party_column = config.get("create_party_column")
             self.run_create_mundissec_column = config.get("create_mundissec_column")
@@ -409,6 +443,8 @@ class CleanData:
         Clean elections data.
         """
         logging.info("Cleaning elections data.")
+        if self.run_fix_party_codes:
+            self.df = fix_party_codes(self.df, self.party_codes_to_fix)
         if self.run_columns_null_values:
             self.df = replace_rows_with_null_values(
                 self.df, empty_columns=self.columns_null_values, value=""

@@ -2,6 +2,14 @@
 Class that represents a party.
 """
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
 
 class Party:
     def __init__(
@@ -20,8 +28,10 @@ class Party:
         self._clean_abbr: str = party_clean_abbr
         self._votes: int = votes
         self._joined: bool = False
-        self.similar_parties: dict[str, "Party"] = {}
+        self._joined_code: int = None
+        self._similar_parties: dict[str, "Party"] = {}
         self._participated_in: set = set()
+        self._grouped_parties: set = set()
 
     def __str__(self):
         return f"{self._name} ({self.code}-{self._abbr})"
@@ -113,6 +123,15 @@ class Party:
         self._joined = value
 
     @property
+    def joined_code(self):
+        return self._joined_code
+
+    @joined_code.setter
+    def joined_code(self, value):
+        self._joined = True
+        self._joined_code = value
+
+    @property
     def similar_parties(self):
         return self._similar_parties
 
@@ -128,5 +147,51 @@ class Party:
     def participated_in(self, value):
         self._participated_in = value
 
-    def competed_together(self, other_party):
+    @property
+    def grouped_parties(self):
+        return self._grouped_parties
+
+    @grouped_parties.setter
+    def grouped_parties(self, value):
+        self._grouped_parties = value
+
+    def _join_participated_in(self, other_party):
+        self.participated_in = self.participated_in.union(other_party.participated_in)
+
+    def _competed_together(self, other_party):
         return self.participated_in.intersection(other_party.participated_in)
+
+    def _add_grouped_party(self, party):
+        self._grouped_parties.add(party)
+
+    def add_similar_party(self, party):
+        self._similar_parties[party.code] = party
+
+    def join_parties(self, other_party: "Party"):
+        if other_party.joined:
+            logging.warning(
+                "Party %s has already been joined to party %s. It will not be joined again.",
+                other_party,
+                other_party.joined_code,
+            )
+            return
+        if self._competed_together(other_party):
+            logging.warning(
+                "Parties %s and %s competed together. They will not be joined.",
+                self,
+                other_party,
+            )
+            return
+        if self.joined_code != self.code:
+            logging.warning(
+                "Party %s has already been joined to party %s. It will not be joined again.",
+                self,
+                self.joined_code,
+            )
+            return
+
+        self._join_participated_in(other_party)
+        other_party.joined_code = self.code
+        if self.joined_code is None:
+            self.joined_code = self.code
+        self._add_grouped_party(other_party)

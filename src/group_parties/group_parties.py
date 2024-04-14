@@ -50,63 +50,6 @@ def extract_true_pairs(similar_parties_matrix: pd.DataFrame) -> pd.DataFrame:
     return parties_table
 
 
-def add_most_voted_party_code_column(
-    most_voted_matrix: pd.DataFrame, similar_parties: pd.DataFrame
-) -> pd.DataFrame:
-    """
-    Adds a 'most_voted_party_code' column to the similar_parties dataframe.
-
-    Parameters:
-    - most_voted_matrix: DataFrame, dataframe matrix party columns.
-    - similar_parties: DataFrame, DataFrame with two columns (party_1, party_2).
-
-    Returns:
-    - DataFrame, the original dataframe with an added 'most_voted_party_code' column.
-    """
-    similar_parties["most_voted_party_code"] = None
-    for index, row in similar_parties.iterrows():
-        try:
-            similar_parties.at[index, "most_voted_party_code"] = most_voted_matrix.at[
-                row["party_1"], row["party_2"]
-            ]
-        except Exception:
-            logging.error(
-                "Error in row %s with party_1: %s and party_2: %s",
-                index,
-                row["party_1"],
-                row["party_2"],
-            )
-            logging.error(
-                "most_voted_matrix.at[%s, %s]", row["party_1"], row["party_2"]
-            )
-
-    return similar_parties
-
-
-def get_party_code_most_votes(
-    party_codes: List[str], party_codes_votes: pd.DataFrame
-) -> str:
-    """
-    Given a list of party codes,
-    return the party code with the most votes from a list of party codes.
-
-    Parameters:
-    - party_codes: list, a list of party codes.
-    - party_codes_votes: DataFrame, a list of party codes with their votes.
-
-    Returns:
-    - str, the party code with the most votes.
-    """
-    try:
-        max_code = party_codes_votes.loc[party_codes].idxmax()
-    except IndexError:
-        max_code = party_codes[0]
-    except KeyError:
-        max_code = party_codes[0]
-
-    return max_code
-
-
 class GroupParties:
     """
     Group data.
@@ -149,9 +92,8 @@ class GroupParties:
         self.threshold = threshold
         self.column_name = column_name
         self.exclude_competed_together = exclude_competed_together
-        self.party_codes = self.df["party_code"].unique()
         self.parties_dict: dict[str, Party] = self._initialize_parties_dict()
-        print(self.parties_dict)
+        self.party_codes = list(self.parties_dict.keys())
 
     def group_parties(self) -> None:
         """
@@ -161,10 +103,8 @@ class GroupParties:
         - None
         """
         logging.info("Grouping parties codes.")
-        party_names = sorted(self.df[self.column_name].unique().tolist())
-        distance_matrix = self.calculate_distance_matrix(party_names)
+        distance_matrix = self.calculate_distance_matrix()
         boolean_distance_matrix = distance_matrix < self.threshold
-        most_voted_matrix = self.calculate_most_voted_party_code_matrix()
 
         if self.exclude_competed_together:
             competed_together_matrix = self.parties_competed_together_matrix()
@@ -174,51 +114,16 @@ class GroupParties:
             )
         else:
             similar_parties_matrix = boolean_distance_matrix
+
         similar_parties = extract_true_pairs(similar_parties_matrix)
-        similar_parties = add_most_voted_party_code_column(
-            most_voted_matrix, similar_parties
-        )
-        print(similar_parties)
 
-        # TODO: Check the algorism below this line, it's probably wrong. Check the notes.
-        # Combine both party columns and flatten the dataset
-        # while keeping the 'most_voted_party_code'
-        parties_flattened = (
-            similar_parties.set_index("most_voted_party_code")
-            .stack()
-            .reset_index(name="party")
-            .drop("level_1", axis=1)
-            .drop_duplicates(subset=["party"])  # Removing duplicate party entries
-        )
-        print(parties_flattened)
+        for row in similar_parties.itertuples():
+            party_1 = self.parties_dict[row.party_1]
+            party_2 = self.parties_dict[row.party_2]
+            party_1.add_similar_party(party_2)
+            party_2.add_similar_party(party_1)
 
-        # TODO: Check this lines. They are probably unnecessary as they leave the same dataframe (unique_parties) as parties_flattened.
-        # Creating a new dataset with unique party names
-        # and their associated 'most_voted_party_code'
-        unique_parties = parties_flattened.drop_duplicates(
-            "party", keep="first"
-        ).reset_index(drop=True)
-        print(unique_parties)
-
-        # Merge 'self.df' with 'unique_parties' on "clean_party_name" and "party"
-        merged_df = pd.merge(
-            self.df,
-            unique_parties,
-            how="left",
-            left_on="clean_party_name",
-            right_on="party",
-        )
-
-        # Create the "joined_code" column
-        merged_df["joined_code"] = np.where(
-            merged_df["most_voted_party_code"].isnull(),
-            merged_df["party_code"],
-            merged_df["most_voted_party_code"],
-        )
-
-        # Dropping unnecessary columns for clarity
-        final_df = merged_df.drop(["party", "most_voted_party_code"], axis=1)
-        save_data(final_df, self.output_filename)
+        # save_data(final_df, self.output_filename)
 
     def _initialize_parties_dict(self) -> dict[str, Party]:
         """
@@ -256,17 +161,14 @@ class GroupParties:
         }
         return party_dict
 
-    def calculate_distance_matrix(self, party_names: List[str]) -> pd.DataFrame:
+    def calculate_distance_matrix(self) -> pd.DataFrame:
         """
         Calculate a distance matrix for a list of strings using a distance algorithm.
-
-        Args:
-        - party_names: List[str], a list with the party names (or abbreviations) to calculate the distance matrix for.
 
         Returns:
         - pd.DataFrame, a distance matrix.
         """
-        n = len(party_names)
+        n = len(self.party_codes)
 
         distance_matrix = np.zeros(
             (n, n), dtype=float
@@ -275,9 +177,11 @@ class GroupParties:
 
         # Only calculate for the upper half of the matrix
         for i in tqdm(range(n), desc="Calculating distances"):
+            party_name_i = self.parties_dict[self.party_codes[i]].clean_name
             for j in range(i + 1, n):
+                party_name_j = self.parties_dict[self.party_codes[j]].clean_name
                 distance_matrix[i, j] = self.distance_function(
-                    party_names[i], party_names[j]
+                    party_name_i, party_name_j
                 )
                 distance_matrix[j, i] = max_distance
 
@@ -285,88 +189,9 @@ class GroupParties:
         np.fill_diagonal(distance_matrix, 100.0)
 
         # Convert the NumPy array to a pandas DataFrame
-        return pd.DataFrame(distance_matrix, index=party_names, columns=party_names)
-
-    def get_party_codes_votes(self) -> pd.DataFrame:
-        """
-        Get the party codes and their sum of votes for a list of party names.
-
-        Returns:
-        - pd.DataFrame, the party codes with their sum of votes.
-        """
-        # Get the party_codes with their sum of votes
-        party_codes_votes = self.df.groupby("party_code")["vots"].sum()
-        return party_codes_votes
-
-    def get_codes_from_names(self, df_grouped, party_name):
-        """
-        Get the party codes for a list of party names.
-
-        Parameters:
-        - df: DataFrame, the original dataframe with party information.
-        - party_name: str, name of the party.
-        - column: str, the column name used to identify parties.
-        """
-        return list(
-            df_grouped[df_grouped[self.column_name] == party_name][
-                "party_code"
-            ].unique()
+        return pd.DataFrame(
+            distance_matrix, index=self.party_codes, columns=self.party_codes
         )
-
-    def get_party_codes_dict(self):
-        """
-        Get a dictionary of party names and their party codes using an optimized approach.
-
-        Parameters:
-        - df: DataFrame, the original dataframe with party information.
-        - column: str, the column name used to identify parties.
-        """
-        # Group by the party name column and apply the get_codes_from_names function to each group.
-        party_codes_dict = (
-            self.df.groupby(self.column_name)
-            .apply(lambda x: self.get_codes_from_names(x, x[self.column_name].iloc[0]))
-            .to_dict()
-        )
-        return party_codes_dict
-
-    def calculate_most_voted_party_code_matrix(self):
-        """
-        Calculate the most voted party code matrix for a dataframe.
-
-        Parameters:
-        - df: DataFrame, the original dataframe with party information.
-        """
-        # Get the party names
-        party_names = self.df[self.column_name].unique()
-
-        # Precalculate the sum of votes for each party code
-        party_codes_votes = self.get_party_codes_votes()
-        # Precalculate the party codes for each party name
-        party_codes_dict = self.get_party_codes_dict()
-
-        # Create an empty boolean matrix
-        matrix_size = len(party_names)
-        most_voted_matrix = pd.DataFrame("", index=party_names, columns=party_names)
-
-        # Iterate through each party name once
-        for i in tqdm(
-            range(matrix_size), desc="Calculating most voted party code matrix"
-        ):
-            party_name_i = party_names[i]
-            codes_i = party_codes_dict[party_name_i]
-            for j in range(i + 1, matrix_size):
-                party_name_j = party_names[j]
-                codes_j = party_codes_dict[party_name_j]
-
-                combined_codes = list(set(codes_i + codes_j))
-                max_party_code = get_party_code_most_votes(
-                    combined_codes, party_codes_votes
-                )
-                most_voted_matrix.at[party_name_i, party_name_j] = most_voted_matrix.at[
-                    party_name_j, party_name_i
-                ] = max_party_code
-
-        return most_voted_matrix
 
     def parties_competed_together_matrix(self):
         """
@@ -378,6 +203,9 @@ class GroupParties:
                           with True indicating that the parties have competed together
                           and False indicating no competition.
         """
+        # TODO: Study how to add for every Party object the elections it has participated in
+        # TODO: Based on each party participated_in set, create a matrix with True if they have competed together
+
         # Create a new column that combines the election name and censal section ID
         # into a single string
         self.df["combined"] = (
@@ -385,28 +213,27 @@ class GroupParties:
         )
 
         # Group by the specified party name and aggregate the combined column into a set
-        party_elections = self.df.groupby(self.column_name)["combined"].agg(set)
-
-        # Get a sorted list of unique party names for consistent ordering
-        party_names = sorted(party_elections.index)
+        party_elections = self.df.groupby("party_code")["combined"].agg(set)
 
         # Create an empty boolean matrix
-        matrix_size = len(party_names)
-        bool_matrix = pd.DataFrame(False, index=party_names, columns=party_names)
+        matrix_size = len(self.party_codes)
+        bool_matrix = pd.DataFrame(
+            False, index=self.party_codes, columns=self.party_codes
+        )
 
         # Iterate through each party name once, showing progress with tqdm
         for i in tqdm(
             range(matrix_size), desc="Calculate parties that competed together"
         ):
-            party_name_i = party_names[i]
-            elections_i = party_elections[party_name_i]
+            party_code_i = self.party_codes[i]
+            elections_i = party_elections[party_code_i]
             for j in range(i + 1, matrix_size):
-                party_name_j = party_names[j]
-                elections_j = party_elections[party_name_j]
+                party_code_j = self.party_codes[j]
+                elections_j = party_elections[party_code_j]
                 # Compare sets of election IDs for common elements
                 # Set the cell to True if there's an intersection
-                bool_matrix.at[party_name_i, party_name_j] = bool_matrix.at[
-                    party_name_j, party_name_i
+                bool_matrix.at[party_code_i, party_code_j] = bool_matrix.at[
+                    party_code_j, party_code_i
                 ] = not elections_i.isdisjoint(elections_j)
 
         return bool_matrix

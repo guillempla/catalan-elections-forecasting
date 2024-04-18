@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import textdistance
 from tqdm import tqdm
+from sortedcontainers import SortedSet
 from group_parties.party import Party
 from utils.rw_files import load_data, save_data
 
@@ -103,25 +104,24 @@ class GroupParties:
         - None
         """
         logging.info("Grouping parties codes.")
-        distance_matrix = self.calculate_distance_matrix()
+        distance_matrix = self._calculate_distance_matrix()
         boolean_distance_matrix = distance_matrix < self.threshold
 
         if self.exclude_competed_together:
-            competed_together_matrix = self.parties_competed_together_matrix()
-            not_competed_together_matrix = ~competed_together_matrix
-            similar_parties_matrix = (
-                boolean_distance_matrix & not_competed_together_matrix
-            )
-        else:
-            similar_parties_matrix = boolean_distance_matrix
+            self._initialize_participated_in()
 
-        similar_parties = extract_true_pairs(similar_parties_matrix)
+        party_similar_parties = extract_true_pairs(boolean_distance_matrix)
 
-        for row in similar_parties.itertuples():
-            party_1 = self.parties_dict[row.party_1]
-            party_2 = self.parties_dict[row.party_2]
-            party_1.add_similar_party(party_2)
-            party_2.add_similar_party(party_1)
+        self._initialize_similar_parties(party_similar_parties)
+
+        # Create an ordered set of parties that have not been grouped yet
+        # The set is in descending order by the number of total votes
+        # each party received in every election
+        not_grouped_parties = SortedSet(self.parties_dict.values())
+
+        self._join_similar_parties(not_grouped_parties)
+
+        # print(not_grouped_parties)
 
         # save_data(final_df, self.output_filename)
 
@@ -161,7 +161,24 @@ class GroupParties:
         }
         return party_dict
 
-    def calculate_distance_matrix(self) -> pd.DataFrame:
+    def _initialize_participated_in(self) -> None:
+        """
+        Initialize the participated_in attribute for each Party object.
+
+        Returns:
+        - None
+        """
+        # Iterate through each row in the DataFrame
+        for row in self.df.itertuples():
+            party_code = row.party_code
+            election_name = row.nom_eleccio
+            censal_section_id = row.mundissec
+            party = self.parties_dict[party_code]
+            # Add the election name and censal section ID to the participated_in set
+            party.participated_in.add((election_name, censal_section_id))
+            party.group_participated_in.add((election_name, censal_section_id))
+
+    def _calculate_distance_matrix(self) -> pd.DataFrame:
         """
         Calculate a distance matrix for a list of strings using a distance algorithm.
 
@@ -193,47 +210,34 @@ class GroupParties:
             distance_matrix, index=self.party_codes, columns=self.party_codes
         )
 
-    def parties_competed_together_matrix(self):
+    def _initialize_similar_parties(
+        self, similar_parties: List[Union[str, List[str]]]
+    ) -> None:
         """
-        Calculate a boolean matrix indicating whether parties have competed together in elections.
+        Set similar parties for each party in the parties_dict.
 
-        Returns:
-            pd.DataFrame: A boolean matrix where each cell represents whether the corresponding
-                          parties have competed together in any election. The matrix is symmetric,
-                          with True indicating that the parties have competed together
-                          and False indicating no competition.
+        Parameters:
+        - similar_parties: List[Union[str, List[str]]], a list of similar party names.
         """
-        # TODO: Study how to add for every Party object the elections it has participated in
-        # TODO: Based on each party participated_in set, create a matrix with True if they have competed together
+        for row in similar_parties.itertuples():
+            party_1 = self.parties_dict[row.party_1]
+            party_2 = self.parties_dict[row.party_2]
+            party_1.add_similar_party(party_2)
+            party_2.add_similar_party(party_1)
 
-        # Create a new column that combines the election name and censal section ID
-        # into a single string
-        self.df["combined"] = (
-            self.df["nom_eleccio"] + " " + self.df["mundissec"].astype(str)
-        )
+    def _join_similar_parties(self, not_grouped_parties) -> None:
+        while len(not_grouped_parties) > 0:
+            # Get the last party in the set, which is the one with the most votes
+            party = not_grouped_parties.pop()
+            # print("Original Party: ", party)
 
-        # Group by the specified party name and aggregate the combined column into a set
-        party_elections = self.df.groupby("party_code")["combined"].agg(set)
+            if party.joined:
+                continue
 
-        # Create an empty boolean matrix
-        matrix_size = len(self.party_codes)
-        bool_matrix = pd.DataFrame(
-            False, index=self.party_codes, columns=self.party_codes
-        )
-
-        # Iterate through each party name once, showing progress with tqdm
-        for i in tqdm(
-            range(matrix_size), desc="Calculate parties that competed together"
-        ):
-            party_code_i = self.party_codes[i]
-            elections_i = party_elections[party_code_i]
-            for j in range(i + 1, matrix_size):
-                party_code_j = self.party_codes[j]
-                elections_j = party_elections[party_code_j]
-                # Compare sets of election IDs for common elements
-                # Set the cell to True if there's an intersection
-                bool_matrix.at[party_code_i, party_code_j] = bool_matrix.at[
-                    party_code_j, party_code_i
-                ] = not elections_i.isdisjoint(elections_j)
-
-        return bool_matrix
+            unjoined_similar_parties = SortedSet(party.similar_parties.values())
+            # print("Similar Parties: ", unjoined_similar_parties)
+            while len(unjoined_similar_parties) > 0:
+                party_to_join = unjoined_similar_parties.pop()
+                unjoined_similar_parties.union(party_to_join.similar_parties.values())
+                # print("Parties left to join: ", party_to_join)
+                party.join_parties(party_to_join)

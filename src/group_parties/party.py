@@ -31,6 +31,7 @@ class Party:
         self._joined_code: int = None
         self._similar_parties: dict[str, "Party"] = {}
         self._participated_in: set = set()
+        self._group_participated_in: set = set()
         self._grouped_parties: set = set()
 
     def __str__(self):
@@ -47,6 +48,9 @@ class Party:
             == other.abbr & self._votes
             == other.votes
         )
+
+    def __neg__(self):
+        return -self._votes
 
     def __lt__(self, other):
         return self._votes < other.votes
@@ -146,6 +150,15 @@ class Party:
     @participated_in.setter
     def participated_in(self, value):
         self._participated_in = value
+        self.group_participated_in = value.copy()
+
+    @property
+    def group_participated_in(self):
+        return self._group_participated_in
+
+    @group_participated_in.setter
+    def group_participated_in(self, value):
+        self._group_participated_in = value
 
     @property
     def grouped_parties(self):
@@ -156,10 +169,17 @@ class Party:
         self._grouped_parties = value
 
     def _join_participated_in(self, other_party):
-        self.participated_in = self.participated_in.union(other_party.participated_in)
+        self.group_participated_in = self.group_participated_in.union(
+            other_party.group_participated_in
+        )
 
     def _competed_together(self, other_party):
-        return self.participated_in.intersection(other_party.participated_in)
+        return bool(self.participated_in.intersection(other_party.participated_in))
+
+    def _group_competed_together(self, other_party):
+        return bool(
+            self.group_participated_in.intersection(other_party.group_participated_in)
+        )
 
     def _add_grouped_party(self, party):
         self._grouped_parties.add(party)
@@ -167,31 +187,35 @@ class Party:
     def add_similar_party(self, party):
         self._similar_parties[party.code] = party
 
-    def join_parties(self, other_party: "Party"):
+    def join_parties(self, other_party: "Party", verbose=False) -> bool:
         if other_party.joined:
-            logging.warning(
-                "Party %s has already been joined to party %s. It will not be joined again.",
-                other_party,
-                other_party.joined_code,
-            )
-            return
-        if self._competed_together(other_party):
-            logging.warning(
-                "Parties %s and %s competed together. They will not be joined.",
-                self,
-                other_party,
-            )
-            return
+            if verbose:
+                logging.warning(
+                    "Party %s has already been joined to party %s. It will not be joined again.",
+                    other_party,
+                    other_party.joined_code,
+                )
+            return False
+        if self._group_competed_together(other_party):
+            if verbose:
+                logging.warning(
+                    "Parties (or group) %s and %s competed together. They will not be joined.",
+                    self,
+                    other_party,
+                )
+            return False
         if self.joined_code != self.code:
-            logging.warning(
-                "Party %s has already been joined to party %s. It will not be joined again.",
-                self,
-                self.joined_code,
-            )
-            return
+            if verbose:
+                logging.warning(
+                    "Party %s has already been joined to party %s. It will not be joined again.",
+                    self,
+                    self.joined_code,
+                )
+            return False
 
         self._join_participated_in(other_party)
         other_party.joined_code = self.code
         if self.joined_code is None:
             self.joined_code = self.code
         self._add_grouped_party(other_party)
+        return True

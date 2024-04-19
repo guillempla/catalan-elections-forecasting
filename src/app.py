@@ -90,33 +90,33 @@ def main():
     if download_data:
         dataset_configs: List[dict] = []
 
-        # dataset_configs.append(
-        #     {"dataset_type": "gis", "year": "2019", "output_path": "../data/raw/"}
-        # )
-        # dataset_configs.append(
-        #     {
-        #         "dataset_type": "socrata",
-        #         "socrata_domain": socrata_domain,
-        #         "socrata_app_token": socrata_app_token,
-        #         "socrata_username": socrata_email,
-        #         "socrata_password": socrata_password,
-        #         "socrata_dataset_id": socrata_elections_participation_id,
-        #         "csv_path": catalan_elections_participation_csv_path,
-        #         "pkl_path": catalan_elections_participation_pkl_path,
-        #     }
-        # )
-        # dataset_configs.append(
-        #     {
-        #         "dataset_type": "socrata",
-        #         "socrata_domain": socrata_domain,
-        #         "socrata_app_token": socrata_app_token,
-        #         "socrata_username": socrata_email,
-        #         "socrata_password": socrata_password,
-        #         "socrata_dataset_id": socrata_elections_results_id,
-        #         "csv_path": catalan_elections_results_csv_path,
-        #         "pkl_path": catalan_elections_results_pkl_path,
-        #     }
-        # )
+        dataset_configs.append(
+            {"dataset_type": "gis", "year": "2019", "output_path": "../data/raw/"}
+        )
+        dataset_configs.append(
+            {
+                "dataset_type": "socrata",
+                "socrata_domain": socrata_domain,
+                "socrata_app_token": socrata_app_token,
+                "socrata_username": socrata_email,
+                "socrata_password": socrata_password,
+                "socrata_dataset_id": socrata_elections_participation_id,
+                "csv_path": catalan_elections_participation_csv_path,
+                "pkl_path": catalan_elections_participation_pkl_path,
+            }
+        )
+        dataset_configs.append(
+            {
+                "dataset_type": "socrata",
+                "socrata_domain": socrata_domain,
+                "socrata_app_token": socrata_app_token,
+                "socrata_username": socrata_email,
+                "socrata_password": socrata_password,
+                "socrata_dataset_id": socrata_elections_results_id,
+                "csv_path": catalan_elections_results_csv_path,
+                "pkl_path": catalan_elections_results_pkl_path,
+            }
+        )
         dataset_configs.append(
             {
                 "dataset_type": "socrata",
@@ -245,7 +245,7 @@ def main():
         CleanData(clean_configs=clean_configs)
 
     if group_parties:
-        GroupParties(exclude_competed_together=True).group_parties()
+        GroupParties(threshold=0.2, only_abbr=True).group_parties()
 
 
 if __name__ == "__main__":

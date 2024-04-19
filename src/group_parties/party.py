@@ -19,6 +19,7 @@ class Party:
         party_code: int,
         party_clean_name: str,
         party_clean_abbr: str,
+        party_color: str,
         votes: int,
     ):
         self._name: str = party_name
@@ -26,6 +27,7 @@ class Party:
         self._code: int = party_code
         self._clean_name: str = party_clean_name
         self._clean_abbr: str = party_clean_abbr
+        self._color: str = party_color
         self._votes: int = votes
         self._joined: bool = False
         self._joined_code: int = None
@@ -109,6 +111,14 @@ class Party:
     @clean_abbr.setter
     def clean_abbr(self, value):
         self._clean_abbr = value
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self._color = value
 
     @property
     def votes(self):
@@ -196,20 +206,20 @@ class Party:
                     other_party.joined_code,
                 )
             return False
+        if self.joined_code is not None and self.joined_code != self.code:
+            if verbose:
+                logging.warning(
+                    "Party %s has already been joined to party %s. It will not be joined again.",
+                    self,
+                    self.joined_code,
+                )
+            return False
         if self._group_competed_together(other_party):
             if verbose:
                 logging.warning(
                     "Parties (or group) %s and %s competed together. They will not be joined.",
                     self,
                     other_party,
-                )
-            return False
-        if self.joined_code != self.code:
-            if verbose:
-                logging.warning(
-                    "Party %s has already been joined to party %s. It will not be joined again.",
-                    self,
-                    self.joined_code,
                 )
             return False
 

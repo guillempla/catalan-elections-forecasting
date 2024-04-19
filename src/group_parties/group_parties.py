@@ -32,21 +32,20 @@ def extract_true_pairs(similar_parties_matrix: pd.DataFrame) -> pd.DataFrame:
 
     Parameters:
     - similar_parties_matrix: DataFrame, a matrix indicating similarity (True)
-    between pairs of parties.
+      between pairs of parties.
 
     Returns:
     - DataFrame with two columns (party_1, party_2) listing all pairs of parties with True values.
     """
-    party_pairs = []
+    # Use `stack` to convert the DataFrame into a Series where multi-index represents (row, col),
+    # and then filter by True values.
+    true_pairs = similar_parties_matrix.stack()[lambda x: x].index
 
-    for row in tqdm(similar_parties_matrix.index, desc="Extracting true pairs"):
-        for col in similar_parties_matrix.columns:
-            if row != col and similar_parties_matrix.at[row, col]:
-                # Append the pair to the list if the parties are different
-                party_pairs.append({"party_1": row, "party_2": col})
+    # Filter out pairs where row == col (same parties)
+    true_pairs = [(idx[0], idx[1]) for idx in true_pairs if idx[0] != idx[1]]
 
-    # Convert the list of dictionaries to a DataFrame
-    parties_table = pd.DataFrame(party_pairs, columns=["party_1", "party_2"])
+    # Convert list of tuples to DataFrame
+    parties_table = pd.DataFrame(true_pairs, columns=["party_1", "party_2"])
 
     return parties_table
 
@@ -62,7 +61,8 @@ class GroupParties:
         output_filename: str = "../data/processed/catalan-elections-grouped-data",
         distance_function: callable = textdistance.jaro_winkler.distance,
         threshold: float = 0.15,
-        column_name: str = "clean_party_name",
+        only_name: bool = False,
+        only_abbr: bool = False,
         exclude_competed_together: bool = True,
     ) -> None:
         """
@@ -80,9 +80,14 @@ class GroupParties:
         - threshold: float, optional
             The threshold value used to determine if two party names are similar.
             Defaults to 0.2.
-        - column_name: str, optional
-            The name of the column in the DataFrame that contains the party names.
-            Defaults to "clean_party_name".
+        - only_name: bool, optional
+            Whether to use only the party name to calculate the distance.
+            Or use the combination of party name and party abbreviature
+            Defaults to False.
+        - only_abbr: bool, optional
+            Whether to use only the party abbreviature to calculate the distance.
+            Or use the combination of party name and party abbreviature
+            Defaults to False.
         - exclude_competed_together: bool, optional
             Whether to exclude parties that have competed together in the same election.
             Defaults to True.
@@ -91,7 +96,8 @@ class GroupParties:
         self.output_filename = output_filename
         self.distance_function = distance_function
         self.threshold = threshold
-        self.column_name = column_name
+        self.only_name = only_name
+        self.only_abbr = only_abbr
         self.exclude_competed_together = exclude_competed_together
         self.parties_dict: dict[str, Party] = self._initialize_parties_dict()
         self.party_codes = list(self.parties_dict.keys())
@@ -104,7 +110,9 @@ class GroupParties:
         - None
         """
         logging.info("Grouping parties codes.")
-        distance_matrix = self._calculate_distance_matrix()
+        distance_matrix = self._calculate_distance_matrix(
+            only_name=self.only_name, only_abbr=self.only_abbr
+        )
         boolean_distance_matrix = distance_matrix < self.threshold
 
         if self.exclude_competed_together:
@@ -119,11 +127,51 @@ class GroupParties:
         # each party received in every election
         not_grouped_parties = SortedSet(self.parties_dict.values())
 
-        self._join_similar_parties(not_grouped_parties)
+        joined_parties = self._join_similar_parties(not_grouped_parties)
 
-        # print(not_grouped_parties)
+        save_data(joined_parties, "../data/processed/joined_parties")
 
-        # save_data(final_df, self.output_filename)
+        final_df = self.df.merge(
+            joined_parties, how="left", left_on="party_code", right_on="party_code"
+        )
+
+        final_df["joined_code"] = np.where(
+            final_df["joined_code"].isnull(),
+            final_df["party_code"],
+            final_df["joined_code"],
+        )
+
+        final_df["joined_name"] = np.where(
+            final_df["joined_name"].isnull(),
+            final_df["party_name"],
+            final_df["joined_name"],
+        )
+
+        final_df["joined_abbr"] = np.where(
+            final_df["joined_abbr"].isnull(),
+            final_df["party_abbr"],
+            final_df["joined_abbr"],
+        )
+
+        final_df["joined_clean_name"] = np.where(
+            final_df["joined_clean_name"].isnull(),
+            final_df["clean_party_name"],
+            final_df["joined_clean_name"],
+        )
+
+        final_df["joined_clean_abbr"] = np.where(
+            final_df["joined_clean_abbr"].isnull(),
+            final_df["clean_party_abbr"],
+            final_df["joined_clean_abbr"],
+        )
+
+        final_df["joined_color"] = np.where(
+            final_df["joined_color"].isnull(),
+            final_df["party_color"],
+            final_df["joined_color"],
+        )
+
+        save_data(final_df, self.output_filename)
 
     def _initialize_parties_dict(self) -> dict[str, Party]:
         """
@@ -141,6 +189,7 @@ class GroupParties:
                     "party_abbr": most_common,
                     "clean_party_name": most_common,
                     "clean_party_abbr": most_common,
+                    "party_color": most_common,
                     "vots": "sum",  # Summing votes for each party code
                 }
             )
@@ -155,6 +204,7 @@ class GroupParties:
                 party_code=row["party_code"],
                 party_clean_name=row["clean_party_name"],
                 party_clean_abbr=row["clean_party_abbr"],
+                party_color=row["party_color"],
                 votes=row["vots"],
             )
             for _, row in aggregated_df.iterrows()
@@ -163,24 +213,33 @@ class GroupParties:
 
     def _initialize_participated_in(self) -> None:
         """
-        Initialize the participated_in attribute for each Party object.
+        Initialize the participated_in attribute for each Party object using optimized pandas operations.
 
         Returns:
         - None
         """
-        # Iterate through each row in the DataFrame
-        for row in self.df.itertuples():
-            party_code = row.party_code
-            election_name = row.nom_eleccio
-            censal_section_id = row.mundissec
-            party = self.parties_dict[party_code]
-            # Add the election name and censal section ID to the participated_in set
-            party.participated_in.add((election_name, censal_section_id))
-            party.group_participated_in.add((election_name, censal_section_id))
+        # Group by 'party_code' and aggregate unique pairs of 'nom_eleccio' and 'mundissec' into a set
+        group_data = self.df.groupby("party_code").apply(
+            lambda x: set(zip(x.nom_eleccio, x.mundissec))
+        )
 
-    def _calculate_distance_matrix(self) -> pd.DataFrame:
+        # Update parties_dict directly with the computed sets
+        for party_code, participated_set in group_data.items():
+            party = self.parties_dict[party_code]
+            party.participated_in.update(participated_set)
+            party.group_participated_in.update(participated_set)
+
+    def _calculate_distance_matrix(
+        self, only_name=False, only_abbr=False
+    ) -> pd.DataFrame:
         """
         Calculate a distance matrix for a list of strings using a distance algorithm.
+
+        Parameters:
+        - only_name: bool, optional
+            Whether to use only the party name to calculate the distance.
+            Or use the combination of party name and party abbreviature
+            Defaults to False.
 
         Returns:
         - pd.DataFrame, a distance matrix.
@@ -195,11 +254,23 @@ class GroupParties:
         # Only calculate for the upper half of the matrix
         for i in tqdm(range(n), desc="Calculating distances"):
             party_name_i = self.parties_dict[self.party_codes[i]].clean_name
+            party_abbr_i = self.parties_dict[self.party_codes[i]].clean_abbr
             for j in range(i + 1, n):
                 party_name_j = self.parties_dict[self.party_codes[j]].clean_name
-                distance_matrix[i, j] = self.distance_function(
-                    party_name_i, party_name_j
-                )
+                party_abbr_j = self.parties_dict[self.party_codes[j]].clean_abbr
+
+                if only_name:
+                    distance_matrix[i, j] = self.distance_function(
+                        party_name_i, party_name_j
+                    )
+                elif only_abbr:
+                    distance_matrix[i, j] = self.distance_function(
+                        party_abbr_i, party_abbr_j
+                    )
+                else:
+                    distance_matrix[i, j] = self.distance_function(
+                        party_name_i + party_abbr_i, party_name_j + party_abbr_j
+                    )
                 distance_matrix[j, i] = max_distance
 
         # Making sure the diagonal is high to simulate distance to itself (will be filtered out)
@@ -226,18 +297,49 @@ class GroupParties:
             party_2.add_similar_party(party_1)
 
     def _join_similar_parties(self, not_grouped_parties) -> None:
+        joined_parties_df = pd.DataFrame(
+            columns=[
+                "party_code",
+                "joined_code",
+                "joined_name",
+                "joined_abbr",
+                "joined_clean_name",
+                "joined_clean_abbr",
+                "joined_color",
+            ]
+        )
+
         while len(not_grouped_parties) > 0:
-            # Get the last party in the set, which is the one with the most votes
+            # Get and remove the last party in the set, which is the one with the most votes
             party = not_grouped_parties.pop()
-            # print("Original Party: ", party)
 
             if party.joined:
                 continue
 
+            # Get the similar parties of the current party and sort them by votes
             unjoined_similar_parties = SortedSet(party.similar_parties.values())
-            # print("Similar Parties: ", unjoined_similar_parties)
             while len(unjoined_similar_parties) > 0:
+                # Get, remove and group the last party in the set
                 party_to_join = unjoined_similar_parties.pop()
                 unjoined_similar_parties.union(party_to_join.similar_parties.values())
-                # print("Parties left to join: ", party_to_join)
-                party.join_parties(party_to_join)
+                are_joined = party.join_parties(party_to_join)
+
+                # Use concat instead of append
+                if are_joined:
+                    # Create a temporary DataFrame to hold the new row
+                    new_row = pd.DataFrame(
+                        {
+                            "party_code": [party_to_join.code],
+                            "joined_code": [party.code],
+                            "joined_name": [party.name],
+                            "joined_abbr": [party.abbr],
+                            "joined_clean_name": [party.clean_name],
+                            "joined_clean_abbr": [party.clean_abbr],
+                            "joined_color": [party.color],
+                        }
+                    )
+                    joined_parties_df = pd.concat(
+                        [joined_parties_df, new_row], ignore_index=True
+                    )
+
+        return joined_parties_df

@@ -18,6 +18,52 @@ logging.basicConfig(
 )
 
 
+def aggregate_duplicated_parties(df: pd.DataFrame) -> pd.DataFrame:
+    # Identifying duplicates
+    duplicates_mask = df.duplicated(
+        subset=["mundissec", "party_code", "nom_eleccio"], keep=False
+    )
+    duplicated_party_codes = df[duplicates_mask]
+
+    # Define how each column should be aggregated
+    aggregations = {
+        "vots": "sum",
+        "escons": "sum",
+        "vots_valids": "sum",
+        "vots_blancs": "sum",
+        "vots_nuls": "sum",
+        "votants": "sum",
+        "vots_valids_percentage": "mean",  # TODO: recalculate these percentages after aggregation
+        "cens_electoral_percentage": "mean",  # TODO: recalculate these percentages after aggregation
+        "votants_percentage": "mean",  # TODO: recalculate these percentages after aggregation
+        "party_name": "first",
+        "party_abbr": "first",
+        "party_color": "first",
+        "type": "first",
+        "year": "first",
+        "round": "first",
+        "clean_party_name": "first",
+        "clean_party_abbr": "first",
+        "date": "first",
+    }
+
+    # Aggregate duplicated rows
+    aggregated_df = (
+        duplicated_party_codes.groupby(["mundissec", "party_code", "nom_eleccio"])
+        .agg(aggregations)
+        .reset_index()
+    )
+
+    # Merge the aggregated results back to the original dataframe
+    # First, drop duplicates from the original df
+    df_cleaned = df.drop(df[duplicates_mask].index)
+
+    # Append the aggregated data
+    final_df = pd.concat([df_cleaned, aggregated_df], ignore_index=True)
+
+    return final_df
+
+
 def fix_party_codes(df: pd.DataFrame, party_codes_to_fix: Dict) -> pd.DataFrame:
     """
     Fix party codes.
@@ -30,7 +76,7 @@ def fix_party_codes(df: pd.DataFrame, party_codes_to_fix: Dict) -> pd.DataFrame:
         code_column = party_columns.get("code_column")
         name_column = party_columns.get("name_column")
 
-        # Select rows to update based on the unique name_column values associated with the party_code
+        # Select rows to update based on the unique name_column values associated with party_code
         unique_names = df1[df1[code_column] == party_code_int][name_column].unique()
         for name in unique_names:
             df1.loc[
@@ -435,6 +481,9 @@ class CleanData:
             self.run_merge_participation_data = (
                 self.elections_participation_df is not None
             )
+            self.run_aggregate_duplicated_parties = config.get(
+                "aggregate_duplicated_parties"
+            )
 
             self.clean_elections_data()
 
@@ -489,5 +538,7 @@ class CleanData:
             self.df = create_valid_votes_percentage_column(self.df)
             self.df = create_census_percentage_column(self.df)
             self.df = create_total_votes_percentage_column(self.df)
+        if self.run_aggregate_duplicated_parties:
+            self.df = aggregate_duplicated_parties(self.df)
 
         save_data(self.df, self.output_filename)

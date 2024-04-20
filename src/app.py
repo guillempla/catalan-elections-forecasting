@@ -239,6 +239,7 @@ def main():
                 "create_mundissec_column": True,
                 "divide_id_eleccio": True,
                 "create_date_column": True,
+                "aggregate_duplicated_parties": True,
             }
         )
 

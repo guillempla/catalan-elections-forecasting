@@ -2,13 +2,112 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Launch App",
-            "type": "python",
+            "name": "Python: Launch App with --download",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--download"]
+        },
+        {
+            "name": "Python: Launch App with --clean",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--clean"]
+        },
+        {
+            "name": "Python: Launch App with --group",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/app.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "args": ["--group"]
+        },
+        {
+            "name": "Python: Launch App with --transform",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--transform"]
+        },
+        {
+            "name": "Python: Launch App with --download and --clean",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--download", "--clean"]
+        },
+        {
+            "name": "Python: Launch App with --download and --group",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--download", "--group"]
+        },
+        {
+            "name": "Python: Launch App with --download and --transform",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--download", "--transform"]
+        },
+        {
+            "name": "Python: Launch App with --clean and --group",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--clean", "--group"]
+        },
+        {
+            "name": "Python: Launch App with --clean and --transform",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--clean", "--transform"]
+        },
+        {
+            "name": "Python: Launch App with --group and --transform",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--group", "--transform"]
+        },
+        {
+            "name": "Python: Launch App with --download and --clean and --group",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--download", "--clean", "--group"]
+        },
+        {
+            "name": "Python: Launch App with --download and --clean and --group and --transform",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--download", "--clean", "--group", "--transform"]
         }
     ]
 }

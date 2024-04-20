@@ -1,9 +1,6 @@
 class MunicipalCodeControlDigit:
     """
-    Class to calculate the control digit for a given test value.
-
-    Translated from Java to Python from the following Github Gist:
-    https://gist.github.com/eltabo/e9fa5fc1e5dd8c2140b4
+    Class to calculate the control digit for a given municipal code.
     """
 
     magic = [
@@ -15,19 +12,22 @@ class MunicipalCodeControlDigit:
     @staticmethod
     def calculate(municipal_code: int) -> int:
         """
-        Calculates the control digit for a given test value.
+        Calculates the control digit for a given municipal code.
 
         Args:
-            test (int): The test value.
+            municipal_code (int): The municipal code.
 
         Returns:
             int: The control digit.
-
         """
-        bytes_str = format(municipal_code, "05").encode()
+        # Ensure the municipal code is at least 5 digits, pad with zeros if necessary
+        bytes_str = format(municipal_code, "05")
 
         total_sum = 0
-        for i, v in enumerate(bytes_str):
-            total_sum += MunicipalCodeControlDigit.magic[2 - i % 3][v - 48]
+        for i, digit_char in enumerate(bytes_str):
+            digit = int(digit_char)
+            total_sum += MunicipalCodeControlDigit.magic[i % 3][digit]
 
-        return 0 if total_sum == 0 else 10 - total_sum % 10
+        # Return 0 directly if total_sum modulo 10 is 0, otherwise calculate the difference to 10
+        result = 10 - total_sum % 10
+        return 0 if result == 10 else result

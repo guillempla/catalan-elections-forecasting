@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from download_data import DownloadData
 from clean_data import CleanData
 from group_parties import GroupParties
+from transform_data.transform_data import TransformData
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,11 +40,19 @@ def main():
         default=False,
         help="Group the parties from the Catalan Elections API.",
     )
+    # Add boolean argument for deciding if the data must be transformed into ML formad or not.
+    parser.add_argument(
+        "--transform",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Transform the data from the Catalan Elections API into ML format.",
+    )
 
     args = parser.parse_args()
     download_data = args.download
     clean_data = args.clean
     group_parties = args.group
+    transform_data = args.transform
 
     logging.info("Loading environment variables.")
 
@@ -137,20 +146,20 @@ def main():
     if clean_data:
         clean_configs: List[dict] = []
 
-        clean_configs.append(
-            {
-                "elections_data_filename": catalan_elections_dates_pkl_path,
-                "output_filename": "../data/processed/catalan-elections-clean-dates",
-                "create_date_columns": True,
-                "columns_to_drop": [
-                    "id_eleccio",
-                    "codi_tipus_eleccio",
-                    "nom_tipus_eleccio",
-                    "data_eleccio",
-                    "nivell_circumscripcio",
-                ],
-            }
-        )
+        # clean_configs.append(
+        #     {
+        #         "elections_data_filename": catalan_elections_dates_pkl_path,
+        #         "output_filename": "../data/processed/catalan-elections-clean-dates",
+        #         "create_date_columns": True,
+        #         "columns_to_drop": [
+        #             "id_eleccio",
+        #             "codi_tipus_eleccio",
+        #             "nom_tipus_eleccio",
+        #             "data_eleccio",
+        #             "nivell_circumscripcio",
+        #         ],
+        #     }
+        # )
         clean_configs.append(
             {
                 "elections_data_filename": catalan_elections_participation_pkl_path,
@@ -247,6 +256,12 @@ def main():
 
     if group_parties:
         GroupParties(threshold=0.2, only_abbr=True).group_parties()
+
+    if transform_data:
+        TransformData(
+            censal_sections_path="../data/raw/bseccenv10sh1f1_20210101_2/bseccenv10sh1f1_20210101_2.shp",
+            results_path="../data/processed/catalan-elections-grouped-data.pkl",
+        ).transform_data()
 
 
 if __name__ == "__main__":

@@ -149,7 +149,9 @@ def create_mundissec_column(df: pd.DataFrame) -> pd.DataFrame:
     df["mundissec"] = None
 
     # Filter rows where id_nivell_territorial is in the specified list
-    filter_rows = df["id_nivell_territorial"].isin(["DM", "ME", "MU", "SE"])
+    filter_rows = (df["id_nivell_territorial"].isin(["DM", "ME", "MU", "SE"])) & (
+        df["territori_codi"] == "08187"
+    )
 
     # Calculate control code only for the filtered rows
     control_code = (

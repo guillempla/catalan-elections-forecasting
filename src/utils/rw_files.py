@@ -106,19 +106,23 @@ def load_shape(filename: str) -> gpd.GeoDataFrame:
 
 
 def save_data(
-    df: pd.DataFrame, filename: str, save_csv: bool = True, save_pickle: bool = True
+    df: pd.DataFrame,
+    filename: str,
+    save_csv: bool = True,
+    save_pickle: bool = True,
+    index: bool = False,
 ) -> None:
     """
     Save dataframe as CSV or pickle file.
     """
     logging.info("Saving data.")
     if save_csv:
-        save_csv_data(df, filename)
+        save_csv_data(df, filename, index=index)
     if save_pickle:
         save_pickle_data(df, filename)
 
 
-def save_csv_data(df: pd.DataFrame, filename: str):
+def save_csv_data(df: pd.DataFrame, filename: str, index: bool = False) -> None:
     """
     Save dataframe as CSV file.
     """
@@ -129,7 +133,7 @@ def save_csv_data(df: pd.DataFrame, filename: str):
         filename = filename + ".csv"
 
     try:
-        df.to_csv(filename, index=False)
+        df.to_csv(filename, index=index)
     except (FileNotFoundError, PermissionError) as e:
         logging.error(e)
 

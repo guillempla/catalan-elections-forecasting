@@ -17,6 +17,7 @@ logging.basicConfig(
 
 # create a constant dictionary that stores a URL for each year
 URLS = {
+    "2023": "https://datacloud.icgc.cat/datacloud/bseccen_etrs89/shp/bseccenv10sh1f1_20230101_0.zip",
     "2022": "https://datacloud.icgc.cat/datacloud/bseccen_etrs89/shp/bseccenv10sh1f1_20220101_0.zip",
     "2021": "https://datacloud.icgc.cat/datacloud/bseccen_etrs89/shp/bseccenv10sh1f1_20210101_2.zip",
     "2020": "https://datacloud.icgc.cat/datacloud/bseccen_etrs89/shp/bseccenv10sh1f1_20200101_2.zip",

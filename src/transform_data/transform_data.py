@@ -6,6 +6,7 @@ from typing import List, Tuple
 
 import logging
 
+import numpy as np
 import pandas as pd
 
 # import numpy as np
@@ -19,21 +20,32 @@ logging.basicConfig(
 )
 
 
-def filter_dataframe_by_column(
-    data: pd.DataFrame, column: str, values: List[str]
-) -> pd.DataFrame:
-    """
-    Filter data by column values
-    """
-    return data[data[column].isin(values)]
+def select_important_parties(df):
+    # Step 1: Determine the top 10 parties per election
+    top_parties = (
+        set()
+    )  # This will hold the joined codes of top parties across all elections
+    grouped = df.groupby("nom_eleccio")
 
+    for _, group in grouped:
+        # Sort parties in each election by 'votes' and select the top 10
+        top_in_election = (
+            group.sort_values(by="vots", ascending=False)
+            .head(10)["joined_code"]
+            .unique()
+        )
+        top_parties.update(top_in_election)
 
-def create_unique_id(row):
-    for attribute in ["vots", "escons", "percentage"]:
-        row[f"{row['clean_party_abbr'].lower()}_{row['party_code']}_{attribute}"] = row[
-            attribute
-        ]
-    return row
+    # Step 2: Identify rows that are not in the top parties
+    mask = ~df["joined_code"].isin(top_parties)
+
+    # Step 3: Replace details for non-top parties to aggregate them as 'Other Parties'
+    df.loc[mask, "joined_code"] = 999999999
+    df.loc[mask, "joined_name"] = "Other Parties"
+    df.loc[mask, "joined_color"] = "#535353"
+    df.loc[mask, "joined_abbr"] = "Other"
+
+    return df
 
 
 class TransformData:
@@ -41,39 +53,63 @@ class TransformData:
     Transform censal sections data and results data into a single output dataframe
     """
 
-    def __init__(self, censal_sections_path: str, results_path: str) -> None:
+    def __init__(
+        self,
+        censal_sections_path: str,
+        results_path: str,
+        output_path: str = "../data/output/censal_sections_results",
+    ) -> None:
         """
         Initialize the class with the paths to the censal sections and results data
         """
         self.censal_sections_gdf = load_data(censal_sections_path)
         self.results_df = load_data(results_path)
+        self.output_path = output_path
 
     def transform_data(self) -> None:
         """
         Transform censal sections data and results data into a single output dataframe
         """
-        self.results_df = self.results_df.apply(create_unique_id, axis=1)
-
-        # Select only the necessary columns (electoral section ID + newly created columns)
-        columns_to_keep = ["mundissec"] + [
-            col
-            for col in self.results_df
-            if col.startswith(
-                tuple(
-                    self.results_df["clean_party_abbr"].str.lower()
-                    + "_"
-                    + self.results_df["party_code"].astype(str)
-                )
-            )
-        ]
-        results_wide = self.results_df[columns_to_keep]
+        important_parties = select_important_parties(self.results_df)
 
         # Pivot the DataFrame
-        results_wide_df = results_wide.pivot_table(index="section_id", aggfunc="first")
-        print(results_wide_df)
+        logging.info("Pivoting the DataFrame")
+        results_wide_df = important_parties.pivot_table(
+            index="mundissec",
+            columns=["joined_code", "id_eleccio"],
+            values=[
+                "vots",
+                "votants_percentage",
+                "vots_valids_percentage",
+                "cens_electoral_percentage",
+            ],
+        )
+        logging.info("Pivoting done")
 
-        # # Merge censal sections and results data
-        # output = pd.merge(censal_sections, results, on="section_id", how="inner")
+        # Flattening the MultiIndex Columns
+        results_wide_df.columns = [
+            "_".join(map(str, col)).strip() for col in results_wide_df.columns.values
+        ]
 
-        # save_data(output, self.results_path)
-        pass
+        # Replace 'Infinity' values with a suitable finite number (e.g., 0)
+        results_wide_df.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+        logging.info("Replacing 'Infinity' values done")
+
+        # save_data(results_wide_df, "../data/output/results_wide_df")
+
+        # Merge censal sections and results data
+        merged_gdf = self.censal_sections_gdf.merge(
+            results_wide_df, left_on="MUNDISSEC", right_on="mundissec", how="inner"
+        )
+
+        logging.info("Merging done")
+
+        # Convert all columns of type 'Float64Dtype' to 'float64' to avoid problems with GeoPandas
+        for col in merged_gdf.select_dtypes(include=["Float64"]).columns:
+            merged_gdf[col] = merged_gdf[col].fillna(0.0).astype("float64")
+
+        logging.info("Converting columns to float64 done")
+
+        merged_gdf.to_file("../data/output/merged_data.geojson", driver="GeoJSON")
+        logging.info("Data transformation done")

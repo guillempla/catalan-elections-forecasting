@@ -21,13 +21,19 @@ class MunicipalCodeControlDigit:
             int: The control digit.
         """
         # Ensure the municipal code is at least 5 digits, pad with zeros if necessary
-        bytes_str = format(municipal_code, "05")
+        bytes_str = format(municipal_code, "05").encode()
 
         total_sum = 0
-        for i, digit_char in enumerate(bytes_str):
-            digit = int(digit_char)
-            total_sum += MunicipalCodeControlDigit.magic[i % 3][digit]
+        for i, v in enumerate(bytes_str):
+            total_sum += MunicipalCodeControlDigit.magic[2 - i % 3][v - 48]
 
         # Return 0 directly if total_sum modulo 10 is 0, otherwise calculate the difference to 10
         result = 10 - total_sum % 10
         return 0 if result == 10 else result
+
+
+if __name__ == "__main__":
+    # Example usage
+    municipal_code = 43123
+    control_digit = MunicipalCodeControlDigit.calculate(municipal_code)
+    print(f"The control digit for municipal code {municipal_code} is {control_digit}")

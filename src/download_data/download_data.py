@@ -6,6 +6,7 @@ import logging
 from typing import List
 from .download_socrata_data import DownloadCatalanElectionsData
 from .download_censal_sections_gis_data import DownloadCensalSectionsGisData
+from .download_mean_income_data import DownloadMeanIncomeData
 
 
 class DownloadData:
@@ -50,6 +51,13 @@ class DownloadData:
                         dataset_config["socrata_dataset_id"],
                         dataset_config["csv_path"],
                         dataset_config["pkl_path"],
+                    )
+                )
+            if dataset_type == "income_data":
+                self.downloaders.append(
+                    DownloadMeanIncomeData(
+                        dataset_config["provinces"],
+                        dataset_config["output_path"],
                     )
                 )
 

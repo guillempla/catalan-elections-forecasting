@@ -67,16 +67,6 @@ def main():
     socrata_email = os.environ.get("SOCRATA_EMAIL")
     socrata_password = os.environ.get("SOCRATA_PASSWORD")
 
-    # postgres_username = os.environ.get("POSTGRES_USER")
-    # postgres_password = os.environ.get("POSTGRES_PASSWORD")
-    # postgres_host = os.environ.get("POSTGRES_HOST")
-    # postgres_catalan_elections_data_db = os.environ.get(
-    #     "POSTGRES_CATALAN_ELECTIONS_DATA_DB"
-    # )
-    # postgres_catalan_elections_data_table = os.environ.get(
-    #     "POSTGRES_CATALAN_ELECTIONS_DATA_TABLE"
-    # )
-
     catalan_elections_results_csv_path = (
         os.environ.get("CATALAN_ELECTIONS_RESULTS_FILENAME") + ".csv"
     )
@@ -99,45 +89,52 @@ def main():
     if download_data:
         dataset_configs: List[dict] = []
 
-        dataset_configs.append(
-            {"dataset_type": "gis", "year": "2019", "output_path": "../data/raw/"}
-        )
-        dataset_configs.append(
-            {
-                "dataset_type": "socrata",
-                "socrata_domain": socrata_domain,
-                "socrata_app_token": socrata_app_token,
-                "socrata_username": socrata_email,
-                "socrata_password": socrata_password,
-                "socrata_dataset_id": socrata_elections_participation_id,
-                "csv_path": catalan_elections_participation_csv_path,
-                "pkl_path": catalan_elections_participation_pkl_path,
-            }
-        )
+        # dataset_configs.append(
+        #     {"dataset_type": "gis", "year": "2019", "output_path": "../data/raw/"}
+        # )
         dataset_configs.append(
             {
-                "dataset_type": "socrata",
-                "socrata_domain": socrata_domain,
-                "socrata_app_token": socrata_app_token,
-                "socrata_username": socrata_email,
-                "socrata_password": socrata_password,
-                "socrata_dataset_id": socrata_elections_results_id,
-                "csv_path": catalan_elections_results_csv_path,
-                "pkl_path": catalan_elections_results_pkl_path,
+                "dataset_type": "income_data",
+                "provinces": ["Barcelona", "Girona", "Lleida", "Tarragona"],
+                "output_path": "../data/raw/",
             }
         )
-        dataset_configs.append(
-            {
-                "dataset_type": "socrata",
-                "socrata_domain": socrata_domain,
-                "socrata_app_token": socrata_app_token,
-                "socrata_username": socrata_email,
-                "socrata_password": socrata_password,
-                "socrata_dataset_id": socrata_elections_dates_id,
-                "csv_path": catalan_elections_dates_csv_path,
-                "pkl_path": catalan_elections_dates_pkl_path,
-            }
-        )
+        # dataset_configs.append(
+        #     {
+        #         "dataset_type": "socrata",
+        #         "socrata_domain": socrata_domain,
+        #         "socrata_app_token": socrata_app_token,
+        #         "socrata_username": socrata_email,
+        #         "socrata_password": socrata_password,
+        #         "socrata_dataset_id": socrata_elections_participation_id,
+        #         "csv_path": catalan_elections_participation_csv_path,
+        #         "pkl_path": catalan_elections_participation_pkl_path,
+        #     }
+        # )
+        # dataset_configs.append(
+        #     {
+        #         "dataset_type": "socrata",
+        #         "socrata_domain": socrata_domain,
+        #         "socrata_app_token": socrata_app_token,
+        #         "socrata_username": socrata_email,
+        #         "socrata_password": socrata_password,
+        #         "socrata_dataset_id": socrata_elections_results_id,
+        #         "csv_path": catalan_elections_results_csv_path,
+        #         "pkl_path": catalan_elections_results_pkl_path,
+        #     }
+        # )
+        # dataset_configs.append(
+        #     {
+        #         "dataset_type": "socrata",
+        #         "socrata_domain": socrata_domain,
+        #         "socrata_app_token": socrata_app_token,
+        #         "socrata_username": socrata_email,
+        #         "socrata_password": socrata_password,
+        #         "socrata_dataset_id": socrata_elections_dates_id,
+        #         "csv_path": catalan_elections_dates_csv_path,
+        #         "pkl_path": catalan_elections_dates_pkl_path,
+        #     }
+        # )
 
         DownloadData(
             dataset_configs=dataset_configs,

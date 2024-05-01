@@ -206,6 +206,9 @@ def download_file(url: str, save_path: str) -> None:
     - url (str): The URL of the file to download.
     - save_path (str): The full path to save the file to.
     """
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
     try:
         response = requests.get(url, timeout=20)  # Add timeout argument
         response.raise_for_status()  # Raise an exception for HTTP errors

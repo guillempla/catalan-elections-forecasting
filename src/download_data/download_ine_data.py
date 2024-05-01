@@ -63,7 +63,7 @@ class DownloadIneData:
             file_name = self.create_filename(self.data_type, province, year)
             download_file(
                 url,
-                Path(self.output_path, file_name),
+                Path(self.output_path, self.data_type, file_name),
             )
 
     @staticmethod
@@ -81,7 +81,7 @@ class DownloadIneData:
         """
         file_name = data_type
         if province:
-            file_name = file_name + "_" + province
+            file_name = file_name + "_" + province.lower()
         if year:
             file_name = file_name + "_" + year
-        return file_name
+        return file_name + ".csv"

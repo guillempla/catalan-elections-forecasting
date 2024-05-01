@@ -96,6 +96,7 @@ def main():
             {
                 "dataset_type": "ine",
                 "data_type": "mean_income",
+                "output_path": "../data/raw/",
                 "urls_info": [
                     {
                         "province": "Barcelona",
@@ -114,7 +115,175 @@ def main():
                         "url": "https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/31223.csv?nocab=1",
                     },
                 ],
+            }
+        )
+        dataset_configs.append(
+            {
+                "dataset_type": "ine",
+                "data_type": "place_of_birth",
                 "output_path": "../data/raw/",
+                "urls_info": [
+                    {
+                        "province": "Barcelona",
+                        "year": "2022",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2022/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2022",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2022/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2022",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2022/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2022",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2022/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2021",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2021/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2021",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2021/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2021",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2021/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2021",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2021/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2020",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2020/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2020",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2020/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2020",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2020/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2020",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2020/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2019",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2019/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2019",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2019/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2019",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2019/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2019",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2019/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2018",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2018/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2018",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2018/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2018",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2018/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2018",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2018/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2017",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2017/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2017",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2017/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2017",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2017/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2017",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2017/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2016",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2016/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2016",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2016/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2016",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2016/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2016",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2016/l0/4306.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Barcelona",
+                        "year": "2015",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2015/l0/0806.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "year": "2015",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2015/l0/1706.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "year": "2015",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2015/l0/2506.csv_bdsc?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "year": "2015",
+                        "url": "https://www.ine.es/jaxi/files/_px/es/csv_bdsc/t20/e245/p07/a2015/l0/4306.csv_bdsc?nocab=1",
+                    },
+                ],
             }
         )
         # dataset_configs.append(
@@ -270,10 +439,10 @@ def main():
             {
                 "output_filename": "../data/processed/mean_income_clean_data",
                 "mean_income_filenames": [
-                    "../data/raw/mean_income_barcelona.csv",
-                    "../data/raw/mean_income_girona.csv",
-                    "../data/raw/mean_income_lleida.csv",
-                    "../data/raw/mean_income_tarragona.csv",
+                    "../data/raw/mean_income/mean_income_barcelona.csv",
+                    "../data/raw/mean_income/mean_income_girona.csv",
+                    "../data/raw/mean_income/mean_income_lleida.csv",
+                    "../data/raw/mean_income/mean_income_tarragona.csv",
                 ],
                 "fix_total_column": True,
                 "remove_empty_rows": ["Secciones"],

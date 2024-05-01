@@ -2,8 +2,9 @@
 Utils functions to read and write files
 """
 
-import logging
 import os
+import csv
+import logging
 import pandas as pd
 import geopandas as gpd
 import zipfile
@@ -66,6 +67,31 @@ def check_directory_exists(directory: str) -> bool:
     return os.path.exists(directory)
 
 
+def detect_delimiter(filename: str) -> str:
+    """
+    Detects the delimiter of a CSV file.
+
+    This function opens a file for reading and uses the csv.Sniffer class to infer the delimiter
+    used in the CSV file. It reads the first 1024 bytes of the file for detection, which is usually
+    sufficient for correctly identifying the delimiter in well-formatted CSV files.
+
+    Parameters:
+    - filename (str): The path to the CSV file.
+
+    Returns:
+    - str: The detected delimiter of the file. Common delimiters include commas (','), tabs ('\t'),
+      and semicolons (';'). If the delimiter cannot be determined, the function returns None.
+    """
+    with open(filename, "r") as file:
+        sniffer = csv.Sniffer()
+        try:
+            dialect = sniffer.sniff(file.read(1024))
+            return dialect.delimiter
+        except csv.Error as e:
+            logging.warning("Could not determine the delimiter.")
+            return None
+
+
 def load_data(filename: str) -> pd.DataFrame | gpd.GeoDataFrame:
     """
     Load data from CSV or pickle file.
@@ -86,7 +112,12 @@ def load_csv(filename: str) -> pd.DataFrame:
     Load data from CSV file.
     """
     logging.info("Loading CSV data %s", filename)
-    return pd.read_csv(filename)
+    delimiter = detect_delimiter(filename)
+    try:
+        return pd.read_csv(filename, sep=delimiter)
+    except pd.errors.ParserError as e:
+        logging.error(e)
+        return pd.read_csv(filename, sep=None, engine="python")
 
 
 def load_pickle(filename: str) -> pd.DataFrame:

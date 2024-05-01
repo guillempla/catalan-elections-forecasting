@@ -94,8 +94,26 @@ def main():
         # )
         dataset_configs.append(
             {
-                "dataset_type": "income_data",
-                "provinces": ["Barcelona", "Girona", "Lleida", "Tarragona"],
+                "dataset_type": "ine",
+                "data_type": "mean_income",
+                "urls_info": [
+                    {
+                        "province": "Barcelona",
+                        "url": "https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/30896.csv?nocab=1",
+                    },
+                    {
+                        "province": "Girona",
+                        "url": "https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/31016.csv?nocab=1",
+                    },
+                    {
+                        "province": "Lleida",
+                        "url": "https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/31079.csv?nocab=1",
+                    },
+                    {
+                        "province": "Tarragona",
+                        "url": "https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/31223.csv?nocab=1",
+                    },
+                ],
                 "output_path": "../data/raw/",
             }
         )
@@ -272,7 +290,7 @@ def main():
                     },
                     {
                         "column": "Secciones",
-                        "new_columns": ["section_code", "section_name"],
+                        "new_columns": ["mundissec", "section_name"],
                         "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
                     },
                 ],
@@ -281,7 +299,7 @@ def main():
                     "values": ["Renta neta media por hogar"],
                 },
                 "pivot_table": {
-                    "index": ["section_code"],
+                    "index": ["mundissec"],
                     "columns": "Periodo",
                     "values": "Total",
                     "aggfunc": "sum",

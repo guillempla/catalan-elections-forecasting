@@ -9,7 +9,7 @@ import pandas as pd
 import geopandas as gpd
 import zipfile
 import requests
-from typing import Optional
+from typing import Dict, Optional
 
 logging.basicConfig(
     level=logging.INFO,
@@ -92,12 +92,14 @@ def detect_delimiter(filename: str) -> str:
             return None
 
 
-def load_data(filename: str) -> pd.DataFrame | gpd.GeoDataFrame:
+def load_data(
+    filename: str, decimals: str = None, thousands: str = None, dtype: Dict = None
+) -> pd.DataFrame | gpd.GeoDataFrame:
     """
     Load data from CSV or pickle file.
     """
     if check_csv_extension(filename):
-        return load_csv(filename)
+        return load_csv(filename, decimals, thousands, dtype)
     if check_pkl_extension(filename):
         return load_pickle(filename)
     if check_shp_extension(filename):
@@ -107,17 +109,28 @@ def load_data(filename: str) -> pd.DataFrame | gpd.GeoDataFrame:
     raise ValueError("File extension not supported.")
 
 
-def load_csv(filename: str) -> pd.DataFrame:
+def load_csv(
+    filename: str, decimals: str = None, thousands: str = None, dtype: Dict = None
+) -> pd.DataFrame:
     """
     Load data from CSV file.
     """
     logging.info("Loading CSV data %s", filename)
     delimiter = detect_delimiter(filename)
     try:
-        return pd.read_csv(filename, sep=delimiter)
+        return pd.read_csv(
+            filename, sep=delimiter, decimal=decimals, thousands=thousands
+        )
     except pd.errors.ParserError as e:
         logging.error(e)
-        return pd.read_csv(filename, sep=None, engine="python")
+        return pd.read_csv(
+            filename,
+            sep=None,
+            engine="python",
+            decimal=decimals,
+            thousands=thousands,
+            dtype=dtype,
+        )
 
 
 def load_pickle(filename: str) -> pd.DataFrame:

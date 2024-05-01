@@ -157,95 +157,135 @@ def main():
         #         ],
         #     }
         # )
+        # clean_configs.append(
+        #     {
+        #         "elections_data_filename": catalan_elections_participation_pkl_path,
+        #         "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
+        #         "output_filename": "../data/processed/catalan-elections-clean-participation",
+        #         "create_party_column": False,
+        #         "divide_id_eleccio": True,
+        #         "elections_type": [
+        #             "M",
+        #             "E",
+        #             "A",
+        #             "G",
+        #         ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals,
+        #         "territorial_levels": ["SE"],  # SE: Secció censal
+        #         "create_date_column": True,
+        #         "columns_to_drop": [
+        #             "vots_primer_avan",
+        #             "vots_segon_avan",
+        #             "hora_primer_avan",
+        #             "hora_segon_avan",
+        #             "vots_candidatures",
+        #             "abstencio",
+        #             "nombre_meses",
+        #         ],
+        #         "columns_types": {
+        #             "year": "int",
+        #             "month": "int",
+        #             "day": "int",
+        #             "seccio": "int",
+        #             "votants": "int",
+        #             "escons": "int",
+        #             "districte": "int",
+        #         },
+        #         "create_mundissec_column": True,
+        #     }
+        # )
+        # clean_configs.append(
+        #     {
+        #         "elections_data_filename": catalan_elections_results_pkl_path,
+        #         "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
+        #         "elections_participation_filename": "../data/processed/catalan-elections-clean-participation.pkl",
+        #         "output_filename": "../data/processed/catalan-elections-clean-data",
+        #         "fix_party_codes": {
+        #             "1083": {
+        #                 "code_column": "candidatura_codi",
+        #                 "name_column": "candidatura_denominacio",
+        #             },
+        #             "1084": {
+        #                 "code_column": "candidatura_codi",
+        #                 "name_column": "candidatura_denominacio",
+        #             },
+        #         },
+        #         "columns_to_drop": [
+        #             "candidat_posicio",
+        #             "candidatura_logotip",
+        #             "candidatura_codi",
+        #             "candidatura_denominacio",
+        #             "candidatura_sigles",
+        #             "candidatura_color",
+        #             "agrupacio_codi",
+        #             "agrupacio_denominacio",
+        #             "agrupacio_sigles",
+        #         ],
+        #         "columns_to_rename": {"secci_": "seccio"},
+        #         "elections_type": [
+        #             "M",
+        #             "E",
+        #             "A",
+        #             "G",
+        #         ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+        #         "territorial_levels": ["SE"],  # SE: Secció censal
+        #         "color_column": "candidatura_color",
+        #         "color_default": "grey",
+        #         "columns_types": {
+        #             "year": "int",
+        #             "month": "int",
+        #             "day": "int",
+        #             "seccio": "int",
+        #             "vots": "int",
+        #             "escons": "int",
+        #             "districte": "int",
+        #             "party_code": "int",
+        #         },
+        #         "columns_null_values": ["candidatura_sigles"],
+        #         "create_party_column": True,
+        #         "create_mundissec_column": True,
+        #         "divide_id_eleccio": True,
+        #         "create_date_column": True,
+        #         "aggregate_duplicated_parties": True,
+        #     }
+        # )
         clean_configs.append(
             {
-                "elections_data_filename": catalan_elections_participation_pkl_path,
-                "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
-                "output_filename": "../data/processed/catalan-elections-clean-participation",
-                "create_party_column": False,
-                "divide_id_eleccio": True,
-                "elections_type": [
-                    "M",
-                    "E",
-                    "A",
-                    "G",
-                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals,
-                "territorial_levels": ["SE"],  # SE: Secció censal
-                "create_date_column": True,
-                "columns_to_drop": [
-                    "vots_primer_avan",
-                    "vots_segon_avan",
-                    "hora_primer_avan",
-                    "hora_segon_avan",
-                    "vots_candidatures",
-                    "abstencio",
-                    "nombre_meses",
+                "output_filename": "../data/processed/mean_income_clean_data",
+                "mean_income_filenames": [
+                    "../data/raw/mean_income_barcelona.csv",
+                    "../data/raw/mean_income_girona.csv",
+                    "../data/raw/mean_income_lleida.csv",
+                    "../data/raw/mean_income_tarragona.csv",
                 ],
-                "columns_types": {
-                    "year": "int",
-                    "month": "int",
-                    "day": "int",
-                    "seccio": "int",
-                    "votants": "int",
-                    "escons": "int",
-                    "districte": "int",
-                },
-                "create_mundissec_column": True,
-            }
-        )
-        clean_configs.append(
-            {
-                "elections_data_filename": catalan_elections_results_pkl_path,
-                "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
-                "elections_participation_filename": "../data/processed/catalan-elections-clean-participation.pkl",
-                "output_filename": "../data/processed/catalan-elections-clean-data",
-                "fix_party_codes": {
-                    "1083": {
-                        "code_column": "candidatura_codi",
-                        "name_column": "candidatura_denominacio",
+                "fix_total_column": True,
+                "remove_empty_rows": ["Secciones"],
+                "divide_columns": [
+                    {
+                        "column": "Municipios",
+                        "new_columns": ["municipal_code", "municipal_name"],
+                        "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
                     },
-                    "1084": {
-                        "code_column": "candidatura_codi",
-                        "name_column": "candidatura_denominacio",
+                    {
+                        "column": "Distritos",
+                        "new_columns": ["district_code", "district_name"],
+                        "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
                     },
-                },
-                "columns_to_drop": [
-                    "candidat_posicio",
-                    "candidatura_logotip",
-                    "candidatura_codi",
-                    "candidatura_denominacio",
-                    "candidatura_sigles",
-                    "candidatura_color",
-                    "agrupacio_codi",
-                    "agrupacio_denominacio",
-                    "agrupacio_sigles",
+                    {
+                        "column": "Secciones",
+                        "new_columns": ["section_code", "section_name"],
+                        "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+                    },
                 ],
-                "columns_to_rename": {"secci_": "seccio"},
-                "elections_type": [
-                    "M",
-                    "E",
-                    "A",
-                    "G",
-                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
-                "territorial_levels": ["SE"],  # SE: Secció censal
-                "color_column": "candidatura_color",
-                "color_default": "grey",
-                "columns_types": {
-                    "year": "int",
-                    "month": "int",
-                    "day": "int",
-                    "seccio": "int",
-                    "vots": "int",
-                    "escons": "int",
-                    "districte": "int",
-                    "party_code": "int",
+                "filter_by_income": {
+                    "column": "Indicadores de renta media y mediana",
+                    "values": ["Renta neta media por hogar"],
                 },
-                "columns_null_values": ["candidatura_sigles"],
-                "create_party_column": True,
-                "create_mundissec_column": True,
-                "divide_id_eleccio": True,
-                "create_date_column": True,
-                "aggregate_duplicated_parties": True,
+                "pivot_table": {
+                    "index": ["section_code"],
+                    "columns": "Periodo",
+                    "values": "Total",
+                    "aggfunc": "sum",
+                },
             }
         )
 

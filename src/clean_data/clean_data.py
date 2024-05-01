@@ -179,9 +179,7 @@ def drop_columns(df: pd.DataFrame, columns_to_drop: List[str]) -> pd.DataFrame:
     return df.drop(columns=columns_to_drop)
 
 
-def remove_rows_with_null_values(
-    df: pd.DataFrame, empty_columns: List[str]
-) -> pd.DataFrame:
+def remove_empty_rows(df: pd.DataFrame, empty_columns: List[str]) -> pd.DataFrame:
     """
     Remove rows with null values in specified columns.
     """
@@ -189,7 +187,7 @@ def remove_rows_with_null_values(
     return df.dropna(subset=empty_columns)
 
 
-def replace_rows_with_null_values(
+def replace_empty_rows(
     df: pd.DataFrame, empty_columns: List[str], value: str
 ) -> pd.DataFrame:
     """
@@ -421,6 +419,81 @@ def create_percentage_column(
     return df_modified
 
 
+def concat_dataframes(dataframes: List[pd.DataFrame]) -> pd.DataFrame:
+    """
+    Join dataframes.
+    """
+    logging.info("Joining dataframes.")
+    return pd.concat(dataframes, ignore_index=True)
+
+
+def divide_string_columns(
+    df: pd.DataFrame, columns_to_divide: List[Dict]
+) -> pd.DataFrame:
+    """
+    Divide columns based on regular expressions into specified new columns.
+
+    Parameters:
+    - df (pd.DataFrame): The dataframe to modify.
+    - columns_to_divide (List[Dict]): A list of dictionaries specifying the column to divide,
+        the new columns names, and the regex pattern.
+
+    Returns:
+    - pd.DataFrame: The modified dataframe with new columns.
+    """
+    logging.info("Dividing columns.")
+    for column_info in columns_to_divide:
+        # Ensure the column exists to avoid KeyError
+        if column_info["column"] in df.columns:
+            # Convert the column to string to ensure correct regex operations
+            df[column_info["column"]] = df[column_info["column"]].astype(str)
+
+            # Extract the groups based on the regex pattern
+            new_data = df[column_info["column"]].str.extract(
+                column_info["regex_separator"]
+            )
+
+            # Check if the number of new columns matches the number of extracted groups
+            if new_data.shape[1] == len(column_info["new_columns"]):
+                for i, new_col in enumerate(column_info["new_columns"]):
+                    df[new_col] = new_data[i].astype(str)
+            else:
+                logging.warning(
+                    "Extraction did not match the expected number of columns for %s",
+                    column_info["column"],
+                )
+        else:
+            logging.warning("Column %s not found in DataFrame.", column_info["column"])
+    return df
+
+
+def pivot_table(df: pd.DataFrame, config) -> pd.DataFrame:
+    """
+    Pivot table.
+    """
+    logging.info("Pivoting table.")
+    index = config.get("index")
+    columns = config.get("columns")
+    values = config.get("values")
+    aggfunc = config.get("aggfunc")
+
+    df = df.pivot_table(index=index, columns=columns, values=values, aggfunc=aggfunc)
+    return df
+
+
+def fix_total_column(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Fix total column.
+    """
+    logging.info("Fixing total column.")
+    # Replace empty values "." with "NA"
+    df["Total"] = df["Total"].replace(".", pd.NA)
+    # Replace the Spanish thousand separator '.' with nothing and convert the decimal ',' to '.'
+    df["Total"] = df["Total"].str.replace(".", "").str.replace(",", ".")
+    df["Total"] = pd.to_numeric(df["Total"], errors="coerce").astype("Int64")
+    return df
+
+
 class CleanData:
     """
     Clean data.
@@ -440,10 +513,11 @@ class CleanData:
             self.elections_participation_filename = config.get(
                 "elections_participation_filename"
             )
+            self.mean_income_filenames = config.get("mean_income_filenames")
 
-            if self.elections_data_filename is None:
-                raise ValueError("Elections data filename cannot be empty.")
-            self.df = load_data(self.elections_data_filename)
+            self.df = None
+            if self.elections_data_filename is not None:
+                self.df = load_data(self.elections_data_filename)
 
             self.elections_days_df = None
             if self.elections_days_filename is not None:
@@ -455,6 +529,13 @@ class CleanData:
                     self.elections_participation_filename
                 )
 
+            self.mean_income_filenames_dfs = None
+            if self.mean_income_filenames is not None:
+                self.mean_income_filenames_dfs = [
+                    load_data(filename, decimals=",", thousands=".", dtype=str)
+                    for filename in self.mean_income_filenames
+                ]
+
             self.output_filename = config.get("output_filename")
             self.party_codes_to_fix = config.get("fix_party_codes")
             self.columns_to_drop = config.get("columns_to_drop")
@@ -465,6 +546,10 @@ class CleanData:
             self.color_default = config.get("color_default")
             self.columns_types = config.get("columns_types")
             self.columns_null_values = config.get("columns_null_values")
+            self.columns_to_divide = config.get("divide_columns")
+            self.filter_by_income = config.get("filter_by_income")
+            self.empty_columns_to_remove = config.get("remove_empty_rows")
+            self.pivot_table = config.get("pivot_table")
 
             self.run_fix_party_codes = self.party_codes_to_fix is not None
             self.run_columns_null_values = self.columns_null_values is not None
@@ -486,6 +571,12 @@ class CleanData:
             self.run_aggregate_duplicated_parties = config.get(
                 "aggregate_duplicated_parties"
             )
+            self.run_concat_dataframes = self.mean_income_filenames_dfs is not None
+            self.fix_total_column = config.get("fix_total_column")
+            self.run_divide_columns = self.columns_to_divide is not None
+            self.run_filter_by_income = self.filter_by_income is not None
+            self.run_remove_empty_rows = self.empty_columns_to_remove is not None
+            self.run_pivot_table = self.pivot_table is not None
 
             self.clean_elections_data()
 
@@ -494,10 +585,34 @@ class CleanData:
         Clean elections data.
         """
         logging.info("Cleaning elections data.")
+
+        # INE Mean Income Data
+        if self.run_concat_dataframes:
+            self.df = concat_dataframes(dataframes=self.mean_income_filenames_dfs)
+        if self.fix_total_column:
+            self.df = fix_total_column(self.df)
+        if self.run_remove_empty_rows:
+            self.df = remove_empty_rows(self.df, self.empty_columns_to_remove)
+        if self.run_divide_columns:
+            self.df = divide_string_columns(
+                self.df, columns_to_divide=self.columns_to_divide
+            )
+        if self.run_filter_by_income:
+            self.df = filter_by_column(
+                self.df,
+                column=self.filter_by_income.get("column"),
+                values=self.filter_by_income.get("values"),
+            )
+        if self.run_pivot_table:
+            self.df = pivot_table(
+                self.df,
+                config=self.pivot_table,
+            )
+
         if self.run_fix_party_codes:
             self.df = fix_party_codes(self.df, self.party_codes_to_fix)
         if self.run_columns_null_values:
-            self.df = replace_rows_with_null_values(
+            self.df = replace_empty_rows(
                 self.df, empty_columns=self.columns_null_values, value=""
             )
         if self.run_rename_columns:
@@ -543,4 +658,4 @@ class CleanData:
         if self.run_aggregate_duplicated_parties:
             self.df = aggregate_duplicated_parties(self.df)
 
-        save_data(self.df, self.output_filename)
+        save_data(self.df, self.output_filename, index=self.run_pivot_table)

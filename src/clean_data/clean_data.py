@@ -2,6 +2,8 @@
 Clean data and save it as a CSV file.
 """
 
+import os
+import re
 from typing import List, Dict
 
 import logging
@@ -494,6 +496,58 @@ def fix_total_column(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def create_column_based_on_filename(
+    df: pd.DataFrame, filename: str, column_name: str, regex: str
+) -> pd.DataFrame:
+    """
+    Create a new column based on the filename.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame to modify.
+    - filename (str): The name of the file.
+    - column_name (str): The name of the new column to create.
+    - regex (str): The regular expression pattern to extract from the filename.
+
+    Returns:
+    - pd.DataFrame: The modified DataFrame with the new column added.
+    """
+    logging.info("Creating column based on filename.")
+    df = df.copy()
+    match = re.search(regex, filename)
+    if match:
+        df[column_name] = match.group(1)
+    else:
+        df[column_name] = None
+        logging.warning("No match found for regex %s in filename %s.", regex, filename)
+    return df
+
+
+def load_data_create_column(
+    filename: str,
+    column_name: str,
+    regex: str,
+    decimals: str = None,
+    thousands: str = None,
+    dtype: str = None,
+) -> pd.DataFrame:
+    """
+    Load data and create a new column based on the filename.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame to modify.
+    - filename (str): The name of the file.
+    - column_name (str): The name of the new column to create.
+    - regex (str): The regular expression pattern to extract from the filename.
+
+    Returns:
+    - pd.DataFrame: The modified DataFrame with the new column added.
+    """
+    logging.info("Loading data and creating column based on filename.")
+    df = load_data(filename, decimals=decimals, thousands=thousands, dtype=dtype)
+    df = create_column_based_on_filename(df, filename, column_name, regex)
+    return df
+
+
 class CleanData:
     """
     Clean data.
@@ -513,7 +567,9 @@ class CleanData:
             self.elections_participation_filename = config.get(
                 "elections_participation_filename"
             )
-            self.mean_income_filenames = config.get("mean_income_filenames")
+            self.mean_income_directory = config.get("mean_income_directory")
+            self.place_of_birth_directory = config.get("place_of_birth_directory")
+            self.create_column_on_load = config.get("create_column_on_load")
 
             self.df = None
             if self.elections_data_filename is not None:
@@ -529,11 +585,34 @@ class CleanData:
                     self.elections_participation_filename
                 )
 
-            self.mean_income_filenames_dfs = None
-            if self.mean_income_filenames is not None:
+            if self.mean_income_directory is not None:
+                # List all files in the directory
+                files = os.listdir(self.mean_income_directory)
+                # Assuming all files in the directory are relevant and should be loaded
                 self.mean_income_filenames_dfs = [
-                    load_data(filename, decimals=",", thousands=".", dtype=str)
-                    for filename in self.mean_income_filenames
+                    load_data(
+                        os.path.join(self.mean_income_directory, filename),
+                        decimals=",",
+                        thousands=".",
+                        dtype=str,
+                    )
+                    for filename in files
+                ]
+
+            if self.place_of_birth_directory is not None:
+                # List all files in the directory
+                files = os.listdir(self.place_of_birth_directory)
+                # Assuming all files in the directory are relevant and should be loaded
+                self.place_of_birth_filenames_dfs = [
+                    load_data_create_column(
+                        filename=os.path.join(self.place_of_birth_directory, filename),
+                        column_name=self.create_column_on_load.get("year"),
+                        regex=self.create_column_on_load.get("regex"),
+                        decimals=",",
+                        thousands=".",
+                        dtype=str,
+                    )
+                    for filename in files
                 ]
 
             self.output_filename = config.get("output_filename")
@@ -571,43 +650,33 @@ class CleanData:
             self.run_aggregate_duplicated_parties = config.get(
                 "aggregate_duplicated_parties"
             )
-            self.run_concat_dataframes = self.mean_income_filenames_dfs is not None
+            self.run_concat_mean_income_dfs = self.mean_income_filenames_dfs is not None
+            self.run_concat_place_of_birth_dfs = (
+                self.place_of_birth_filenames_dfs is not None
+            )
             self.fix_total_column = config.get("fix_total_column")
             self.run_divide_columns = self.columns_to_divide is not None
             self.run_filter_by_income = self.filter_by_income is not None
             self.run_remove_empty_rows = self.empty_columns_to_remove is not None
             self.run_pivot_table = self.pivot_table is not None
 
-            self.clean_elections_data()
+            data_type = config.get("data_type")
+            if data_type == "elections_data":
+                self.clean_elections_data()
+            elif data_type == "mean_income_data":
+                self.clean_mean_income_data()
+            elif data_type == "place_of_birth":
+                self.clean_place_of_birth()
+            elif data_type == "socioeconomic_data":
+                self.clean_socioeconomic_data()
+            else:
+                logging.warning("No data to clean.")
 
     def clean_elections_data(self):
         """
         Clean elections data.
         """
         logging.info("Cleaning elections data.")
-
-        # INE Mean Income Data
-        if self.run_concat_dataframes:
-            self.df = concat_dataframes(dataframes=self.mean_income_filenames_dfs)
-        if self.fix_total_column:
-            self.df = fix_total_column(self.df)
-        if self.run_remove_empty_rows:
-            self.df = remove_empty_rows(self.df, self.empty_columns_to_remove)
-        if self.run_divide_columns:
-            self.df = divide_string_columns(
-                self.df, columns_to_divide=self.columns_to_divide
-            )
-        if self.run_filter_by_income:
-            self.df = filter_by_column(
-                self.df,
-                column=self.filter_by_income.get("column"),
-                values=self.filter_by_income.get("values"),
-            )
-        if self.run_pivot_table:
-            self.df = pivot_table(
-                self.df,
-                config=self.pivot_table,
-            )
 
         if self.run_fix_party_codes:
             self.df = fix_party_codes(self.df, self.party_codes_to_fix)
@@ -658,4 +727,63 @@ class CleanData:
         if self.run_aggregate_duplicated_parties:
             self.df = aggregate_duplicated_parties(self.df)
 
+        save_data(self.df, self.output_filename)
+
+    def clean_mean_income_data(self):
+        """
+        Clean mean income data.
+        """
+        logging.info("Cleaning mean income data.")
+
+        if self.run_concat_mean_income_dfs:
+            self.df = concat_dataframes(dataframes=self.mean_income_filenames_dfs)
+        if self.fix_total_column:
+            self.df = fix_total_column(self.df)
+        if self.run_remove_empty_rows:
+            self.df = remove_empty_rows(self.df, self.empty_columns_to_remove)
+        if self.run_divide_columns:
+            self.df = divide_string_columns(
+                self.df, columns_to_divide=self.columns_to_divide
+            )
+        if self.run_filter_by_income:
+            self.df = filter_by_column(
+                self.df,
+                column=self.filter_by_income.get("column"),
+                values=self.filter_by_income.get("values"),
+            )
+        if self.run_pivot_table:
+            self.df = pivot_table(
+                self.df,
+                config=self.pivot_table,
+            )
+
         save_data(self.df, self.output_filename, index=self.run_pivot_table)
+
+    def clean_place_of_birth(self):
+        """
+        Clean place of birth data.
+        """
+        logging.info("Cleaning place of birth data.")
+
+        if self.run_concat_place_of_birth_dfs:
+            self.df = concat_dataframes(dataframes=self.place_of_birth_filenames_dfs)
+
+        # delete rows "País de nacimiento" == "TOTAL" and "Sexo" == "Hombres" and "Sexo" == "Mujeres"
+
+        # change column name "Seccion" to "mundissec"
+
+        # Add calculated column "p_bonr_abroad" = "Nacidos en el extranjero" / "Total Población"
+
+        # Remove columns "Sexo", "País de nacimiento" and "Total"
+
+        # Pivot table to have "p_born_abroad" by "year"
+
+        save_data(self.df, self.output_filename, index=self.run_pivot_table)
+
+    def clean_socioeconomic_data(self):
+        """
+        Clean socioeconomic data.
+        """
+        logging.info("Cleaning socioeconomic data.")
+
+        pass

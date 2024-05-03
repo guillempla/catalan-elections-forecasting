@@ -676,19 +676,54 @@ def main():
         #         },
         #     }
         # )
+        # clean_configs.append(
+        #     {
+        #         "data_type": "place_of_birth",
+        #         "output_filename": "../data/processed/place_of_birth_clean_data",
+        #         "place_of_birth_directory": "../data/raw/place_of_birth/",
+        #         "create_column_on_load": {
+        #             "new_column": "year",
+        #             "regex": r"_(\d{4})\.\w+$",
+        #         },
+        #         "remove_rows_by_value": [
+        #             {
+        #                 "column": "País de nacimiento",
+        #                 "value": "TOTAL",
+        #             },
+        #             {
+        #                 "column": "Sexo",
+        #                 "value": "Hombres",
+        #             },
+        #             {
+        #                 "column": "Sexo",
+        #                 "value": "Mujeres",
+        #             },
+        #         ],
+        #         "columns_to_rename": {
+        #             "Sección": "mundissec",
+        #         },
+        #         "calculate_p_born_abroad": True,
+        #         "pivot_table": {
+        #             "index": ["mundissec"],
+        #             "columns": "year",
+        #             "values": "p_born_abroad",
+        #             "aggfunc": "sum",
+        #         },
+        #     }
+        # )
         clean_configs.append(
             {
-                "data_type": "place_of_birth",
-                "output_filename": "../data/processed/place_of_birth_clean_data",
-                "place_of_birth_directory": "../data/raw/place_of_birth/",
+                "data_type": "age_groups",
+                "output_filename": "../data/processed/age_groups_clean_data",
+                "age_groups_directory": "../data/raw/age_groups/",
                 "create_column_on_load": {
                     "new_column": "year",
                     "regex": r"_(\d{4})\.\w+$",
                 },
                 "remove_rows_by_value": [
                     {
-                        "column": "País de nacimiento",
-                        "value": "Total",
+                        "column": "Edad (grupos quinquenales)",
+                        "value": "TOTAL",
                     },
                     {
                         "column": "Sexo",
@@ -702,11 +737,10 @@ def main():
                 "columns_to_rename": {
                     "Sección": "mundissec",
                 },
-                "calculate_p_born_abroad": True,
                 "pivot_table": {
                     "index": ["mundissec"],
-                    "columns": "year",
-                    "values": "p_born_abroad",
+                    "columns": ["Edad (grupos quinquenales)", "year"],
+                    "values": "Total",
                     "aggfunc": "sum",
                 },
             }

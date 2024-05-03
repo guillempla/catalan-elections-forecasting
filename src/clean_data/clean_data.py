@@ -657,6 +657,7 @@ class CleanData:
             )
             self.mean_income_directory = config.get("mean_income_directory")
             self.place_of_birth_directory = config.get("place_of_birth_directory")
+            self.age_groups_directory = config.get("age_groups_directory")
             self.create_column_on_load = config.get("create_column_on_load")
 
             self.df = None
@@ -694,6 +695,23 @@ class CleanData:
                 self.place_of_birth_filenames_dfs = [
                     load_data_create_column(
                         filename=os.path.join(self.place_of_birth_directory, filename),
+                        column_name=self.create_column_on_load.get("new_column"),
+                        regex=self.create_column_on_load.get("regex"),
+                        sep=";",
+                        decimals=",",
+                        thousands=".",
+                        dtype=str,
+                    )
+                    for filename in files
+                ]
+
+            if self.age_groups_directory is not None:
+                # List all files in the directory
+                files = os.listdir(self.age_groups_directory)
+                # Assuming all files in the directory are relevant and should be loaded
+                self.age_groups_filenames_dfs = [
+                    load_data_create_column(
+                        filename=os.path.join(self.age_groups_directory, filename),
                         column_name=self.create_column_on_load.get("new_column"),
                         regex=self.create_column_on_load.get("regex"),
                         sep=";",
@@ -744,6 +762,7 @@ class CleanData:
             self.run_concat_place_of_birth_dfs = (
                 self.place_of_birth_directory is not None
             )
+            self.run_concat_age_groups_dfs = self.age_groups_directory is not None
             self.fix_total_column = config.get("fix_total_column")
             self.run_divide_columns = self.columns_to_divide is not None
             self.run_filter_by_income = self.filter_by_income is not None
@@ -759,6 +778,8 @@ class CleanData:
                 self.clean_mean_income_data()
             elif data_type == "place_of_birth":
                 self.clean_place_of_birth()
+            elif data_type == "age_groups":
+                self.clean_age_groups()
             elif data_type == "socioeconomic_data":
                 self.clean_socioeconomic_data()
             else:
@@ -865,8 +886,26 @@ class CleanData:
             self.df = rename_columns(self.df, self.columns_to_rename)
         if self.run_calculate_p_born_abroad:
             self.df = calculate_p_born_abroad(self.df)
-        if self.run_drop_columns:
-            self.df = drop_columns(self.df, self.columns_to_drop)
+        if self.run_pivot_table:
+            self.df = pivot_table(
+                self.df,
+                config=self.pivot_table,
+            )
+
+        save_data(self.df, self.output_filename, index=self.run_pivot_table)
+
+    def clean_age_groups(self):
+        """
+        Clean place of birth data.
+        """
+        logging.info("Cleaning place of birth data.")
+
+        if self.run_concat_age_groups_dfs:
+            self.df = concat_dataframes(dataframes=self.age_groups_filenames_dfs)
+        if self.run_remove_rows_by_values:
+            self.df = remove_rows_by_values(self.df, self.remove_rows_by_values)
+        if self.run_rename_columns:
+            self.df = rename_columns(self.df, self.columns_to_rename)
         if self.run_pivot_table:
             self.df = pivot_table(
                 self.df,

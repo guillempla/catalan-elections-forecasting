@@ -189,6 +189,68 @@ def remove_empty_rows(df: pd.DataFrame, empty_columns: List[str]) -> pd.DataFram
     return df.dropna(subset=empty_columns)
 
 
+def replace_rows_values(df: pd.DataFrame, column: str, old_value: str, new_value: str):
+    """
+    Replace rows with old_value in column with new_value.
+    """
+    logging.info(
+        "Replacing rows with %s in column %s with %s.", old_value, column, new_value
+    )
+    df[column] = df[column].replace(old_value, new_value)
+    return df
+
+
+def remove_rows_by_values(df: pd.DataFrame, conditions: list):
+    """
+    Remove rows based on multiple conditions.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to modify.
+        conditions (list): A list of dictionaries, each containing a 'column' key and 'value' key,
+                           specifying which rows to remove from the DataFrame.
+
+    Returns:
+        pd.DataFrame: The modified DataFrame with the specified rows removed.
+    """
+    for condition in conditions:
+        column = condition["column"]
+        value = condition["value"]
+        logging.info("Removing rows with %s in column %s.", value, column)
+        df = df[df[column] != value]
+    return df
+
+
+def calculate_p_born_abroad(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate the percentage of people born abroad in the population.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the data.
+
+    Returns:
+        pd.DataFrame: The modified DataFrame with the new column 'p_born_abroad' added.
+    """
+    logging.info("Calculating the percentage of people born abroad in the population.")
+    df = df.copy()
+    # Pivot the data to get 'Nacidos en el Extranjero' and 'Total Población' as columns
+    pivot_df = df.pivot_table(
+        index=["mundissec", "year"],
+        columns="País de nacimiento",
+        values="Total",
+        aggfunc="sum",
+    )
+
+    # Calculate the proportion of 'Nacidos en el Extranjero' to 'Total Población'
+    pivot_df["p_born_abroad"] = (
+        pivot_df["Nacidos en el Extranjero"] / pivot_df["Total Población"]
+    )
+
+    # Reset the index if needed to flatten the DataFrame
+    pivot_df.reset_index(inplace=True)
+
+    return pivot_df
+
+
 def replace_empty_rows(
     df: pd.DataFrame, empty_columns: List[str], value: str
 ) -> pd.DataFrame:
@@ -469,9 +531,17 @@ def divide_string_columns(
     return df
 
 
-def pivot_table(df: pd.DataFrame, config) -> pd.DataFrame:
+def pivot_table(df: pd.DataFrame, config, prefix_columns=True) -> pd.DataFrame:
     """
-    Pivot table.
+    Pivot table with an option to prefix column names based on the 'columns' field.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to pivot.
+        config (dict): Configuration dict containing 'index', 'columns', 'values', and 'aggfunc'.
+        prefix_columns (bool): If True, prefix the new column names with the name from 'columns'. Default is False.
+
+    Returns:
+        pd.DataFrame: The pivoted DataFrame with optional prefixed column names.
     """
     logging.info("Pivoting table.")
     index = config.get("index")
@@ -479,8 +549,23 @@ def pivot_table(df: pd.DataFrame, config) -> pd.DataFrame:
     values = config.get("values")
     aggfunc = config.get("aggfunc")
 
-    df = df.pivot_table(index=index, columns=columns, values=values, aggfunc=aggfunc)
-    return df
+    # Perform the pivot operation
+    df_pivoted = df.pivot_table(
+        index=index, columns=columns, values=values, aggfunc=aggfunc
+    )
+
+    # Optionally prefix column names
+    if prefix_columns:
+        # Handling when columns are multi-level after pivot
+        if isinstance(df_pivoted.columns, pd.MultiIndex):
+            df_pivoted.columns = [
+                "_".join([values] + list(map(str, col))).strip()
+                for col in df_pivoted.columns
+            ]
+        else:
+            df_pivoted.columns = [f"{values}_{col}" for col in df_pivoted.columns]
+
+    return df_pivoted
 
 
 def fix_total_column(df: pd.DataFrame) -> pd.DataFrame:
@@ -526,6 +611,7 @@ def load_data_create_column(
     filename: str,
     column_name: str,
     regex: str,
+    sep: str = None,
     decimals: str = None,
     thousands: str = None,
     dtype: str = None,
@@ -543,7 +629,9 @@ def load_data_create_column(
     - pd.DataFrame: The modified DataFrame with the new column added.
     """
     logging.info("Loading data and creating column based on filename.")
-    df = load_data(filename, decimals=decimals, thousands=thousands, dtype=dtype)
+    df = load_data(
+        filename, sep=sep, decimals=decimals, thousands=thousands, dtype=dtype
+    )
     df = create_column_based_on_filename(df, filename, column_name, regex)
     return df
 
@@ -606,8 +694,9 @@ class CleanData:
                 self.place_of_birth_filenames_dfs = [
                     load_data_create_column(
                         filename=os.path.join(self.place_of_birth_directory, filename),
-                        column_name=self.create_column_on_load.get("year"),
+                        column_name=self.create_column_on_load.get("new_column"),
                         regex=self.create_column_on_load.get("regex"),
+                        sep=";",
                         decimals=",",
                         thousands=".",
                         dtype=str,
@@ -629,6 +718,7 @@ class CleanData:
             self.filter_by_income = config.get("filter_by_income")
             self.empty_columns_to_remove = config.get("remove_empty_rows")
             self.pivot_table = config.get("pivot_table")
+            self.remove_rows_by_values = config.get("remove_rows_by_values")
 
             self.run_fix_party_codes = self.party_codes_to_fix is not None
             self.run_columns_null_values = self.columns_null_values is not None
@@ -650,15 +740,17 @@ class CleanData:
             self.run_aggregate_duplicated_parties = config.get(
                 "aggregate_duplicated_parties"
             )
-            self.run_concat_mean_income_dfs = self.mean_income_filenames_dfs is not None
+            self.run_concat_mean_income_dfs = self.mean_income_directory is not None
             self.run_concat_place_of_birth_dfs = (
-                self.place_of_birth_filenames_dfs is not None
+                self.place_of_birth_directory is not None
             )
             self.fix_total_column = config.get("fix_total_column")
             self.run_divide_columns = self.columns_to_divide is not None
             self.run_filter_by_income = self.filter_by_income is not None
             self.run_remove_empty_rows = self.empty_columns_to_remove is not None
             self.run_pivot_table = self.pivot_table is not None
+            self.run_remove_rows_by_values = self.remove_rows_by_values is not None
+            self.run_calculate_p_born_abroad = config.get("calculate_p_born_abroad")
 
             data_type = config.get("data_type")
             if data_type == "elections_data":
@@ -767,16 +859,19 @@ class CleanData:
 
         if self.run_concat_place_of_birth_dfs:
             self.df = concat_dataframes(dataframes=self.place_of_birth_filenames_dfs)
-
-        # delete rows "País de nacimiento" == "TOTAL" and "Sexo" == "Hombres" and "Sexo" == "Mujeres"
-
-        # change column name "Seccion" to "mundissec"
-
-        # Add calculated column "p_bonr_abroad" = "Nacidos en el extranjero" / "Total Población"
-
-        # Remove columns "Sexo", "País de nacimiento" and "Total"
-
-        # Pivot table to have "p_born_abroad" by "year"
+        if self.run_remove_rows_by_values:
+            self.df = remove_rows_by_values(self.df, self.remove_rows_by_values)
+        if self.run_rename_columns:
+            self.df = rename_columns(self.df, self.columns_to_rename)
+        if self.run_calculate_p_born_abroad:
+            self.df = calculate_p_born_abroad(self.df)
+        if self.run_drop_columns:
+            self.df = drop_columns(self.df, self.columns_to_drop)
+        if self.run_pivot_table:
+            self.df = pivot_table(
+                self.df,
+                config=self.pivot_table,
+            )
 
         save_data(self.df, self.output_filename, index=self.run_pivot_table)
 

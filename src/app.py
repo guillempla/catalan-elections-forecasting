@@ -532,151 +532,181 @@ def main():
     if clean_data:
         clean_configs: List[dict] = []
 
+        # clean_configs.append(
+        #     {
+        #         "data_type": "elections_data",
+        #         "elections_data_filename": catalan_elections_dates_pkl_path,
+        #         "output_filename": "../data/processed/catalan-elections-clean-dates",
+        #         "create_date_columns": True,
+        #         "columns_to_drop": [
+        #             "id_eleccio",
+        #             "codi_tipus_eleccio",
+        #             "nom_tipus_eleccio",
+        #             "data_eleccio",
+        #             "nivell_circumscripcio",
+        #         ],
+        #     }
+        # )
+        # clean_configs.append(
+        #     {
+        #         "data_type": "elections_data",
+        #         "elections_data_filename": catalan_elections_participation_pkl_path,
+        #         "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
+        #         "output_filename": "../data/processed/catalan-elections-clean-participation",
+        #         "create_party_column": False,
+        #         "divide_id_eleccio": True,
+        #         "elections_type": [
+        #             "M",
+        #             "E",
+        #             "A",
+        #             "G",
+        #         ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals,
+        #         "territorial_levels": ["SE"],  # SE: Secció censal
+        #         "create_date_column": True,
+        #         "columns_to_drop": [
+        #             "vots_primer_avan",
+        #             "vots_segon_avan",
+        #             "hora_primer_avan",
+        #             "hora_segon_avan",
+        #             "vots_candidatures",
+        #             "abstencio",
+        #             "nombre_meses",
+        #         ],
+        #         "columns_types": {
+        #             "year": "int",
+        #             "month": "int",
+        #             "day": "int",
+        #             "seccio": "int",
+        #             "votants": "int",
+        #             "escons": "int",
+        #             "districte": "int",
+        #         },
+        #         "create_mundissec_column": True,
+        #     }
+        # )
+        # clean_configs.append(
+        #     {
+        #         "data_type": "elections_data",
+        #         "elections_data_filename": catalan_elections_results_pkl_path,
+        #         "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
+        #         "elections_participation_filename": "../data/processed/catalan-elections-clean-participation.pkl",
+        #         "output_filename": "../data/processed/catalan-elections-clean-data",
+        #         "fix_party_codes": {
+        #             "1083": {
+        #                 "code_column": "candidatura_codi",
+        #                 "name_column": "candidatura_denominacio",
+        #             },
+        #             "1084": {
+        #                 "code_column": "candidatura_codi",
+        #                 "name_column": "candidatura_denominacio",
+        #             },
+        #         },
+        #         "columns_to_drop": [
+        #             "candidat_posicio",
+        #             "candidatura_logotip",
+        #             "candidatura_codi",
+        #             "candidatura_denominacio",
+        #             "candidatura_sigles",
+        #             "candidatura_color",
+        #             "agrupacio_codi",
+        #             "agrupacio_denominacio",
+        #             "agrupacio_sigles",
+        #         ],
+        #         "columns_to_rename": {"secci_": "seccio"},
+        #         "elections_type": [
+        #             "M",
+        #             "E",
+        #             "A",
+        #             "G",
+        #         ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
+        #         "territorial_levels": ["SE"],  # SE: Secció censal
+        #         "color_column": "candidatura_color",
+        #         "color_default": "grey",
+        #         "columns_types": {
+        #             "year": "int",
+        #             "month": "int",
+        #             "day": "int",
+        #             "seccio": "int",
+        #             "vots": "int",
+        #             "escons": "int",
+        #             "districte": "int",
+        #             "party_code": "int",
+        #         },
+        #         "columns_null_values": ["candidatura_sigles"],
+        #         "create_party_column": True,
+        #         "create_mundissec_column": True,
+        #         "divide_id_eleccio": True,
+        #         "create_date_column": True,
+        #         "aggregate_duplicated_parties": True,
+        #     }
+        # )
+        # clean_configs.append(
+        #     {
+        #         "data_type": "mean_income_data",
+        #         "output_filename": "../data/processed/mean_income_clean_data",
+        #         "mean_income_directory": "../data/raw/mean_income/",
+        #         "fix_total_column": True,
+        #         "remove_empty_rows": ["Secciones"],
+        #         "divide_columns": [
+        #             {
+        #                 "column": "Municipios",
+        #                 "new_columns": ["municipal_code", "municipal_name"],
+        #                 "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+        #             },
+        #             {
+        #                 "column": "Distritos",
+        #                 "new_columns": ["district_code", "district_name"],
+        #                 "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+        #             },
+        #             {
+        #                 "column": "Secciones",
+        #                 "new_columns": ["mundissec", "section_name"],
+        #                 "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+        #             },
+        #         ],
+        #         "filter_by_income": {
+        #             "column": "Indicadores de renta media y mediana",
+        #             "values": ["Renta neta media por hogar"],
+        #         },
+        #         "pivot_table": {
+        #             "index": ["mundissec"],
+        #             "columns": "Periodo",
+        #             "values": "Total",
+        #             "aggfunc": "sum",
+        #         },
+        #     }
+        # )
         clean_configs.append(
             {
-                "data_type": "elections_data",
-                "elections_data_filename": catalan_elections_dates_pkl_path,
-                "output_filename": "../data/processed/catalan-elections-clean-dates",
-                "create_date_columns": True,
-                "columns_to_drop": [
-                    "id_eleccio",
-                    "codi_tipus_eleccio",
-                    "nom_tipus_eleccio",
-                    "data_eleccio",
-                    "nivell_circumscripcio",
-                ],
-            }
-        )
-        clean_configs.append(
-            {
-                "data_type": "elections_data",
-                "elections_data_filename": catalan_elections_participation_pkl_path,
-                "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
-                "output_filename": "../data/processed/catalan-elections-clean-participation",
-                "create_party_column": False,
-                "divide_id_eleccio": True,
-                "elections_type": [
-                    "M",
-                    "E",
-                    "A",
-                    "G",
-                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals,
-                "territorial_levels": ["SE"],  # SE: Secció censal
-                "create_date_column": True,
-                "columns_to_drop": [
-                    "vots_primer_avan",
-                    "vots_segon_avan",
-                    "hora_primer_avan",
-                    "hora_segon_avan",
-                    "vots_candidatures",
-                    "abstencio",
-                    "nombre_meses",
-                ],
-                "columns_types": {
-                    "year": "int",
-                    "month": "int",
-                    "day": "int",
-                    "seccio": "int",
-                    "votants": "int",
-                    "escons": "int",
-                    "districte": "int",
+                "data_type": "place_of_birth",
+                "output_filename": "../data/processed/place_of_birth_clean_data",
+                "place_of_birth_directory": "../data/raw/place_of_birth/",
+                "create_column_on_load": {
+                    "new_column": "year",
+                    "regex": r"_(\d{4})\.\w+$",
                 },
-                "create_mundissec_column": True,
-            }
-        )
-        clean_configs.append(
-            {
-                "data_type": "elections_data",
-                "elections_data_filename": catalan_elections_results_pkl_path,
-                "elections_days_filename": "../data/processed/catalan-elections-clean-dates.pkl",
-                "elections_participation_filename": "../data/processed/catalan-elections-clean-participation.pkl",
-                "output_filename": "../data/processed/catalan-elections-clean-data",
-                "fix_party_codes": {
-                    "1083": {
-                        "code_column": "candidatura_codi",
-                        "name_column": "candidatura_denominacio",
-                    },
-                    "1084": {
-                        "code_column": "candidatura_codi",
-                        "name_column": "candidatura_denominacio",
-                    },
-                },
-                "columns_to_drop": [
-                    "candidat_posicio",
-                    "candidatura_logotip",
-                    "candidatura_codi",
-                    "candidatura_denominacio",
-                    "candidatura_sigles",
-                    "candidatura_color",
-                    "agrupacio_codi",
-                    "agrupacio_denominacio",
-                    "agrupacio_sigles",
-                ],
-                "columns_to_rename": {"secci_": "seccio"},
-                "elections_type": [
-                    "M",
-                    "E",
-                    "A",
-                    "G",
-                ],  # M: Municipals, E: Europees, A: Autonòmiques, G: Generals
-                "territorial_levels": ["SE"],  # SE: Secció censal
-                "color_column": "candidatura_color",
-                "color_default": "grey",
-                "columns_types": {
-                    "year": "int",
-                    "month": "int",
-                    "day": "int",
-                    "seccio": "int",
-                    "vots": "int",
-                    "escons": "int",
-                    "districte": "int",
-                    "party_code": "int",
-                },
-                "columns_null_values": ["candidatura_sigles"],
-                "create_party_column": True,
-                "create_mundissec_column": True,
-                "divide_id_eleccio": True,
-                "create_date_column": True,
-                "aggregate_duplicated_parties": True,
-            }
-        )
-        clean_configs.append(
-            {
-                "data_type": "mean_income_data",
-                "output_filename": "../data/processed/mean_income_clean_data",
-                "mean_income_directory": [
-                    "../data/raw/mean_income/mean_income_barcelona.csv",
-                    "../data/raw/mean_income/mean_income_girona.csv",
-                    "../data/raw/mean_income/mean_income_lleida.csv",
-                    "../data/raw/mean_income/mean_income_tarragona.csv",
-                ],
-                "fix_total_column": True,
-                "remove_empty_rows": ["Secciones"],
-                "divide_columns": [
+                "remove_rows_by_value": [
                     {
-                        "column": "Municipios",
-                        "new_columns": ["municipal_code", "municipal_name"],
-                        "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+                        "column": "País de nacimiento",
+                        "value": "Total",
                     },
                     {
-                        "column": "Distritos",
-                        "new_columns": ["district_code", "district_name"],
-                        "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+                        "column": "Sexo",
+                        "value": "Hombres",
                     },
                     {
-                        "column": "Secciones",
-                        "new_columns": ["mundissec", "section_name"],
-                        "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
+                        "column": "Sexo",
+                        "value": "Mujeres",
                     },
                 ],
-                "filter_by_income": {
-                    "column": "Indicadores de renta media y mediana",
-                    "values": ["Renta neta media por hogar"],
+                "columns_to_rename": {
+                    "Sección": "mundissec",
                 },
+                "calculate_p_born_abroad": True,
                 "pivot_table": {
                     "index": ["mundissec"],
-                    "columns": "Periodo",
-                    "values": "Total",
+                    "columns": "year",
+                    "values": "p_born_abroad",
                     "aggfunc": "sum",
                 },
             }

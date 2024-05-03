@@ -4,9 +4,11 @@ Module for downloading data.
 
 import logging
 from typing import List
+
 from .download_socrata_data import DownloadCatalanElectionsData
 from .download_censal_sections_gis_data import DownloadCensalSectionsGisData
 from .download_ine_data import DownloadIneData
+from .download_idescat_data import DownloadIdescatData
 
 
 class DownloadData:
@@ -41,7 +43,7 @@ class DownloadData:
                         dataset_config["output_path"],
                     )
                 )
-            if dataset_type == "socrata":
+            elif dataset_type == "socrata":
                 self.downloaders.append(
                     DownloadCatalanElectionsData(
                         dataset_config["socrata_domain"],
@@ -53,7 +55,7 @@ class DownloadData:
                         dataset_config["pkl_path"],
                     )
                 )
-            if dataset_type == "ine":
+            elif dataset_type == "ine":
                 self.downloaders.append(
                     DownloadIneData(
                         dataset_config["data_type"],
@@ -61,6 +63,16 @@ class DownloadData:
                         dataset_config["output_path"],
                     )
                 )
+            elif dataset_type == "idescat":
+                self.downloaders.append(
+                    DownloadIdescatData(
+                        dataset_config["data_type"],
+                        dataset_config["urls_info"],
+                        dataset_config["output_path"],
+                    )
+                )
+            else:
+                raise ValueError(f"Unknown dataset type: {dataset_type}")
 
     def download_catalan_elections_data(self) -> None:
         """

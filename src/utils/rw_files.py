@@ -219,17 +219,31 @@ def download_file(url: str, save_path: str) -> None:
         logging.error("Error downloading file: %s", e)
 
 
-def unzip_file(zip_path: str, extract_to: Optional[str]) -> None:
+def unzip_file(
+    zip_path: str, extract_to: Optional[str] = None, delete_zip: bool = True
+) -> None:
     """
-    Extracts a ZIP file to a specified directory.
+    Extracts a ZIP file to a specified directory and optionally deletes the ZIP file.
+    If no directory is specified, it extracts to the directory containing the ZIP file.
 
     Parameters:
     - zip_path (str): The path of the ZIP file to extract.
-    - extract_to (str, optional): The directory to extract the contents to.
+    - extract_to (Optional[str]): The directory to extract the contents to, defaults to the ZIP file's directory.
+    - delete_zip (bool): Whether to delete the ZIP file after extraction, defaults to True.
     """
+    if extract_to is None:
+        extract_to = os.path.dirname(zip_path)
+
     try:
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(extract_to)
         logging.info("Extracted %s to %s", os.path.basename(zip_path), extract_to)
+
+        if delete_zip:
+            os.remove(zip_path)
+            logging.info("Deleted original ZIP file: %s", zip_path)
+
     except zipfile.BadZipFile as e:
         logging.error("Error extracting the ZIP file: %s", e)
+    except FileNotFoundError as e:
+        logging.error("Error deleting the ZIP file: %s", e)

@@ -70,15 +70,6 @@ class DownloadCensalSectionsGisData:
         base_filename = filename.replace(".zip", "")
         save_path = os.path.join(self.output_path, filename)
 
-        # Download the file
         download_file(self.url, save_path)
-
-        # Extract on a folder
         output_path = os.path.join(self.output_path, base_filename)
-
-        # Unzip the file
         unzip_file(save_path, output_path)
-
-        # Remove the ZIP file after extraction
-        os.remove(save_path)
-        logging.info("Removed %s.", filename)

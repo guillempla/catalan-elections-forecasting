@@ -87,19 +87,26 @@ def detect_delimiter(filename: str) -> str:
         try:
             dialect = sniffer.sniff(file.read(1024))
             return dialect.delimiter
-        except csv.Error as e:
+        except csv.Error:
             logging.warning("Could not determine the delimiter.")
-            return None
+            return ","
+        except UnicodeDecodeError:
+            logging.warning("Could not determine the delimiter.")
+            return ","
 
 
 def load_data(
-    filename: str, decimals: str = None, thousands: str = None, dtype: Dict = None
+    filename: str,
+    sep: str = None,
+    decimals: str = None,
+    thousands: str = None,
+    dtype: Dict = None,
 ) -> pd.DataFrame | gpd.GeoDataFrame:
     """
     Load data from CSV or pickle file.
     """
     if check_csv_extension(filename):
-        return load_csv(filename, decimals, thousands, dtype)
+        return load_csv(filename, sep, decimals, thousands, dtype)
     if check_pkl_extension(filename):
         return load_pickle(filename)
     if check_shp_extension(filename):
@@ -110,17 +117,21 @@ def load_data(
 
 
 def load_csv(
-    filename: str, decimals: str = None, thousands: str = None, dtype: Dict = None
+    filename: str,
+    sep: str = None,
+    decimals: str = None,
+    thousands: str = None,
+    dtype: Dict = None,
 ) -> pd.DataFrame:
     """
     Load data from CSV file.
     """
     logging.info("Loading CSV data %s", filename)
-    delimiter = detect_delimiter(filename)
+
+    if sep is None:
+        sep = detect_delimiter(filename)
     try:
-        return pd.read_csv(
-            filename, sep=delimiter, decimal=decimals, thousands=thousands
-        )
+        return pd.read_csv(filename, sep=sep, decimal=decimals, thousands=thousands)
     except pd.errors.ParserError as e:
         logging.error(e)
         return pd.read_csv(

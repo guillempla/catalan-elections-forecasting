@@ -711,36 +711,59 @@ def main():
         #         },
         #     }
         # )
+        # clean_configs.append(
+        #     {
+        #         "data_type": "age_groups",
+        #         "output_filename": "../data/processed/age_groups_clean_data",
+        #         "age_groups_directory": "../data/raw/age_groups/",
+        #         "create_column_on_load": {
+        #             "new_column": "year",
+        #             "regex": r"_(\d{4})\.\w+$",
+        #         },
+        #         "remove_rows_by_value": [
+        #             {
+        #                 "column": "Edad (grupos quinquenales)",
+        #                 "value": "TOTAL",
+        #             },
+        #             {
+        #                 "column": "Sexo",
+        #                 "value": "Hombres",
+        #             },
+        #             {
+        #                 "column": "Sexo",
+        #                 "value": "Mujeres",
+        #             },
+        #         ],
+        #         "columns_to_rename": {
+        #             "Sección": "mundissec",
+        #         },
+        #         "pivot_table": {
+        #             "index": ["mundissec"],
+        #             "columns": ["Edad (grupos quinquenales)", "year"],
+        #             "values": "Total",
+        #             "aggfunc": "sum",
+        #         },
+        #     }
+        # )
         clean_configs.append(
             {
-                "data_type": "age_groups",
-                "output_filename": "../data/processed/age_groups_clean_data",
-                "age_groups_directory": "../data/raw/age_groups/",
-                "create_column_on_load": {
-                    "new_column": "year",
-                    "regex": r"_(\d{4})\.\w+$",
-                },
+                "data_type": "socioeconomic_index",
+                "output_filename": "../data/processed/socioeconomic_index_clean_data",
+                "socioeconomic_index_directory": "../data/raw/socioeconomic_index/",
                 "remove_rows_by_value": [
                     {
-                        "column": "Edad (grupos quinquenales)",
-                        "value": "TOTAL",
-                    },
-                    {
-                        "column": "Sexo",
-                        "value": "Hombres",
-                    },
-                    {
-                        "column": "Sexo",
-                        "value": "Mujeres",
+                        "column": "secció censal",
+                        "value": "Catalunya",
                     },
                 ],
                 "columns_to_rename": {
-                    "Sección": "mundissec",
+                    "secció censal": "mundissec",
+                    "any": "year",
                 },
                 "pivot_table": {
                     "index": ["mundissec"],
-                    "columns": ["Edad (grupos quinquenales)", "year"],
-                    "values": "Total",
+                    "columns": ["concepte", "year"],
+                    "values": "valor",
                     "aggfunc": "sum",
                 },
             }

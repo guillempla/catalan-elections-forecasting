@@ -128,6 +128,9 @@ def load_csv(
     """
     logging.info("Loading CSV data %s", filename)
 
+    if decimals is None:
+        decimals = "."  # Default decimal separator
+
     if sep is None:
         sep = detect_delimiter(filename)
     try:

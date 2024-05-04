@@ -21,6 +21,16 @@ logging.basicConfig(
 
 
 def aggregate_duplicated_parties(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Aggregates duplicated parties in the given DataFrame.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the party data.
+
+    Returns:
+        pd.DataFrame: The DataFrame with duplicated parties aggregated.
+
+    """
     # Identifying duplicates
     duplicates_mask = df.duplicated(
         subset=["mundissec", "party_code", "nom_eleccio"], keep=False
@@ -658,6 +668,9 @@ class CleanData:
             self.mean_income_directory = config.get("mean_income_directory")
             self.place_of_birth_directory = config.get("place_of_birth_directory")
             self.age_groups_directory = config.get("age_groups_directory")
+            self.socioeconomic_index_directory = config.get(
+                "socioeconomic_index_directory"
+            )
             self.create_column_on_load = config.get("create_column_on_load")
 
             self.df = None
@@ -722,6 +735,20 @@ class CleanData:
                     for filename in files
                 ]
 
+            if self.socioeconomic_index_directory is not None:
+                # List all files in the directory
+                files = os.listdir(self.socioeconomic_index_directory)
+                # Assuming all files in the directory are relevant and should be loaded
+                self.socioeconomic_index_filenames_dfs = [
+                    load_data(
+                        filename=os.path.join(
+                            self.socioeconomic_index_directory, filename
+                        ),
+                        dtype=str,
+                    )
+                    for filename in files
+                ]
+
             self.output_filename = config.get("output_filename")
             self.party_codes_to_fix = config.get("fix_party_codes")
             self.columns_to_drop = config.get("columns_to_drop")
@@ -763,6 +790,9 @@ class CleanData:
                 self.place_of_birth_directory is not None
             )
             self.run_concat_age_groups_dfs = self.age_groups_directory is not None
+            self.run_concat_socioeconomic_index_dfs = (
+                self.socioeconomic_index_directory is not None
+            )
             self.fix_total_column = config.get("fix_total_column")
             self.run_divide_columns = self.columns_to_divide is not None
             self.run_filter_by_income = self.filter_by_income is not None
@@ -780,8 +810,8 @@ class CleanData:
                 self.clean_place_of_birth()
             elif data_type == "age_groups":
                 self.clean_age_groups()
-            elif data_type == "socioeconomic_data":
-                self.clean_socioeconomic_data()
+            elif data_type == "socioeconomic_index":
+                self.clean_socioeconomic_index()
             else:
                 logging.warning("No data to clean.")
 
@@ -914,10 +944,24 @@ class CleanData:
 
         save_data(self.df, self.output_filename, index=self.run_pivot_table)
 
-    def clean_socioeconomic_data(self):
+    def clean_socioeconomic_index(self):
         """
         Clean socioeconomic data.
         """
         logging.info("Cleaning socioeconomic data.")
 
-        pass
+        if self.run_concat_socioeconomic_index_dfs:
+            self.df = concat_dataframes(
+                dataframes=self.socioeconomic_index_filenames_dfs
+            )
+        if self.run_remove_rows_by_values:
+            self.df = remove_rows_by_values(self.df, self.remove_rows_by_values)
+        if self.run_rename_columns:
+            self.df = rename_columns(self.df, self.columns_to_rename)
+        if self.run_pivot_table:
+            self.df = pivot_table(
+                self.df,
+                config=self.pivot_table,
+            )
+
+        save_data(self.df, self.output_filename, index=self.run_pivot_table)

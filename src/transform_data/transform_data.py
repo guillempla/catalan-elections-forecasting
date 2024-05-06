@@ -20,7 +20,16 @@ logging.basicConfig(
 )
 
 
-def select_important_parties(df):
+def select_important_parties(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Select the top 10 parties per election and aggregate the rest as 'Other Parties'
+
+    Args:
+        df (pandas.DataFrame): DataFrame containing the election results data
+
+    Returns:
+        pandas.DataFrame: DataFrame with the top 10 parties per election and 'Other Parties' aggregated
+    """
     # Determine the top 10 parties per election
     top_parties = (
         set()
@@ -61,6 +70,11 @@ class TransformData:
     ) -> None:
         """
         Initialize the class with the paths to the censal sections and results data
+
+        Args:
+            censal_sections_path (str): Path to the censal sections data file
+            results_path (str): Path to the election results data file
+            output_path (str, optional): Path to save the output dataframe. Defaults to "../data/output/censal_sections_results".
         """
         self.censal_sections_gdf = load_data(censal_sections_path)
         self.results_df = load_data(results_path)

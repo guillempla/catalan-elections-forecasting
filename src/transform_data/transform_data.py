@@ -21,7 +21,7 @@ logging.basicConfig(
 
 
 def select_important_parties(df):
-    # Step 1: Determine the top 10 parties per election
+    # Determine the top 10 parties per election
     top_parties = (
         set()
     )  # This will hold the joined codes of top parties across all elections
@@ -36,10 +36,10 @@ def select_important_parties(df):
         )
         top_parties.update(top_in_election)
 
-    # Step 2: Identify rows that are not in the top parties
+    # Identify rows that are not in the top parties
     mask = ~df["joined_code"].isin(top_parties)
 
-    # Step 3: Replace details for non-top parties to aggregate them as 'Other Parties'
+    # Replace details for non-top parties to aggregate them as 'Other Parties'
     df.loc[mask, "joined_code"] = 999999999
     df.loc[mask, "joined_name"] = "Other Parties"
     df.loc[mask, "joined_color"] = "#535353"

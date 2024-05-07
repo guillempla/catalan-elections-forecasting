@@ -4,8 +4,8 @@ Transform censal sections data and results data into a single output dataframe
 
 from typing import List, Tuple
 
+import re
 import logging
-
 import numpy as np
 import pandas as pd
 
@@ -30,6 +30,8 @@ def select_important_parties(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pandas.DataFrame: DataFrame with the top 10 parties per election and 'Other Parties' aggregated
     """
+    logging.info("Selecting important parties")
+
     # Determine the top 10 parties per election
     top_parties = (
         set()
@@ -55,6 +57,54 @@ def select_important_parties(df: pd.DataFrame) -> pd.DataFrame:
     df.loc[mask, "joined_abbr"] = "Other"
 
     return df
+
+
+def add_missing_party_columns(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """
+    Adds missing party columns to the GeoDataFrame.
+    Columns are identified by the pattern `VARIABLENAME_PARTYCODE_ELECTIONSID`.
+    Missing columns are added with their values filled as `0.0`.
+
+    :param gdf: The original GeoDataFrame with existing columns.
+    :return: The GeoDataFrame with all possible party columns present.
+    """
+    logging.info("Add missing party columns")
+
+    # Function to parse columns into three components
+    def parse_column_name(col_name):
+        parts = col_name.split("_")
+        election_id = parts[-1]
+        party_code = parts[-2]
+        variable_name = "_".join(parts[:-2])  # Handle underscores within VARIABLENAME
+        return variable_name, party_code, election_id
+
+    # Extract unique patterns
+    existing_patterns = {parse_column_name(col) for col in gdf.columns if "_" in col}
+
+    # Create sets for unique components
+    unique_vars = {x[0] for x in existing_patterns}
+    unique_parties = {x[1] for x in existing_patterns}
+    unique_elections = {x[2] for x in existing_patterns}
+
+    # Generate all combinations
+    all_combinations = {
+        f"{var}_{party}_{election}"
+        for var in unique_vars
+        for party in unique_parties
+        for election in unique_elections
+    }
+
+    # Determine which combinations are missing
+    existing_columns = set(gdf.columns)
+    missing_columns = all_combinations - existing_columns
+
+    # Create a DataFrame to hold the missing columns
+    missing_df = pd.DataFrame(0.0, index=gdf.index, columns=sorted(missing_columns))
+
+    # Concatenate the new columns to the original GeoDataFrame
+    gdf = pd.concat([gdf, missing_df], axis=1)
+
+    return gdf
 
 
 class TransformData:
@@ -98,7 +148,6 @@ class TransformData:
                 "cens_electoral_percentage",
             ],
         )
-        logging.info("Pivoting done")
 
         # Flattening the MultiIndex Columns
         results_wide_df.columns = [
@@ -125,5 +174,14 @@ class TransformData:
 
         logging.info("Converting columns to float64 done")
 
-        merged_gdf.to_file("../data/output/merged_data.geojson", driver="GeoJSON")
+        merged_gdf = add_missing_party_columns(merged_gdf)
+
+        logging.info("Saving output data with only past votes data")
+
+        only_votes_df = merged_gdf.drop(columns=["geometry"])
+        save_data(only_votes_df, "../data/output/only_votes.csv")
+
+        logging.info("Saving output data with only past votes data done")
+
+        # merged_gdf.to_file("../data/output/merged_data.geojson", driver="GeoJSON")
         logging.info("Data transformation done")

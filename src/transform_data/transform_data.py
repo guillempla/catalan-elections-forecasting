@@ -20,29 +20,31 @@ logging.basicConfig(
 )
 
 
-def select_important_parties(df: pd.DataFrame) -> pd.DataFrame:
+def select_important_parties(
+    df: pd.DataFrame, n_important_parties: int = 6
+) -> pd.DataFrame:
     """
-    Select the top 10 parties per election and aggregate the rest as 'Other Parties'
+    Select the top n parties per election and aggregate the rest as 'Other Parties'
 
     Args:
         df (pandas.DataFrame): DataFrame containing the election results data
 
     Returns:
-        pandas.DataFrame: DataFrame with the top 10 parties per election and 'Other Parties' aggregated
+        pandas.DataFrame: DataFrame with the top n parties per election and 'Other Parties' aggregated
     """
     logging.info("Selecting important parties")
 
-    # Determine the top 10 parties per election
+    # Determine the top n parties per election
     top_parties = (
         set()
     )  # This will hold the joined codes of top parties across all elections
     grouped = df.groupby("nom_eleccio")
 
     for _, group in grouped:
-        # Sort parties in each election by 'votes' and select the top 10
+        # Sort parties in each election by 'votes' and select the top n
         top_in_election = (
             group.sort_values(by="vots", ascending=False)
-            .head(10)["joined_code"]
+            .head(n_important_parties)["joined_code"]
             .unique()
         )
         top_parties.update(top_in_election)
@@ -117,6 +119,8 @@ class TransformData:
         censal_sections_path: str,
         results_path: str,
         output_path: str = "../data/output/censal_sections_results",
+        start_year: int = 2010,
+        end_year: int = 2021,
     ) -> None:
         """
         Initialize the class with the paths to the censal sections and results data
@@ -129,11 +133,19 @@ class TransformData:
         self.censal_sections_gdf = load_data(censal_sections_path)
         self.results_df = load_data(results_path)
         self.output_path = output_path
+        self.start_year = start_year
+        self.end_year = end_year
 
     def transform_data(self) -> None:
         """
         Transform censal sections data and results data into a single output dataframe
         """
+
+        # filter the results_df to only include the years between start_year and end_year
+        self.results_df = self.results_df[
+            self.results_df["year"].astype(int).between(self.start_year, self.end_year)
+        ]
+
         important_parties = select_important_parties(self.results_df)
 
         # Pivot the DataFrame
@@ -179,7 +191,7 @@ class TransformData:
         logging.info("Saving output data with only past votes data")
 
         only_votes_df = merged_gdf.drop(columns=["geometry"])
-        save_data(only_votes_df, "../data/output/only_votes.csv")
+        save_data(only_votes_df, "../data/output/only_votes")
 
         logging.info("Saving output data with only past votes data done")
 

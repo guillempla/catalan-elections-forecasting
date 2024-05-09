@@ -109,6 +109,33 @@ def add_missing_party_columns(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     return gdf
 
 
+def manually_group_parties(
+    df: pd.DataFrame,
+    parties_to_group: Dict[int, List[int]],
+    column_name: str = "joined_code",
+) -> pd.DataFrame:
+    """
+    Manually group parties in the DataFrame
+
+    Args:
+        df (pandas.DataFrame): DataFrame containing the election results data
+        parties_to_group (Dict): Dictionary containing the parties to group.
+
+    Returns:
+        pandas.DataFrame: DataFrame with the parties grouped as specified in the input dictionary
+    """
+    logging.info("Manually grouping parties")
+
+    for group_name, group_parties in parties_to_group.items():
+        # Get the joined codes of the parties to group
+        joined_codes = df[df[column_name].isin(group_parties)][column_name].unique()
+
+        # Replace the joined code of the parties to group with the joined code of the group
+        df.loc[df[column_name].isin(joined_codes), column_name] = group_name
+
+    return df
+
+
 class TransformData:
     """
     Transform censal sections data and results data into a single output dataframe
@@ -145,6 +172,16 @@ class TransformData:
         self.results_df = self.results_df[
             self.results_df["year"].astype(int).between(self.start_year, self.end_year)
         ]
+
+        self.results_df = manually_group_parties(
+            self.results_df,
+            {
+                6: [2019838],
+                10: [698],
+                1008: [1013, 1015, 1099],
+                1031: [12, 412, 1007, 1016],
+            },
+        )
 
         important_parties = select_important_parties(self.results_df)
 

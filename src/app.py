@@ -763,10 +763,11 @@ def main():
                     },
                     "agg_columns": ["Total"],
                 },
+                "calcutate_p_age_groups": True,
                 "pivot_table": {
                     "index": ["mundissec"],
                     "columns": ["age_groups", "year"],
-                    "values": "Total",
+                    "values": "p_age_groups",
                     "aggfunc": "sum",
                 },
             }

@@ -266,7 +266,7 @@ def fix_mundissec(df: pd.DataFrame) -> pd.DataFrame:
 
 def calculate_p_born_abroad(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculate the percentage of people born abroad in the population.
+    Calculate the proportion of people born abroad in the population.
 
     Args:
         df (pd.DataFrame): The DataFrame containing the data.
@@ -274,7 +274,7 @@ def calculate_p_born_abroad(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The modified DataFrame with the new column 'p_born_abroad' added.
     """
-    logging.info("Calculating the percentage of people born abroad in the population.")
+    logging.info("Calculating the proportion of people born abroad in the population.")
     df = df.copy()
     # Pivot the data to get 'Nacidos en el Extranjero' and 'Total Población' as columns
     pivot_df = df.pivot_table(
@@ -741,6 +741,34 @@ def aggregate_rows(df: pd.DataFrame, groups_info: Dict[str, Any]) -> pd.DataFram
     return grouped
 
 
+def calculate_p_age_groups(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculates the percentage of each age group within each year and mundissec,
+    then removes the rows where age_groups is "Total".
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame containing the columns 'year', 'mundissec', 'age_groups', and 'Total'.
+
+    Returns:
+    - pd.DataFrame: The modified DataFrame with a new column 'p_age_groups' and rows with age_groups 'Total' removed.
+    """
+    # Calculate the total for each year and mundissec
+    total_df = df[df["age_groups"] == "Total"][["year", "mundissec", "Total"]].rename(
+        columns={"Total": "total_value"}
+    )
+
+    # Merge the total values back to the original dataframe
+    df = df.merge(total_df, on=["year", "mundissec"])
+
+    # Calculate the percentage of each age group
+    df["p_age_groups"] = df["Total"] / df["total_value"]
+
+    # Remove rows where age_groups is 'Total'
+    df = df[df["age_groups"] != "Total"]
+
+    return df
+
+
 class CleanData:
     """
     Clean data.
@@ -898,6 +926,7 @@ class CleanData:
             self.run_calculate_p_born_abroad = config.get("calculate_p_born_abroad")
             self.run_fix_mundissec = config.get("fix_mundissec")
             self.run_group_age_groups = self.age_groups is not None
+            self.run_calculate_p_age_groups = config.get("calcutate_p_age_groups")
 
             data_type = config.get("data_type")
             if data_type == "elections_data":
@@ -1038,6 +1067,8 @@ class CleanData:
             self.df = rename_columns(self.df, self.columns_to_rename)
         if self.run_group_age_groups:
             self.df = aggregate_rows(self.df, groups_info=self.age_groups)
+        if self.run_calculate_p_age_groups:
+            self.df = calculate_p_age_groups(self.df)
         if self.run_pivot_table:
             self.df = pivot_table(
                 self.df,

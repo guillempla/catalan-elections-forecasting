@@ -4,7 +4,7 @@ Clean data and save it as a CSV file.
 
 import os
 import re
-from typing import List, Dict
+from typing import Any, List, Dict
 
 import logging
 import pandas as pd
@@ -24,6 +24,9 @@ def aggregate_duplicated_parties(df: pd.DataFrame) -> pd.DataFrame:
     """
     Aggregates duplicated parties in the given DataFrame.
 
+    For each duplicated party on the same election on the same census section,
+    they are aggregated into a single row by summing the votes and seats.
+
     Args:
         df (pd.DataFrame): The DataFrame containing the party data.
 
@@ -31,23 +34,23 @@ def aggregate_duplicated_parties(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: The DataFrame with duplicated parties aggregated.
 
     """
-    # Identifying duplicates
+    logging.info("Aggregating duplicated parties.")
+
+    # Identifying duplicates based on election, census section, and party code
     duplicates_mask = df.duplicated(
-        subset=["mundissec", "party_code", "nom_eleccio"], keep=False
+        subset=["mundissec", "party_code", "id_eleccio"], keep=False
     )
-    duplicated_party_codes = df[duplicates_mask]
+    duplicated_df = df[duplicates_mask]
 
     # Define how each column should be aggregated
     aggregations = {
         "vots": "sum",
-        "escons": "sum",
-        "vots_valids": "sum",
-        "vots_blancs": "sum",
-        "vots_nuls": "sum",
-        "votants": "sum",
-        "vots_valids_percentage": "mean",  # TODO: recalculate these percentages after aggregation
-        "cens_electoral_percentage": "mean",  # TODO: recalculate these percentages after aggregation
-        "votants_percentage": "mean",  # TODO: recalculate these percentages after aggregation
+        "escons": "first",
+        "vots_valids": "first",
+        "vots_blancs": "first",
+        "vots_nuls": "first",
+        "votants": "first",
+        "cens_electoral": "first",
         "party_name": "first",
         "party_abbr": "first",
         "party_color": "first",
@@ -61,14 +64,24 @@ def aggregate_duplicated_parties(df: pd.DataFrame) -> pd.DataFrame:
 
     # Aggregate duplicated rows
     aggregated_df = (
-        duplicated_party_codes.groupby(["mundissec", "party_code", "nom_eleccio"])
+        duplicated_df.groupby(["mundissec", "party_code", "id_eleccio"])
         .agg(aggregations)
         .reset_index()
     )
 
+    # Recalculate percentage columns
+    for col in [
+        "vots_valids_percentage",
+        "cens_electoral_percentage",
+        "votants_percentage",
+    ]:
+        aggregated_df[col] = (
+            aggregated_df["vots"] / aggregated_df[col.replace("_percentage", "")] * 100
+        )
+
     # Merge the aggregated results back to the original dataframe
     # First, drop duplicates from the original df
-    df_cleaned = df.drop(df[duplicates_mask].index)
+    df_cleaned = df.drop(index=duplicated_df.index)
 
     # Append the aggregated data
     final_df = pd.concat([df_cleaned, aggregated_df], ignore_index=True)
@@ -161,10 +174,7 @@ def create_mundissec_column(df: pd.DataFrame) -> pd.DataFrame:
     df["mundissec"] = None
 
     # Filter rows where id_nivell_territorial is in the specified list
-    filter_rows = (df["id_nivell_territorial"].isin(["DM", "ME", "MU", "SE"])) & (
-        df["territori_codi"] == "08187"
-    )
-
+    filter_rows = df["id_nivell_territorial"].isin(["DM", "ME", "MU", "SE"])
     # Calculate control code only for the filtered rows
     control_code = (
         df.loc[filter_rows, "territori_codi"]
@@ -227,6 +237,30 @@ def remove_rows_by_values(df: pd.DataFrame, conditions: list):
         value = condition["value"]
         logging.info("Removing rows with %s in column %s.", value, column)
         df = df[df[column] != value]
+    return df
+
+
+def fix_mundissec(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Fix the mundissec code as some of the codes have invalid (or none) check codes.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the data.
+
+    Returns:
+        pd.DataFrame: The modified DataFrame with the fixed mundissec codes.
+    """
+    mundissec_codes = df["mundissec"]
+    municipal_codes = mundissec_codes.apply(lambda x: x[:5])
+    check_codes = (
+        municipal_codes.astype(int)
+        .apply(MunicipalCodeControlDigit.calculate)
+        .astype(str)
+    )
+    rest_of_code = mundissec_codes.apply(lambda x: x[5:])
+    fixed_mundissec = municipal_codes + check_codes + rest_of_code
+
+    df["mundissec"] = fixed_mundissec
     return df
 
 
@@ -646,6 +680,67 @@ def load_data_create_column(
     return df
 
 
+def aggregate_columns(df: pd.DataFrame, groups: Dict) -> pd.DataFrame:
+    """
+    Group columns based on a dictionary of groups adding its values.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame to modify.
+    - groups (Dict): A dictionary where keys are the new column names and values are
+        lists of columns to group.
+
+    Returns:
+    - pd.DataFrame: The modified DataFrame with the new grouped columns.
+    """
+    logging.info("Grouping columns.")
+
+    # Create new columns with the sum of specified columns
+    for new_column, columns in groups.items():
+        df[new_column] = df[columns].sum(axis=1)
+
+    #  Drop the original columns
+    columns_to_drop = [column for columns in groups.values() for column in columns]
+    df.drop(columns=columns_to_drop, inplace=True)
+
+    return df
+
+
+def aggregate_rows(df: pd.DataFrame, groups_info: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Aggregates rows of a DataFrame based on specified grouping criteria.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame to be aggregated.
+    - groups_info (Dict[str, Any]): A dictionary containing the following keys:
+        - 'indexes' (List[str]): List of columns to group by besides the group column.
+        - 'group_column' (str): The column name to be grouped.
+        - 'groups' (Dict[str, List[str]]): A dictionary where keys are new group names and values
+            are lists of old group names.
+        - 'agg_columns' (List[str]): List of columns to be aggregated.
+        - 'new_column' (str, optional): The name of the new column to be created. Defaults to the original group column name.
+
+    Returns:
+    - pd.DataFrame: The aggregated DataFrame.
+    """
+    # Get the parameters from the dictionary
+    indexes = groups_info["indexes"]
+    group_column = groups_info["group_column"]
+    groups = groups_info["groups"]
+    agg_columns = groups_info["agg_columns"]
+    new_column = groups_info.get("new_column", group_column)
+
+    # Create a mapping of old groups to new groups
+    group_mapping = {old: new for new, olds in groups.items() for old in olds}
+
+    # Apply the mapping to create a new grouped column
+    df[new_column] = df[group_column].map(group_mapping).fillna(df[group_column])
+
+    # Group by the new group and other specified indexes
+    grouped = df.groupby(indexes + [new_column])[agg_columns].sum().reset_index()
+
+    return grouped
+
+
 class CleanData:
     """
     Clean data.
@@ -764,6 +859,7 @@ class CleanData:
             self.empty_columns_to_remove = config.get("remove_empty_rows")
             self.pivot_table = config.get("pivot_table")
             self.remove_rows_by_values = config.get("remove_rows_by_values")
+            self.age_groups = config.get("group_age_groups")
 
             self.run_fix_party_codes = self.party_codes_to_fix is not None
             self.run_columns_null_values = self.columns_null_values is not None
@@ -800,6 +896,8 @@ class CleanData:
             self.run_pivot_table = self.pivot_table is not None
             self.run_remove_rows_by_values = self.remove_rows_by_values is not None
             self.run_calculate_p_born_abroad = config.get("calculate_p_born_abroad")
+            self.run_fix_mundissec = config.get("fix_mundissec")
+            self.run_group_age_groups = self.age_groups is not None
 
             data_type = config.get("data_type")
             if data_type == "elections_data":
@@ -864,9 +962,9 @@ class CleanData:
             self.df = merge_participation_data(
                 self.df, df_participation=self.elections_participation_df
             )
-            self.df = create_valid_votes_percentage_column(self.df)
-            self.df = create_census_percentage_column(self.df)
-            self.df = create_total_votes_percentage_column(self.df)
+            self.df = create_valid_votes_percentage_column(self.df, remove_na=False)
+            self.df = create_census_percentage_column(self.df, remove_na=False)
+            self.df = create_total_votes_percentage_column(self.df, remove_na=False)
         if self.run_aggregate_duplicated_parties:
             self.df = aggregate_duplicated_parties(self.df)
 
@@ -914,6 +1012,8 @@ class CleanData:
             self.df = remove_rows_by_values(self.df, self.remove_rows_by_values)
         if self.run_rename_columns:
             self.df = rename_columns(self.df, self.columns_to_rename)
+        if self.run_fix_mundissec:
+            self.df = fix_mundissec(self.df)
         if self.run_calculate_p_born_abroad:
             self.df = calculate_p_born_abroad(self.df)
         if self.run_pivot_table:
@@ -926,9 +1026,9 @@ class CleanData:
 
     def clean_age_groups(self):
         """
-        Clean place of birth data.
+        Clean age groups data.
         """
-        logging.info("Cleaning place of birth data.")
+        logging.info("Cleaning age groups data.")
 
         if self.run_concat_age_groups_dfs:
             self.df = concat_dataframes(dataframes=self.age_groups_filenames_dfs)
@@ -936,6 +1036,8 @@ class CleanData:
             self.df = remove_rows_by_values(self.df, self.remove_rows_by_values)
         if self.run_rename_columns:
             self.df = rename_columns(self.df, self.columns_to_rename)
+        if self.run_group_age_groups:
+            self.df = aggregate_rows(self.df, groups_info=self.age_groups)
         if self.run_pivot_table:
             self.df = pivot_table(
                 self.df,

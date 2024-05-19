@@ -1015,12 +1015,16 @@ class CleanData:
             self.df = divide_string_columns(
                 self.df, columns_to_divide=self.columns_to_divide
             )
+        if self.run_fix_mundissec:
+            self.df = fix_mundissec(self.df)
         if self.run_filter_by_income:
             self.df = filter_by_column(
                 self.df,
                 column=self.filter_by_income.get("column"),
                 values=self.filter_by_income.get("values"),
             )
+        if self.run_rename_columns:
+            self.df = rename_columns(self.df, self.columns_to_rename)
         if self.run_pivot_table:
             self.df = pivot_table(
                 self.df,
@@ -1065,6 +1069,8 @@ class CleanData:
             self.df = remove_rows_by_values(self.df, self.remove_rows_by_values)
         if self.run_rename_columns:
             self.df = rename_columns(self.df, self.columns_to_rename)
+        if self.run_fix_mundissec:
+            self.df = fix_mundissec(self.df)
         if self.run_group_age_groups:
             self.df = aggregate_rows(self.df, groups_info=self.age_groups)
         if self.run_calculate_p_age_groups:

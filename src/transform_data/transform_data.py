@@ -281,6 +281,9 @@ class TransformData:
         results_path: str,
         output_path: str = "../data/output/censal_sections_results",
         born_abroad_path: str = "../data/processed/place_of_birth_clean_data.pkl",
+        age_groups_path: str = "../data/processed/age_groups_clean_data.pkl",
+        mean_income_path: str = "../data/processed/mean_income_clean_data.pkl",
+        socioeconomic_index_path: str = "../data/processed/socioeconomic_index_clean_data.pkl",
         start_year: int = 2008,
         end_year: int = 2024,
         n_important_parties: int = 9,
@@ -289,6 +292,7 @@ class TransformData:
         add_born_abroad: bool = False,
         add_mean_income: bool = False,
         add_age_groups: bool = False,
+        add_socioeconomic_index: bool = False,
     ) -> None:
         """
         Initialize the class with the paths to the censal sections and results data
@@ -300,7 +304,6 @@ class TransformData:
         """
         self.censal_sections_gdf = load_data(censal_sections_path)
         self.results_df = load_data(results_path)
-        self.born_abroad_df = load_data(born_abroad_path)
         self.output_path = output_path
         self.start_year = start_year
         self.end_year = end_year
@@ -310,6 +313,16 @@ class TransformData:
         self.add_born_abroad = add_born_abroad
         self.add_mean_income = add_mean_income
         self.add_age_groups = add_age_groups
+        self.add_socioeconomic_index = add_socioeconomic_index
+
+        if self.add_born_abroad:
+            self.born_abroad_df = load_data(born_abroad_path)
+        if self.add_age_groups:
+            self.age_groups_df = load_data(age_groups_path)
+        if self.add_mean_income:
+            self.mean_income_df = load_data(mean_income_path)
+        if self.add_socioeconomic_index:
+            self.socioeconomic_index_df = load_data(socioeconomic_index_path)
 
     def transform_data(self) -> None:
         """
@@ -321,43 +334,12 @@ class TransformData:
             self.results_df["year"].astype(int).between(self.start_year, self.end_year)
         ]
 
-        # # fix cup-g and cup-pr joined_code
-        # self.results_df.loc[
-        #     (self.results_df["party_abbr"] == "CUP-G")
-        #     | (self.results_df["party_abbr"] == "CUP-PR"),
-        #     "joined_code",
-        # ] = 1003
-        # # fix cup-g and cup-pr joined_name
-        # self.results_df.loc[
-        #     (self.results_df["party_abbr"] == "CUP-G")
-        #     | (self.results_df["party_abbr"] == "CUP-PR"),
-        #     "joined_name",
-        # ] = "Candidatura d'Unitat Popular"
-        # # fix cup-g and cup-pr joined_abbr
-        # self.results_df.loc[
-        #     (self.results_df["party_abbr"] == "CUP-G")
-        #     | (self.results_df["party_abbr"] == "CUP-PR"),
-        #     "joined_abbr",
-        # ] = "CUP"
-
         self.results_df = manually_group_parties(
             self.results_df,
             {
                 1013: [71],
                 1031: [12, 1007, 1000],
                 1003: [2015673, 82064190],
-                # 999999999: [
-                #     5000000,
-                #     170564112,
-                #     430244110,
-                #     895,
-                #     860,
-                #     80655190,
-                #     81654190,
-                #     252094190,
-                #     252484190,
-                #     431704190,
-                # ],
             },
         )
 
@@ -458,13 +440,13 @@ class TransformData:
                     inplace=True,
                 )
 
-                # Step 1: Extract 'mundissec' from the index of timeseries_df
+                # Extract 'mundissec' from the index of timeseries_df
                 # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
                 timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
                     lambda x: x.split("_")[1]
                 )
 
-                # Step 2: Ensure data types are compatible
+                # Ensure data types are compatible
                 timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
 
                 # If last_born_abroad_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
@@ -484,7 +466,7 @@ class TransformData:
                     str
                 )  # Ensure data type matches
 
-                # Step 3: Merge on 'mundissec' while keeping timeseries_df's original index
+                # Merge on 'mundissec' while keeping timeseries_df's original index
                 aux_timeseries_df = timeseries_df.copy()
                 aux_timeseries_df.reset_index(inplace=True, drop=True)
                 merged_df = pd.merge(
@@ -498,9 +480,197 @@ class TransformData:
                 merged_df.set_index(timeseries_df.index, inplace=True)
                 timeseries_df = merged_df
 
+            if self.add_age_groups:
+                max_year = max(timeseries_df.index.map(extract_year))
+                max_year_columns = [
+                    col for col in self.age_groups_df.columns if str(max_year) in col
+                ]
+
+                # Resulting DataFrame with only columns that contain the max year
+                last_age_groups_df = self.age_groups_df[max_year_columns]
+
+                # Find all columns that match the pattern "p_age_groups_{age_group}_{max_year}"
+                age_group_columns = [
+                    col
+                    for col in last_age_groups_df.columns
+                    if col.startswith("p_age_groups_") and col.endswith(f"_{max_year}")
+                ]
+                # Create a mapping from the old column names to the new column names
+                rename_mapping = {
+                    col: f"{max_year}_p_{col.split('_')[-2]}"
+                    for col in age_group_columns
+                }
+                # Rename the columns to {max_year}_p_{age_group}
+                last_age_groups_df.rename(columns=rename_mapping, inplace=True)
+
+                # Extract 'mundissec' from the index of timeseries_df
+                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
+                    lambda x: x.split("_")[1]
+                )
+
+                # Ensure data types are compatible
+                timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
+
+                # If last_age_groups_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                if (
+                    last_age_groups_df.index.name == "mundissec"
+                    or "mundissec" in last_age_groups_df.columns
+                ):
+                    last_age_groups_df.reset_index(inplace=True)
+                    if last_age_groups_df.index.name == "mundissec":
+                        last_age_groups_df.rename(
+                            columns={last_age_groups_df.index.name: "mundissec"},
+                            inplace=True,
+                        )
+                last_age_groups_df["mundissec"] = last_age_groups_df[
+                    "mundissec"
+                ].astype(
+                    str
+                )  # Ensure data type matches
+
+                # Merge on 'mundissec' while keeping timeseries_df's original index
+                aux_timeseries_df = timeseries_df.copy()
+                aux_timeseries_df.reset_index(inplace=True, drop=True)
+                merged_df = pd.merge(
+                    aux_timeseries_df,
+                    last_age_groups_df,
+                    on="mundissec",
+                    how="left",
+                )
+
+                # Ensure that timeseries_df index is carried over
+                merged_df.set_index(timeseries_df.index, inplace=True)
+                timeseries_df = merged_df
+
+            if self.add_mean_income:
+                max_year = max(timeseries_df.index.map(extract_year))
+                max_year_columns = [
+                    col for col in self.mean_income_df.columns if str(max_year) in col
+                ]
+
+                # Resulting DataFrame with only columns that contain the max year
+                last_mean_income_df = self.mean_income_df[max_year_columns]
+
+                # Rename column "mean_income_{max_year}" to "{max_year}_mean_income"
+                last_mean_income_df.rename(
+                    columns={f"mean_income_{max_year}": f"{max_year}_mean_income"},
+                    inplace=True,
+                )
+
+                # Extract 'mundissec' from the index of timeseries_df
+                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
+                    lambda x: x.split("_")[1]
+                )
+
+                # Ensure data types are compatible
+                timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
+
+                # If last_mean_income_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                if (
+                    last_mean_income_df.index.name == "mundissec"
+                    or "mundissec" in last_mean_income_df.columns
+                ):
+                    last_mean_income_df.reset_index(inplace=True)
+                    if last_mean_income_df.index.name == "mundissec":
+                        last_mean_income_df.rename(
+                            columns={last_mean_income_df.index.name: "mundissec"},
+                            inplace=True,
+                        )
+                last_mean_income_df["mundissec"] = last_mean_income_df[
+                    "mundissec"
+                ].astype(
+                    str
+                )  # Ensure data type matches
+
+                # Merge on 'mundissec' while keeping timeseries_df's original index
+                aux_timeseries_df = timeseries_df.copy()
+                aux_timeseries_df.reset_index(inplace=True, drop=True)
+                merged_df = pd.merge(
+                    aux_timeseries_df,
+                    last_mean_income_df,
+                    on="mundissec",
+                    how="left",
+                )
+
+                # Ensure that timeseries_df index is carried over
+                merged_df.set_index(timeseries_df.index, inplace=True)
+                timeseries_df = merged_df
+
+            if self.add_socioeconomic_index:
+                max_year = max(timeseries_df.index.map(extract_year))
+                years_socioeconomic_index = [
+                    int(re.search(r"\d+", col).group())
+                    for col in self.socioeconomic_index_df.columns
+                    if re.search(r"\d+", col) is not None
+                ]
+                max_year = min(max_year, max(years_socioeconomic_index))
+                max_year_columns = [
+                    col
+                    for col in self.socioeconomic_index_df.columns
+                    if str(max_year) in col
+                ]
+                # Resulting DataFrame with only columns that contain the max year
+                last_socioeconomic_index_df = self.socioeconomic_index_df[
+                    max_year_columns
+                ]
+
+                # Rename column "socioeconomic_index_{max_year}" to "{max_year}_ist"
+                last_socioeconomic_index_df.rename(
+                    columns={
+                        f"valor_Índex socioeconòmic territorial_{max_year}": f"{max_year}_ist"
+                    },
+                    inplace=True,
+                )
+
+                # Extract 'mundissec' from the index of timeseries_df
+                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
+                    lambda x: x.split("_")[1]
+                )
+
+                # Ensure data types are compatible
+                timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
+
+                # If last_socioeconomic_index_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                if (
+                    last_socioeconomic_index_df.index.name == "mundissec"
+                    or "mundissec" in last_socioeconomic_index_df.columns
+                ):
+                    last_socioeconomic_index_df.reset_index(inplace=True)
+                    if last_socioeconomic_index_df.index.name == "mundissec":
+                        last_socioeconomic_index_df.rename(
+                            columns={
+                                last_socioeconomic_index_df.index.name: "mundissec"
+                            },
+                            inplace=True,
+                        )
+                last_socioeconomic_index_df["mundissec"] = last_socioeconomic_index_df[
+                    "mundissec"
+                ].astype(
+                    str
+                )  # Ensure data type matches
+
+                # Merge on 'mundissec' while keeping timeseries_df's original index
+                aux_timeseries_df = timeseries_df.copy()
+                aux_timeseries_df.reset_index(inplace=True, drop=True)
+                merged_df = pd.merge(
+                    aux_timeseries_df,
+                    last_socioeconomic_index_df,
+                    on="mundissec",
+                    how="left",
+                )
+
+                # Ensure that timeseries_df index is carried over
+                merged_df.set_index(timeseries_df.index, inplace=True)
+                timeseries_df = merged_df
+
+            timeseries_df = timeseries_df.drop(columns=["mundissec"])
+
             save_data(
                 timeseries_df,
-                f"../data/output/timeseries_{self.start_year}_{self.end_year}_{self.n_important_parties}_{self.add_election_type}_{self.add_born_abroad}",
+                f"../data/output/timeseries_{self.start_year}_{self.end_year}_{self.n_important_parties}_{self.add_election_type}_{self.add_born_abroad}_{self.add_age_groups}_{self.add_mean_income}_{self.add_socioeconomic_index}",
                 index=True,
             )
 

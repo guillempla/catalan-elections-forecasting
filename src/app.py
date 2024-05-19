@@ -664,14 +664,18 @@ def main():
         #                 "regex_separator": r"^(\d+)\s+(.+)",  # Divide by the first space
         #             },
         #         ],
+        #         "fix_mundissec": True,
         #         "filter_by_income": {
         #             "column": "Indicadores de renta media y mediana",
         #             "values": ["Renta neta media por hogar"],
         #         },
+        #         "columns_to_rename": {
+        #             "Total": "mean_income",
+        #         },
         #         "pivot_table": {
         #             "index": ["mundissec"],
         #             "columns": "Periodo",
-        #             "values": "Total",
+        #             "values": "mean_income",
         #             "aggfunc": "sum",
         #         },
         #     }
@@ -689,10 +693,6 @@ def main():
         #         "remove_rows_by_values": [
         #             {
         #                 "column": "Sección",
-        #                 "value": "TOTAL",
-        #             },
-        #             {
-        #                 "column": "País de nacimiento",
         #                 "value": "TOTAL",
         #             },
         #             {
@@ -716,85 +716,86 @@ def main():
         #         },
         #     }
         # )
-        clean_configs.append(
-            {
-                "data_type": "age_groups",
-                "output_filename": "../data/processed/age_groups_clean_data",
-                "age_groups_directory": "../data/raw/age_groups/",
-                "create_column_on_load": {
-                    "new_column": "year",
-                    "regex": r"_(\d{4})\.\w+$",
-                },
-                "remove_rows_by_values": [
-                    {
-                        "column": "Sección",
-                        "value": "TOTAL",
-                    },
-                    {
-                        "column": "Sexo",
-                        "value": "Hombres",
-                    },
-                    {
-                        "column": "Sexo",
-                        "value": "Mujeres",
-                    },
-                ],
-                "columns_to_rename": {
-                    "Sección": "mundissec",
-                },
-                "group_age_groups": {
-                    "indexes": ["year", "mundissec"],
-                    "group_column": "Edad (grupos quinquenales)",
-                    "new_column": "age_groups",
-                    "groups": {
-                        "child": ["0-4", "5-9", "10-14"],
-                        "young": ["15-19", "20-24", "25-29", "30-34"],
-                        "adult": ["35-39", "40-44", "45-49", "50-54", "55-59", "60-64"],
-                        "senior": [
-                            "65-69",
-                            "70-74",
-                            "75-79",
-                            "80-84",
-                            "85-89",
-                            "90-94",
-                            "95-99",
-                            "100 y más",
-                        ],
-                    },
-                    "agg_columns": ["Total"],
-                },
-                "calcutate_p_age_groups": True,
-                "pivot_table": {
-                    "index": ["mundissec"],
-                    "columns": ["age_groups", "year"],
-                    "values": "p_age_groups",
-                    "aggfunc": "sum",
-                },
-            }
-        )
         # clean_configs.append(
         #     {
-        #         "data_type": "socioeconomic_index",
-        #         "output_filename": "../data/processed/socioeconomic_index_clean_data",
-        #         "socioeconomic_index_directory": "../data/raw/socioeconomic_index/",
+        #         "data_type": "age_groups",
+        #         "output_filename": "../data/processed/age_groups_clean_data",
+        #         "age_groups_directory": "../data/raw/age_groups/",
+        #         "create_column_on_load": {
+        #             "new_column": "year",
+        #             "regex": r"_(\d{4})\.\w+$",
+        #         },
+        #         "fix_mundissec": True,
         #         "remove_rows_by_values": [
         #             {
-        #                 "column": "secció censal",
-        #                 "value": "Catalunya",
+        #                 "column": "Sección",
+        #                 "value": "TOTAL",
+        #             },
+        #             {
+        #                 "column": "Sexo",
+        #                 "value": "Hombres",
+        #             },
+        #             {
+        #                 "column": "Sexo",
+        #                 "value": "Mujeres",
         #             },
         #         ],
         #         "columns_to_rename": {
-        #             "secció censal": "mundissec",
-        #             "any": "year",
+        #             "Sección": "mundissec",
         #         },
+        #         "group_age_groups": {
+        #             "indexes": ["year", "mundissec"],
+        #             "group_column": "Edad (grupos quinquenales)",
+        #             "new_column": "age_groups",
+        #             "groups": {
+        #                 "child": ["0-4", "5-9", "10-14"],
+        #                 "young": ["15-19", "20-24", "25-29", "30-34"],
+        #                 "adult": ["35-39", "40-44", "45-49", "50-54", "55-59", "60-64"],
+        #                 "senior": [
+        #                     "65-69",
+        #                     "70-74",
+        #                     "75-79",
+        #                     "80-84",
+        #                     "85-89",
+        #                     "90-94",
+        #                     "95-99",
+        #                     "100 y más",
+        #                 ],
+        #             },
+        #             "agg_columns": ["Total"],
+        #         },
+        #         "calcutate_p_age_groups": True,
         #         "pivot_table": {
         #             "index": ["mundissec"],
-        #             "columns": ["concepte", "year"],
-        #             "values": "valor",
+        #             "columns": ["age_groups", "year"],
+        #             "values": "p_age_groups",
         #             "aggfunc": "sum",
         #         },
         #     }
         # )
+        clean_configs.append(
+            {
+                "data_type": "socioeconomic_index",
+                "output_filename": "../data/processed/socioeconomic_index_clean_data",
+                "socioeconomic_index_directory": "../data/raw/socioeconomic_index/",
+                "remove_rows_by_values": [
+                    {
+                        "column": "secció censal",
+                        "value": "Catalunya",
+                    },
+                ],
+                "columns_to_rename": {
+                    "secció censal": "mundissec",
+                    "any": "year",
+                },
+                "pivot_table": {
+                    "index": ["mundissec"],
+                    "columns": ["concepte", "year"],
+                    "values": "valor",
+                    "aggfunc": "sum",
+                },
+            }
+        )
 
         CleanData(clean_configs=clean_configs)
 
@@ -810,6 +811,9 @@ def main():
             transform_to_timeseries=True,
             add_election_type=1,
             add_born_abroad=True,
+            add_age_groups=True,
+            add_mean_income=True,
+            add_socioeconomic_index=True,
         ).transform_data()
 
 

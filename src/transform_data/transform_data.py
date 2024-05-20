@@ -145,6 +145,25 @@ def select_important_parties_last_election(
     return df
 
 
+def select_important_parties_by_list(
+    df: pd.DataFrame,
+    important_parties_codes: List[int],
+    party_code_column: str = "joined_code",
+    party_name_column: str = "joined_name",
+    party_color_column: str = "joined_color",
+    party_abbr_column: str = "joined_abbr",
+) -> pd.DataFrame:
+    # Identify rows that are not in the top parties
+    mask = ~df[party_code_column].isin(important_parties_codes)
+
+    # Replace details for non-top parties to aggregate them as 'Other Parties'
+    df.loc[mask, party_code_column] = 999999999
+    df.loc[mask, party_name_column] = "Other Parties"
+    df.loc[mask, party_color_column] = "#535353"
+    df.loc[mask, party_abbr_column] = "Other"
+    return df
+
+
 def add_missing_party_columns(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds missing party columns to the GeoDataFrame.
@@ -367,14 +386,28 @@ class TransformData:
             },
         )
 
-        important_parties_df = select_important_parties(
-            self.results_df,
-            n_important_parties=self.n_important_parties,
-            party_abbr_column="joined_clean_abbr",
-        )
+        # important_parties_df = select_important_parties(
+        #     self.results_df,
+        #     n_important_parties=self.n_important_parties,
+        #     party_abbr_column="joined_clean_abbr",
+        # )
         # important_parties = select_important_parties_last_election(
         #     self.results_df, n_important_parties=self.n_important_parties
         # )
+        important_parties = [
+            1013,
+            1031,
+            1003,
+            999999999,
+            6,
+            10,
+            86,
+            301,
+            693,
+        ]  # 301: Cs, 693: VOX
+        important_parties_df = select_important_parties_by_list(
+            self.results_df, important_parties
+        )
 
         important_parties_df = ensure_joined_abbr_consistency(important_parties_df)
 

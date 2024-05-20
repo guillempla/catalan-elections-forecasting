@@ -270,6 +270,26 @@ def extract_year(index_string):
     return int(index_string[digits_start : digits_start + 4])
 
 
+def ensure_joined_abbr_consistency(df):
+    # Group by 'joined_code'
+    grouped = df.groupby("joined_code")
+
+    # Iterate through each group
+    for name, group in grouped:
+        # Ensure consistency by keeping the first unique 'joined_clean_abbr' value
+        consistent_clean_abbr = group["joined_clean_abbr"].iloc[-1]
+        consistent_uppercased_abbr = consistent_clean_abbr.upper()
+        df.loc[df["joined_code"] == name, "joined_clean_abbr"] = (
+            consistent_uppercased_abbr
+        )
+        consistent_name = group["joined_name"].iloc[-1]
+        df.loc[df["joined_code"] == name, "joined_name"] = consistent_name
+        consistent_abbr = group["joined_abbr"].iloc[-1]
+        df.loc[df["joined_code"] == name, "joined_abbr"] = consistent_abbr
+
+    return df
+
+
 class TransformData:
     """
     Transform censal sections data and results data into a single output dataframe
@@ -284,7 +304,7 @@ class TransformData:
         age_groups_path: str = "../data/processed/age_groups_clean_data.pkl",
         mean_income_path: str = "../data/processed/mean_income_clean_data.pkl",
         socioeconomic_index_path: str = "../data/processed/socioeconomic_index_clean_data.pkl",
-        start_year: int = 2008,
+        start_year: int = 1975,
         end_year: int = 2024,
         n_important_parties: int = 9,
         transform_to_timeseries: bool = False,
@@ -337,24 +357,32 @@ class TransformData:
         self.results_df = manually_group_parties(
             self.results_df,
             {
-                1013: [71],
-                1031: [12, 1007, 1000],
-                1003: [2015673, 82064190],
+                1013: [71, 337, 1001, 1015, 739, 2003575, 2007380, 194],  # Comuns
+                1031: [12, 1007, 1000, 373],  # JxCat
+                1003: [1030, 2015673, 82064190],  # CUP
+                999999999: [3000000, 5000000],  # Other Parties
+                6: [2003191, 264],  # PSC-PSOE
+                10: [610, 431, 52, 111],  # ERC
+                86: [19, 31],  # PP
             },
         )
 
         important_parties_df = select_important_parties(
-            self.results_df, n_important_parties=self.n_important_parties
+            self.results_df,
+            n_important_parties=self.n_important_parties,
+            party_abbr_column="joined_clean_abbr",
         )
         # important_parties = select_important_parties_last_election(
         #     self.results_df, n_important_parties=self.n_important_parties
         # )
 
+        important_parties_df = ensure_joined_abbr_consistency(important_parties_df)
+
         # Pivot the DataFrame
         logging.info("Pivoting the DataFrame")
         results_wide_df = important_parties_df.pivot_table(
             index="mundissec",
-            columns=["joined_code", "id_eleccio"],
+            columns=["joined_clean_abbr", "id_eleccio"],
             values=[
                 "vots",
                 "votants_percentage",

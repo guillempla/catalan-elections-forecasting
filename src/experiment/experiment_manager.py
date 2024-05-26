@@ -6,7 +6,7 @@ from typing import Dict, List
 import pandas as pd
 
 from experiment.experiment_runner import ExperimentRunner
-from utils.rw_files import load_data, save_data
+from utils.rw_files import save_data
 
 
 class ExperimentManager:

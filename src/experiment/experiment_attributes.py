@@ -104,3 +104,23 @@ class ExperimentAttributes:
             value (Dict[str, Any]): A dictionary containing the hyperparameters for the experiment.
         """
         self._hyperparams = value
+
+    @property
+    def results(self):
+        """
+        Get the results of the experiment.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing the results of the experiment.
+        """
+        return self._results
+
+    @results.setter
+    def results(self, value):
+        """
+        Set the results of the experiment.
+
+        Args:
+            value (Dict[str, Any]): A dictionary containing the results of the experiment.
+        """
+        self._results = value

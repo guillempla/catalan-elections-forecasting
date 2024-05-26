@@ -23,7 +23,6 @@ class ExperimentAttributes:
         self.dataset_params = experiment_config.get("dataset_params")
         self.model_params = experiment_config.get("model_type_params")
         self.hyperparams = experiment_config.get("hyperparams")
-        self.results = {}
 
     @property
     def experiment_name(self):
@@ -104,23 +103,3 @@ class ExperimentAttributes:
             value (Dict[str, Any]): A dictionary containing the hyperparameters for the experiment.
         """
         self._hyperparams = value
-
-    @property
-    def results(self):
-        """
-        Get the results of the experiment.
-
-        Returns:
-            Dict[str, Any]: A dictionary containing the results of the experiment.
-        """
-        return self._results
-
-    @results.setter
-    def results(self, value):
-        """
-        Set the results of the experiment.
-
-        Args:
-            value (Dict[str, Any]): A dictionary containing the results of the experiment.
-        """
-        self._results = value

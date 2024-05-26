@@ -6,33 +6,24 @@ which represents the configuration for an experiment.
 from typing import Dict, Any
 
 
-class ExperimentConfig:
+class ExperimentAttributes:
     """
     ExperimentConfig class represents the configuration for an experiment.
     """
 
-    def __init__(
-        self,
-        experiment_name: str,
-        dataset_params: Dict[str, Any],
-        model_type_params: Dict[str, Any],
-        hyperparams: Dict[str, Any],
-    ):
+    def __init__(self, experiment_config: Dict[str, Any]):
         """
         Initialize the ExperimentConfig object.
 
         Args:
-            experiment_name (str): The name of the experiment.
-            dataset_params (Dict[str, Any]): A dictionary containing the parameters for the dataset.
-            model_type_params (Dict[str, Any]): A dictionary containing the parameters
-                for the model.
-            hyperparams (Dict[str, Any]): A dictionary containing the hyperparameters
+            experiment_config (Dict[str, Any]): A dictionary containing the configuration
                 for the experiment.
         """
-        self.experiment_name = experiment_name
-        self.dataset_params = dataset_params
-        self.model_params = model_type_params
-        self.hyperparams = hyperparams
+        self.experiment_name = experiment_config.get("experiment_name")
+        self.dataset_params = experiment_config.get("dataset_params")
+        self.model_params = experiment_config.get("model_type_params")
+        self.hyperparams = experiment_config.get("hyperparams")
+        self.results = {}
 
     @property
     def experiment_name(self):

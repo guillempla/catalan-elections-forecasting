@@ -29,12 +29,10 @@ class ExperimentRunner:
 
         try:
             status = "loading data"
-            data, target = self.data_preparation.load_data()
+            self.data_preparation.load_data()
 
             status = "splitting data"
-            X_train, X_test, y_train, y_test = self.data_preparation.split_data(
-                data, target
-            )
+            X_train, X_test, y_train, y_test = self.data_preparation.split_data()
 
             status = "training model"
             self.model_training.train(X_train, y_train)

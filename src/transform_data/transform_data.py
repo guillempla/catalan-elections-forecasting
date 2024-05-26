@@ -727,7 +727,8 @@ class TransformData:
                 merged_df.set_index(timeseries_df.index, inplace=True)
                 timeseries_df = merged_df
 
-            timeseries_df = timeseries_df.drop(columns=["mundissec"])
+            if "mundissec" in timeseries_df.columns:
+                timeseries_df = timeseries_df.drop(columns=["mundissec"])
 
             save_data(
                 timeseries_df,

@@ -15,17 +15,17 @@ class ModelTraining:
     """Class for training and evaluating machine learning models."""
 
     def __init__(
-        self, model_type: str, model_params: Dict[str, Any], hyperparams: Dict[str, Any]
+        self, model_type: str, model_params: Dict[str, Any], fit_params: Dict[str, Any]
     ):
         """
         Initialize the ModelTraining object.
 
         Args:
             model_params (Dict[str, Any]): Parameters for the model.
-            hyperparams (Dict[str, Any]): Hyperparameters for the model.
+            fit_params (Dict[str, Any]): Hyperparameters for the model.
         """
         self.model_params = model_params
-        self.hyperparams = hyperparams
+        self.fit_params = fit_params
         self.model = self.initialize_model()
         self.model_type = model_type
 

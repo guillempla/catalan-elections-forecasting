@@ -19,10 +19,11 @@ class ExperimentAttributes:
             experiment_config (Dict[str, Any]): A dictionary containing the configuration
                 for the experiment.
         """
-        self.experiment_name = experiment_config.get("experiment_name")
-        self.dataset_params = experiment_config.get("dataset_params")
-        self.model_params = experiment_config.get("model_type_params")
-        self.hyperparams = experiment_config.get("hyperparams")
+        self._experiment_name = experiment_config.get("experiment_name")
+        self._model_type = experiment_config.get("model_type")
+        self._dataset_params = experiment_config.get("dataset_params")
+        self._model_params = experiment_config.get("model_params")
+        self._fit_params = experiment_config.get("fit_params")
 
     @property
     def experiment_name(self):
@@ -43,6 +44,26 @@ class ExperimentAttributes:
             value (str): The name of the experiment.
         """
         self._experiment_name = value
+
+    @property
+    def model_type(self):
+        """
+        Get the type of the model.
+
+        Returns:
+            str: The type of the model.
+        """
+        return self._model_type
+
+    @model_type.setter
+    def model_type(self, value):
+        """
+        Set the type of the model.
+
+        Args:
+            value (str): The type of the model.
+        """
+        self._model_type = value
 
     @property
     def dataset_params(self):
@@ -85,21 +106,21 @@ class ExperimentAttributes:
         self._model_params = value
 
     @property
-    def hyperparams(self):
+    def fit_params(self):
         """
         Get the hyperparameters for the experiment.
 
         Returns:
             Dict[str, Any]: A dictionary containing the hyperparameters for the experiment.
         """
-        return self._hyperparams
+        return self._fit_params
 
-    @hyperparams.setter
-    def hyperparams(self, value):
+    @fit_params.setter
+    def fit_params(self, value):
         """
         Set the hyperparameters for the experiment.
 
         Args:
             value (Dict[str, Any]): A dictionary containing the hyperparameters for the experiment.
         """
-        self._hyperparams = value
+        self._fit_params = value

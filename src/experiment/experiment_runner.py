@@ -17,8 +17,9 @@ class ExperimentRunner:
             self.experiment_attributes.dataset_params
         )
         self.model_training = ModelTraining(
+            self.experiment_attributes.model_type,
             self.experiment_attributes.model_params,
-            self.experiment_attributes.hyperparams,
+            self.experiment_attributes.fit_params,
         )
 
     def run_experiment(self):

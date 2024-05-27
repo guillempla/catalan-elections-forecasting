@@ -261,3 +261,17 @@ def unzip_file(
         logging.error("Error extracting the ZIP file: %s", e)
     except FileNotFoundError as e:
         logging.error("Error deleting the ZIP file: %s", e)
+
+
+def camel_to_snake(s: str) -> str:
+    """
+    Converts a string from camel case to snake case.
+
+    Args:
+        s (str): The input string in camel case.
+
+    Returns:
+        str: The converted string in snake case.
+    """
+    s.replace(" ", "")
+    return "".join(["_" + c.lower() if c.isupper() else c for c in s]).lstrip("_")

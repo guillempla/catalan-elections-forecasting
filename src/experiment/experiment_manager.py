@@ -28,6 +28,7 @@ class ExperimentManager:
         for experiment in self.experiments:
             runner = ExperimentRunner(experiment)
             results = runner.run_experiment()
+            self.results.append(results)
             print(results)
 
     def save_results(self, file_path: str = "experiment_results.csv"):

@@ -26,8 +26,8 @@ class ModelTraining:
         """
         self.model_params = model_params
         self.fit_params = fit_params
-        self.model = self.initialize_model()
         self.model_type = model_type
+        self.model = self.initialize_model()
 
     def initialize_model(self):
         """

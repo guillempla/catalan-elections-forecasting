@@ -35,7 +35,7 @@ class ExperimentRunner:
             X_train, y_train, X_test, y_test, _ = self.data_preparation.split_data()
 
             status = "training model"
-            self.model_training.train(X_train, y_train)
+            self.model_training.train(X_train, y_train, X_test, y_test)
 
             status = "evaluating model"
             metrics = self.model_training.evaluate(X_test, y_test)

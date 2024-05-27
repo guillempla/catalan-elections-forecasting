@@ -5,6 +5,7 @@ from typing import List
 from dotenv import load_dotenv
 from download_data import DownloadData
 from clean_data import CleanData
+from experiment.experiment_manager import ExperimentManager
 from group_parties import GroupParties
 from transform_data.transform_data import TransformData
 
@@ -47,12 +48,20 @@ def main():
         default=False,
         help="Transform the data from the Catalan Elections API into ML format.",
     )
+    # Add boolean argument for deciding if the ML model must be trained or not.
+    parser.add_argument(
+        "--train",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Train the ML model.",
+    )
 
     args = parser.parse_args()
     download_data = args.download
     clean_data = args.clean
     group_parties = args.group
     transform_data = args.transform
+    train_model = args.train
 
     logging.info("Loading environment variables.")
 
@@ -815,6 +824,62 @@ def main():
             add_mean_income=True,
             add_socioeconomic_index=True,
         ).transform_data()
+
+    if train_model:
+        experiments_configs: List[dict] = []
+
+        experiments_configs.append(
+            {
+                "experiment_name": "XGBoost Multi Output Regressor",
+                "model_type": "xgboost",
+                "dataset_params": {
+                    "only_votes": "",
+                    "no_ist": "",
+                    "ist": "",
+                    "complete": "",
+                },
+                "model_params": {
+                    "n_estimators": 400,  # Number of boosting rounds
+                    "max_depth": 12,  # Typically 3-10. Higher values can lead to overfitting
+                    "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
+                    "objective": "reg:squarederror",  # Regression with squared loss
+                    "eval_metric": "rmse",  # Root Mean Square Error for evaluation
+                    "tree_method": "hist",  # Fast histogram optimized approximate greedy algorithm
+                    "multi_strategy": "multi_output_tree",
+                    "early_stopping_rounds": 5,
+                    "reg_alpha": 100,  # L1 regularization term on weights
+                    "reg_lambda": 50,  # L2 regularization term on weights
+                },
+                "fit_params": {
+                    "verbose": True,
+                },
+            },
+            {
+                "experiment_name": "XGBoost Single Output Regressor",
+                "model_type": "xgboost",
+                "dataset_params": {
+                    "only_votes": "",
+                    "no_ist": "",
+                    "ist": "",
+                    "complete": "",
+                },
+                "model_params": {
+                    "n_estimators": 400,  # Number of boosting rounds
+                    "max_depth": 6,  # Typically 3-10. Higher values can lead to overfitting
+                    "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
+                    "objective": "reg:squarederror",  # Regression with squared loss
+                    "eval_metric": "rmse",  # Root Mean Square Error for evaluation
+                    "early_stopping_rounds": 10,
+                    "reg_alpha": 10,  # L1 regularization term on weights
+                    "reg_lambda": 100,  # L2 regularization term on weights
+                },
+                "fit_params": {
+                    "verbose": True,
+                },
+            },
+        )
+
+        ExperimentManager(experiments=experiments_configs).run_all_experiments()
 
 
 if __name__ == "__main__":

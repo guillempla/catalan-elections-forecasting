@@ -38,6 +38,15 @@
             "args": ["--transform"]
         },
         {
+            "name": "Python: Launch App with --train",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--train"]
+        },
+        {
             "name": "Python: Launch App with --download and --clean",
             "type": "debugpy",
             "request": "launch",
@@ -92,6 +101,15 @@
             "args": ["--group", "--transform"]
         },
         {
+            "name": "Python: Launch App with --transform and --train",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--transform", "--train"]
+        },
+        {
             "name": "Python: Launch App with --download and --clean and --group",
             "type": "debugpy",
             "request": "launch",
@@ -101,13 +119,13 @@
             "args": ["--download", "--clean", "--group"]
         },
         {
-            "name": "Python: Launch App with --download and --clean and --group and --transform",
+            "name": "Python: Launch App with --download and --clean and --group and --transform and --train",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/app.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
-            "args": ["--download", "--clean", "--group", "--transform"]
+            "args": ["--download", "--clean", "--group", "--transform", "--train"]
         }
     ]
 }

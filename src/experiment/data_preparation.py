@@ -7,14 +7,22 @@ from utils.rw_files import load_data
 
 class DataPreparation:
     def __init__(self, dataset_params: Dict[str, Any]):
-        self.dataset_params = dataset_params
-        self.dataset_filename = dataset_params["filename"]
+        self._name = dataset_params.get("name")
+        self._path = dataset_params.get("path")
         self.df = pd.DataFrame()
 
     def load_data(self):
-        self.df = load_data(self.dataset_filename)
+        self.df = load_data(self._path)
         self.df = self.sort_by_year_repetition(self.df)
         self.df = self.add_shifted_columns_grouped(self.df)
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def path(self):
+        return self._path
 
     @staticmethod
     def sort_by_year_repetition(df):

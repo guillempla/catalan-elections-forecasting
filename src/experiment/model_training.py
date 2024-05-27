@@ -47,7 +47,7 @@ class ModelTraining:
             raise ValueError(f"Model type {self.model_type} is not supported.")
         return model
 
-    def train(self, X_train, y_train):
+    def train(self, X_train, y_train, X_test=None, y_test=None):
         """
         Train the machine learning model.
 
@@ -55,7 +55,12 @@ class ModelTraining:
             X_train: Training data.
             y_train: Target values for the training data.
         """
-        self.model.fit(X_train, y_train, **self.hyperparams)
+
+        if X_test is None or y_test is None:
+            self.model.fit(X_train, y_train, **self.fit_params)
+        else:
+            eval_set = [(X_test, y_test)]
+            self.model.fit(X_train, y_train, eval_set=eval_set, **self.fit_params)
 
     def evaluate(self, X_test, y_test):
         """

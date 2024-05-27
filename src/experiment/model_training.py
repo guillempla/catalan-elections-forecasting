@@ -73,6 +73,9 @@ class ModelTraining:
         Returns:
             float: Accuracy of the model predictions.
         """
+        # Initialize a dictionary to store metrics for each column
+        metrics = {}
+
         if self.model_type == "xgboost":
             predictions = self.model.predict(
                 X_test, iteration_range=(0, self.model.best_iteration + 1)
@@ -81,9 +84,6 @@ class ModelTraining:
                 predictions = pd.DataFrame(
                     predictions, index=y_test.index, columns=y_test.columns
                 )
-
-            # Initialize a dictionary to store metrics for each column
-            metrics = {}
 
             # Loop through each column in y_test to calculate metrics
             for column in y_test.columns:
@@ -97,3 +97,5 @@ class ModelTraining:
             raise ValueError(
                 f"Evaluation for model type {self.model_type} is not supported."
             )
+
+        return metrics

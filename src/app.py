@@ -832,12 +832,24 @@ def main():
             {
                 "experiment_name": "XGBoost Multi Output Regressor",
                 "model_type": "xgboost",
-                "dataset_params": {
-                    "only_votes": "",
-                    "no_ist": "",
-                    "ist": "",
-                    "complete": "",
-                },
+                "dataset_params": [
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+                    },
+                ],
                 "model_params": {
                     "n_estimators": 400,  # Number of boosting rounds
                     "max_depth": 12,  # Typically 3-10. Higher values can lead to overfitting
@@ -853,16 +865,30 @@ def main():
                 "fit_params": {
                     "verbose": True,
                 },
-            },
+            }
+        )
+        experiments_configs.append(
             {
                 "experiment_name": "XGBoost Single Output Regressor",
                 "model_type": "xgboost",
-                "dataset_params": {
-                    "only_votes": "",
-                    "no_ist": "",
-                    "ist": "",
-                    "complete": "",
-                },
+                "dataset_params": [
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+                    },
+                ],
                 "model_params": {
                     "n_estimators": 400,  # Number of boosting rounds
                     "max_depth": 6,  # Typically 3-10. Higher values can lead to overfitting

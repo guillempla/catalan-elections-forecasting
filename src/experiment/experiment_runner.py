@@ -2,20 +2,19 @@
 ExperimentRunner class to run the experiment with the given configuration.
 """
 
-import csv
+import json
 from datetime import datetime
 from typing import Dict
 from experiment.data_preparation import DataPreparation
 from experiment.experiment_attributes import ExperimentAttributes
 from experiment.model_training import ModelTraining
+from utils.rw_files import camel_to_snake
 
 
 class ExperimentRunner:
     def __init__(self, experiment_config: Dict):
         self.experiment_attributes = ExperimentAttributes(experiment_config)
-        self.data_preparation = DataPreparation(
-            self.experiment_attributes.dataset_params
-        )
+        self.datasets_params = self.experiment_attributes.dataset_params
         self.model_training = ModelTraining(
             self.experiment_attributes.model_type,
             self.experiment_attributes.model_params,
@@ -25,15 +24,44 @@ class ExperimentRunner:
     def run_experiment(self):
         start_date = datetime.now()
         status = "not started"
+        datasets_metrics = {}
+        error = None
+
+        for dataset_params in self.datasets_params:
+            data_preparation = DataPreparation(dataset_params)
+            dataset_metrics = self.run_single_experiment(
+                data_preparation=data_preparation
+            )
+            datasets_metrics[data_preparation.name] = dataset_metrics
+
+        end_date = datetime.now()
+        results = {
+            "experiment_name": self.experiment_attributes.experiment_name,
+            "start_date": start_date,
+            "end_date": end_date,
+            "elapsed_time": end_date - start_date,
+            "status": status,
+            "error": error if error else "None",
+            "dataset_metrics": datasets_metrics if datasets_metrics else "None",
+        }
+
+        if results:
+            self.log_metrics(results, self.experiment_attributes.experiment_name)
+
+        return results
+
+    def run_single_experiment(self, data_preparation: DataPreparation) -> Dict:
+        start_date = datetime.now()
+        status = "not started"
         metrics = None
         error = None
 
         try:
             status = "loading data"
-            self.data_preparation.load_data()
+            data_preparation.load_data()
 
             status = "splitting data"
-            X_train, y_train, X_test, y_test, _ = self.data_preparation.split_data()
+            X_train, y_train, X_test, y_test, _ = data_preparation.split_data()
 
             status = "training model"
             self.model_training.train(X_train, y_train, X_test, y_test)
@@ -41,31 +69,29 @@ class ExperimentRunner:
             status = "evaluating model"
             metrics = self.model_training.evaluate(X_test, y_test)
             status = "completed"
-            end_date = datetime.now()
 
         except Exception as e:
             error = e
             status = f"error during {status}"
 
-        if metrics:
-            self.log_metrics(metrics)
+        end_date = datetime.now()
 
         results = {
-            "experiment_name": self.experiment_attributes.experiment_name,
+            "dataset_name": data_preparation.name,
             "start_date": start_date,
             "end_date": end_date,
             "elapsed_time": end_date - start_date,
             "status": status,
-            "metrics": metrics if metrics else "None",
             "error": error if error else "None",
+            "metrics": metrics if metrics else "None",
         }
 
         return results
 
     @staticmethod
-    def log_metrics(metrics: Dict):
-        with open(
-            "experiment_metrics.csv", mode="a", newline="", encoding="utf-8"
-        ) as file:
-            writer = csv.writer(file)
-            writer.writerow(metrics.values())
+    def log_metrics(metrics: Dict, filename: str = "experiment_results"):
+        filename = (
+            camel_to_snake(filename) + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+        )
+        with open(f"../results/{filename}.json", "w", encoding="utf-8") as fp:
+            json.dump(metrics, fp, indent=4, sort_keys=True, default=str)

@@ -273,5 +273,30 @@ def camel_to_snake(s: str) -> str:
     Returns:
         str: The converted string in snake case.
     """
-    s.replace(" ", "")
     return "".join(["_" + c.lower() if c.isupper() else c for c in s]).lstrip("_")
+
+
+def snake_to_camel(s: str) -> str:
+    """
+    Converts a string from snake case to camel case.
+
+    Args:
+        s (str): The input string in snake case.
+
+    Returns:
+        str: The converted string in camel case.
+    """
+    return "".join([word.capitalize() for word in s.split("_")])
+
+
+def sentence_to_snake(s: str) -> str:
+    """
+    Converts a string from words to snake case.
+
+    Args:
+        s (str): The input string in words.
+
+    Returns:
+        str: The converted string in snake case.
+    """
+    return "_".join(s.lower().split())

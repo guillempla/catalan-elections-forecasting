@@ -8,7 +8,7 @@ from typing import Dict
 from experiment.data_preparation import DataPreparation
 from experiment.experiment_attributes import ExperimentAttributes
 from experiment.model_training import ModelTraining
-from utils.rw_files import camel_to_snake
+from utils.rw_files import sentence_to_snake
 
 
 class ExperimentRunner:
@@ -91,7 +91,7 @@ class ExperimentRunner:
     @staticmethod
     def log_metrics(metrics: Dict, filename: str = "experiment_results"):
         filename = (
-            camel_to_snake(filename) + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+            datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + sentence_to_snake(filename)
         )
         with open(f"../results/{filename}.json", "w", encoding="utf-8") as fp:
             json.dump(metrics, fp, indent=4, sort_keys=True, default=str)

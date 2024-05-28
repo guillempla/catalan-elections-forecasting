@@ -8,6 +8,7 @@ from statistics import LinearRegression
 from typing import Dict, Any
 
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.neighbors import KNeighborsRegressor
 from xgboost import XGBRegressor
 
 
@@ -43,6 +44,8 @@ class ModelTraining:
             model = XGBRegressor(**self.model_params)
         elif self.model_type == "linear_regression":
             model = LinearRegression(**self.model_params)
+        elif self.model_type == "knn":
+            model = KNeighborsRegressor(**self.model_params)
         else:
             raise ValueError(f"Model type {self.model_type} is not supported.")
         return model
@@ -57,10 +60,16 @@ class ModelTraining:
         """
 
         if X_test is None or y_test is None:
-            self.model.fit(X_train, y_train, **self.fit_params)
+            if self.fit_params is None:
+                self.model.fit(X_train, y_train)
+            else:
+                self.model.fit(X_train, y_train, **self.fit_params)
         else:
             eval_set = [(X_test, y_test)]
-            self.model.fit(X_train, y_train, eval_set=eval_set, **self.fit_params)
+            if self.fit_params is None:
+                self.model.fit(X_train, y_train, eval_set=eval_set)
+            else:
+                self.model.fit(X_train, y_train, eval_set=eval_set, **self.fit_params)
 
     def evaluate(self, X_test, y_test):
         """
@@ -80,6 +89,22 @@ class ModelTraining:
             predictions = self.model.predict(
                 X_test, iteration_range=(0, self.model.best_iteration + 1)
             )
+            if not isinstance(predictions, pd.DataFrame):
+                predictions = pd.DataFrame(
+                    predictions, index=y_test.index, columns=y_test.columns
+                )
+
+            # Loop through each column in y_test to calculate metrics
+            for column in y_test.columns:
+                mse = mean_squared_error(y_test[column], predictions[column])
+                rmse = np.sqrt(mse)
+                r2 = r2_score(y_test[column], predictions[column])
+
+                # Store metrics in the dictionary
+                metrics[column] = {"RMSE": rmse, "R^2": r2}
+        elif self.model_type == "knn":
+            # Predict on the test set
+            predictions = self.model.predict(X_test)
             if not isinstance(predictions, pd.DataFrame):
                 predictions = pd.DataFrame(
                     predictions, index=y_test.index, columns=y_test.columns

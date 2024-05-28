@@ -64,10 +64,19 @@ class ExperimentRunner:
             X_train, y_train, X_test, y_test, _ = data_preparation.split_data()
 
             status = "training model"
-            self.model_training.train(X_train, y_train, X_test, y_test)
+            if self.experiment_attributes.model_type == "xgboost":
+                self.model_training.train(X_train, y_train, X_test, y_test)
+            elif self.experiment_attributes.model_type == "knn":
+                # If nan values are present in the data, fill them with 0
+                X_train.fillna(0, inplace=True)
+                self.model_training.train(X_train, y_train)
 
             status = "evaluating model"
-            metrics = self.model_training.evaluate(X_test, y_test)
+            if self.experiment_attributes.model_type == "xgboost":
+                metrics = self.model_training.evaluate(X_test, y_test)
+            elif self.experiment_attributes.model_type == "knn":
+                X_test.fillna(0, inplace=True)
+                metrics = self.model_training.evaluate(X_test, y_test)
             status = "completed"
 
         except Exception as e:

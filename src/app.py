@@ -861,6 +861,7 @@ def main():
                     "early_stopping_rounds": 5,
                     "reg_alpha": 100,  # L1 regularization term on weights
                     "reg_lambda": 50,  # L2 regularization term on weights
+                    "n_jobs": -1,  # Use all available cores
                 },
                 "fit_params": {
                     "verbose": True,
@@ -898,6 +899,7 @@ def main():
                     "early_stopping_rounds": 10,
                     "reg_alpha": 10,  # L1 regularization term on weights
                     "reg_lambda": 100,  # L2 regularization term on weights
+                    "n_jobs": -1,  # Use all available cores
                 },
                 "fit_params": {
                     "verbose": True,

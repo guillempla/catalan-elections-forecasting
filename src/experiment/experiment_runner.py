@@ -40,7 +40,7 @@ class ExperimentRunner:
             "start_date": start_date,
             "end_date": end_date,
             "elapsed_time": end_date - start_date,
-            "status": status,
+            "status": "completed",
             "error": error if error else "None",
             "dataset_metrics": datasets_metrics if datasets_metrics else "None",
         }

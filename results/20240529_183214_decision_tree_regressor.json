@@ -1,0 +1,46 @@
+{
+    "dataset_metrics": {
+        "complete": {
+            "dataset_name": "complete",
+            "elapsed_time": "0:00:00.416105",
+            "end_date": "2024-05-29 18:32:14.285553",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-29 18:32:13.869448",
+            "status": "completed"
+        },
+        "ist": {
+            "dataset_name": "ist",
+            "elapsed_time": "0:00:00.440215",
+            "end_date": "2024-05-29 18:32:13.866202",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-29 18:32:13.425987",
+            "status": "completed"
+        },
+        "no_ist": {
+            "dataset_name": "no_ist",
+            "elapsed_time": "0:00:00.435322",
+            "end_date": "2024-05-29 18:32:13.422987",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-29 18:32:12.987665",
+            "status": "completed"
+        },
+        "only_votes": {
+            "dataset_name": "only_votes",
+            "elapsed_time": "0:00:00.440488",
+            "end_date": "2024-05-29 18:32:12.985024",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-29 18:32:12.544536",
+            "status": "completed"
+        }
+    },
+    "elapsed_time": "0:00:01.742999",
+    "end_date": "2024-05-29 18:32:14.286552",
+    "error": "None",
+    "experiment_name": "Decision Tree Regressor",
+    "start_date": "2024-05-29 18:32:12.543553",
+    "status": "not started"
+}

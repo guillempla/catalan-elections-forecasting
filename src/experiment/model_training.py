@@ -9,6 +9,7 @@ from typing import Dict, Any
 
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 
 
@@ -42,8 +43,8 @@ class ModelTraining:
         """
         if self.model_type == "xgboost":
             model = XGBRegressor(**self.model_params)
-        elif self.model_type == "linear_regression":
-            model = LinearRegression(**self.model_params)
+        elif self.model_type == "decision_tree":
+            model = DecisionTreeRegressor(**self.model_params)
         elif self.model_type == "knn":
             model = KNeighborsRegressor(**self.model_params)
         else:
@@ -89,38 +90,26 @@ class ModelTraining:
             predictions = self.model.predict(
                 X_test, iteration_range=(0, self.model.best_iteration + 1)
             )
-            if not isinstance(predictions, pd.DataFrame):
-                predictions = pd.DataFrame(
-                    predictions, index=y_test.index, columns=y_test.columns
-                )
-
-            # Loop through each column in y_test to calculate metrics
-            for column in y_test.columns:
-                mse = mean_squared_error(y_test[column], predictions[column])
-                rmse = np.sqrt(mse)
-                r2 = r2_score(y_test[column], predictions[column])
-
-                # Store metrics in the dictionary
-                metrics[column] = {"RMSE": rmse, "R^2": r2}
-        elif self.model_type == "knn":
+        elif self.model_type == "knn" or self.model_type == "decision_tree":
             # Predict on the test set
             predictions = self.model.predict(X_test)
-            if not isinstance(predictions, pd.DataFrame):
-                predictions = pd.DataFrame(
-                    predictions, index=y_test.index, columns=y_test.columns
-                )
-
-            # Loop through each column in y_test to calculate metrics
-            for column in y_test.columns:
-                mse = mean_squared_error(y_test[column], predictions[column])
-                rmse = np.sqrt(mse)
-                r2 = r2_score(y_test[column], predictions[column])
-
-                # Store metrics in the dictionary
-                metrics[column] = {"RMSE": rmse, "R^2": r2}
         else:
             raise ValueError(
                 f"Evaluation for model type {self.model_type} is not supported."
             )
+
+        if not isinstance(predictions, pd.DataFrame):
+            predictions = pd.DataFrame(
+                predictions, index=y_test.index, columns=y_test.columns
+            )
+
+        # Loop through each column in y_test to calculate metrics
+        for column in y_test.columns:
+            mse = mean_squared_error(y_test[column], predictions[column])
+            rmse = np.sqrt(mse)
+            r2 = r2_score(y_test[column], predictions[column])
+
+            # Store metrics in the dictionary
+            metrics[column] = {"RMSE": rmse, "R^2": r2}
 
         return metrics

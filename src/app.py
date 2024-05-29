@@ -906,10 +906,40 @@ def main():
         #         },
         #     },
         # )
+        # experiments_configs.append(
+        #     {
+        #         "experiment_name": "KNN Regressor",
+        #         "model_type": "knn",
+        #         "dataset_params": [
+        #             {
+        #                 "name": "only_votes",
+        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
+        #             },
+        #             {
+        #                 "name": "no_ist",
+        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
+        #             },
+        #             {
+        #                 "name": "ist",
+        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
+        #             },
+        #             {
+        #                 "name": "complete",
+        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+        #             },
+        #         ],
+        #         "model_params": {
+        #             "algorithm": "kd_tree",
+        #             "n_neighbors": 29,
+        #             "weights": "distance",
+        #             "n_jobs": -1,  # Use all available cores
+        #         },
+        #     }
+        # )
         experiments_configs.append(
             {
-                "experiment_name": "KNN Regressor",
-                "model_type": "knn",
+                "experiment_name": "Decision Tree Regressor",
+                "model_type": "decision_tree",
                 "dataset_params": [
                     {
                         "name": "only_votes",
@@ -929,10 +959,12 @@ def main():
                     },
                 ],
                 "model_params": {
-                    "algorithm": "kd_tree",
-                    "n_neighbors": 29,
-                    "weights": "distance",
-                    "n_jobs": -1,  # Use all available cores
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best",
                 },
             }
         )

@@ -9,13 +9,15 @@ class DataPreparation:
     def __init__(self, dataset_params: Dict[str, Any]):
         self._name = dataset_params.get("name")
         self._path = dataset_params.get("path")
+        self._num_shifts = dataset_params.get("num_shifts", 1)
+        self._max_null_sets = dataset_params.get("max_null_sets", 1)
         self.df = pd.DataFrame()
 
     def load_data(self):
         self.df = load_data(self._path)
         self.df = self.sort_by_year_repetition(self.df)
-        self.df = self.add_shifted_columns_grouped(self.df)
-        self.df = self.remove_rows_with_null_sets(self.df)
+        self.df = self.add_shifted_columns_grouped(self.df, self._num_shifts)
+        self.df = self.remove_rows_with_null_sets(self.df, self._max_null_sets)
 
     @property
     def name(self):

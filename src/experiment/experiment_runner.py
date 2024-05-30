@@ -129,7 +129,8 @@ class ExperimentRunner:
 
         Args:
             metrics (Dict): The experiment metrics.
-            filename (str, optional): The filename for the log file. Defaults to "experiment_results".
+            filename (str, optional): The filename for the log file.
+                Defaults to "experiment_results".
         """
         filename = (
             datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + sentence_to_snake(filename)

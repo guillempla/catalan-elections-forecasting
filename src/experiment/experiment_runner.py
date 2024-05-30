@@ -5,6 +5,7 @@ ExperimentRunner class to run the experiment with the given configuration.
 import json
 from datetime import datetime
 from typing import Dict
+
 from experiment.data_preparation import DataPreparation
 from experiment.experiment_attributes import ExperimentAttributes
 from experiment.model_training import ModelTraining
@@ -12,7 +13,17 @@ from utils.rw_files import sentence_to_snake
 
 
 class ExperimentRunner:
+    """
+    Class to run experiments based on the provided experiment configuration.
+    """
+
     def __init__(self, experiment_config: Dict):
+        """
+        Initialize the ExperimentRunner with the experiment configuration.
+
+        Args:
+            experiment_config (Dict): The experiment configuration.
+        """
         self.experiment_attributes = ExperimentAttributes(experiment_config)
         self.datasets_params = self.experiment_attributes.dataset_params
         self.model_training = ModelTraining(
@@ -21,7 +32,13 @@ class ExperimentRunner:
             self.experiment_attributes.fit_params,
         )
 
-    def run_experiment(self):
+    def run_experiment(self) -> Dict:
+        """
+        Run the experiment and return the results.
+
+        Returns:
+            Dict: The experiment results.
+        """
         start_date = datetime.now()
         datasets_metrics = {}
         error = None
@@ -50,6 +67,15 @@ class ExperimentRunner:
         return results
 
     def run_single_experiment(self, data_preparation: DataPreparation) -> Dict:
+        """
+        Run a single experiment with the given data preparation.
+
+        Args:
+            data_preparation (DataPreparation): The data preparation object.
+
+        Returns:
+            Dict: The experiment results for the single experiment.
+        """
         start_date = datetime.now()
         status = "not started"
         metrics = None
@@ -98,6 +124,13 @@ class ExperimentRunner:
 
     @staticmethod
     def log_metrics(metrics: Dict, filename: str = "experiment_results"):
+        """
+        Log the experiment metrics to a file.
+
+        Args:
+            metrics (Dict): The experiment metrics.
+            filename (str, optional): The filename for the log file. Defaults to "experiment_results".
+        """
         filename = (
             datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + sentence_to_snake(filename)
         )

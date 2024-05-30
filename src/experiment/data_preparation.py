@@ -15,6 +15,7 @@ class DataPreparation:
         self.df = load_data(self._path)
         self.df = self.sort_by_year_repetition(self.df)
         self.df = self.add_shifted_columns_grouped(self.df)
+        self.df = self.remove_rows_with_null_sets(self.df)
 
     @property
     def name(self):
@@ -43,7 +44,7 @@ class DataPreparation:
         return df_sorted
 
     @staticmethod
-    def add_shifted_columns_grouped(df):
+    def add_shifted_columns_grouped(df, num_shifts=1):
         # Extract 'mundissec' from the index
         df["mundissec"] = df.index.map(lambda x: x.split("_")[1])
 
@@ -59,17 +60,30 @@ class DataPreparation:
             # Identify columns for the current party code
             party_columns = [col for col in df.columns if col.endswith(party_code)]
             for col in party_columns:
-                # Create a new shifted column name
-                shifted_col_name = f"{col}_shifted"
-                # Group by 'mundissec' and shift within each group
-                df[shifted_col_name] = df.groupby("mundissec")[col].shift(
-                    -1
-                )  # Shift within each group
+                for shift in range(1, num_shifts + 1):
+                    # Create a new shifted column name
+                    shifted_col_name = f"{col}_shifted_{shift}"
+                    # Group by 'mundissec' and shift within each group
+                    df[shifted_col_name] = df.groupby("mundissec")[col].shift(
+                        -shift
+                    )  # Shift within each group
 
         # Drop the temporary 'mundissec' column after shifting
         df.drop(columns="mundissec", inplace=True)
 
-        return df
+    @staticmethod
+    def remove_rows_with_null_sets(df, max_null_sets=1):
+        # Identify shifted columns
+        shifted_columns = [col for col in df.columns if "shifted" in col]
+
+        # Create a mask to identify rows with more than the allowed number of null sets
+        null_sets_count = df[shifted_columns].isnull().sum(axis=1)
+        mask = null_sets_count <= max_null_sets
+
+        # Filter the DataFrame based on the mask
+        filtered_df = df[mask]
+
+        return filtered_df
 
     def split_data(self):
         # Identify unique elections from the index
@@ -96,25 +110,33 @@ class DataPreparation:
             )
         ]
 
-        # Columns that are not shifted
+        # Identify shifted columns and non-shifted columns
+        shifted_columns = [col for col in self.df.columns if "_shifted_" in col]
         non_shifted_columns = [
-            col for col in self.df.columns if not col.endswith("_shifted")
+            col for col in self.df.columns if col not in shifted_columns
         ]
-        # Columns that are shifted
-        shifted_columns = [col for col in self.df.columns if col.endswith("_shifted")]
 
-        # Creating new_data, X_test, y_test, X_train, y_train
+        # Identify the highest shift value
+        max_shift_value = max(int(col.split("_")[-1]) for col in shifted_columns)
+
+        # Columns with the highest shift value
+        y_shifted_columns = [
+            col
+            for col in shifted_columns
+            if col.endswith(f"_shifted_{max_shift_value}")
+        ]
+        # Columns with other shift values
+        x_shifted_columns = [
+            col for col in shifted_columns if col not in y_shifted_columns
+        ]
+
+        # Ensure new_data only contains non-shifted columns
         new_data = new_data[non_shifted_columns]
-        X_test = test_data[non_shifted_columns]
-        y_test = test_data[shifted_columns]
-        X_train = train_data[non_shifted_columns]
-        y_train = train_data[shifted_columns]
 
-        # Convert the data to float
-        X_train = X_train.astype(float)
-        y_train = y_train.astype(float)
-        X_test = X_test.astype(float)
-        y_test = y_test.astype(float)
-        new_data = new_data.astype(float)
+        # Split test and train data into X (non-shifted and lower shift values) and y (highest shift values)
+        X_test = test_data[non_shifted_columns + x_shifted_columns]
+        y_test = test_data[y_shifted_columns]
+        X_train = train_data[non_shifted_columns + x_shifted_columns]
+        y_train = train_data[y_shifted_columns]
 
         return X_train, y_train, X_test, y_test, new_data

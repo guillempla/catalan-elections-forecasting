@@ -1,3 +1,7 @@
+"""
+DataPreparation class for data preparation and splitting
+"""
+
 from typing import Dict, Any
 
 import pandas as pd
@@ -7,6 +11,16 @@ from utils.rw_files import load_data
 
 class DataPreparation:
     def __init__(self, dataset_params: Dict[str, Any]):
+        """
+        Initialize the DataPreparation class.
+
+        Args:
+            dataset_params (Dict[str, Any]): A dictionary containing dataset parameters.
+                - name (str): The name of the dataset.
+                - path (str): The path to the dataset file.
+                - num_shifts (int, optional): The number of shifts to apply to the dataset. Defaults to 1.
+                - max_null_sets (int, optional): The maximum number of null sets allowed. Defaults to 1.
+        """
         self._name = dataset_params.get("name")
         self._path = dataset_params.get("path")
         self._num_shifts = dataset_params.get("num_shifts", 1)
@@ -14,21 +28,45 @@ class DataPreparation:
         self.df = pd.DataFrame()
 
     def load_data(self):
+        """
+        Load the dataset and perform data preparation steps.
+        """
         self.df = load_data(self._path)
         self.df = self.sort_by_year_repetition(self.df)
         self.df = self.add_shifted_columns_grouped(self.df, self._num_shifts)
         self.df = self.remove_rows_with_null_sets(self.df, self._max_null_sets)
 
     @property
-    def name(self):
+    def name(self) -> str:
+        """
+        Get the name of the dataset.
+
+        Returns:
+            str: The name of the dataset.
+        """
         return self._name
 
     @property
-    def path(self):
+    def path(self) -> str:
+        """
+        Get the path to the dataset file.
+
+        Returns:
+            str: The path to the dataset file.
+        """
         return self._path
 
     @staticmethod
-    def sort_by_year_repetition(df):
+    def sort_by_year_repetition(df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Sort the DataFrame by year and repetitionid.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame.
+
+        Returns:
+            pd.DataFrame: The sorted DataFrame.
+        """
         # Extract election id components from the index
         df["year"] = df.index.map(
             lambda x: int(x.split("_")[0][1:5])
@@ -46,7 +84,14 @@ class DataPreparation:
         return df_sorted
 
     @staticmethod
-    def add_shifted_columns_grouped(df, num_shifts=1):
+    def add_shifted_columns_grouped(df: pd.DataFrame, num_shifts: int = 1) -> None:
+        """
+        Add shifted columns to the DataFrame grouped by 'mundissec'.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame.
+            num_shifts (int, optional): The number of shifts to apply. Defaults to 1.
+        """
         # Extract 'mundissec' from the index
         df["mundissec"] = df.index.map(lambda x: x.split("_")[1])
 
@@ -74,7 +119,19 @@ class DataPreparation:
         df.drop(columns="mundissec", inplace=True)
 
     @staticmethod
-    def remove_rows_with_null_sets(df, max_null_sets=1):
+    def remove_rows_with_null_sets(
+        df: pd.DataFrame, max_null_sets: int = 1
+    ) -> pd.DataFrame:
+        """
+        Remove rows with more than the allowed number of null sets.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame.
+            max_null_sets (int, optional): The maximum number of null sets allowed. Defaults to 1.
+
+        Returns:
+            pd.DataFrame: The filtered DataFrame.
+        """
         # Identify shifted columns
         shifted_columns = [col for col in df.columns if "shifted" in col]
 
@@ -87,7 +144,13 @@ class DataPreparation:
 
         return filtered_df
 
-    def split_data(self):
+    def split_data(self) -> tuple:
+        """
+        Split the data into train, test, and new data.
+
+        Returns:
+            tuple: A tuple containing X_train, y_train, X_test, y_test, and new_data.
+        """
         # Identify unique elections from the index
         elections = self.df.index.map(lambda x: x.split("_")[0]).unique()
 

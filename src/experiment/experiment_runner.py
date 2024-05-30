@@ -23,7 +23,6 @@ class ExperimentRunner:
 
     def run_experiment(self):
         start_date = datetime.now()
-        status = "not started"
         datasets_metrics = {}
         error = None
 

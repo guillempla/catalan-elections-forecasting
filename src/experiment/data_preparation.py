@@ -18,8 +18,10 @@ class DataPreparation:
             dataset_params (Dict[str, Any]): A dictionary containing dataset parameters.
                 - name (str): The name of the dataset.
                 - path (str): The path to the dataset file.
-                - num_shifts (int, optional): The number of shifts to apply to the dataset. Defaults to 1.
-                - max_null_sets (int, optional): The maximum number of null sets allowed. Defaults to 1.
+                - num_shifts (int, optional): The number of shifts to apply to the dataset.
+                    Defaults to 1.
+                - max_null_sets (int, optional): The maximum number of null sets allowed.
+                    Defaults to 1.
         """
         self._name = dataset_params.get("name")
         self._path = dataset_params.get("path")
@@ -84,7 +86,9 @@ class DataPreparation:
         return df_sorted
 
     @staticmethod
-    def add_shifted_columns_grouped(df: pd.DataFrame, num_shifts: int = 1) -> None:
+    def add_shifted_columns_grouped(
+        df: pd.DataFrame, num_shifts: int = 1
+    ) -> pd.DataFrame:
         """
         Add shifted columns to the DataFrame grouped by 'mundissec'.
 
@@ -117,6 +121,8 @@ class DataPreparation:
 
         # Drop the temporary 'mundissec' column after shifting
         df.drop(columns="mundissec", inplace=True)
+
+        return df
 
     @staticmethod
     def remove_rows_with_null_sets(

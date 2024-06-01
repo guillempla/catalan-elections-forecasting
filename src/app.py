@@ -812,18 +812,52 @@ def main():
         GroupParties(threshold=0.2).group_parties()
 
     if transform_data:
-        TransformData(
-            censal_sections_path="../data/raw/bseccenv10sh1f1_20210101_2/bseccenv10sh1f1_20210101_2.shp",
-            results_path="../data/processed/catalan-elections-grouped-data.pkl",
-            start_year=2010,
-            n_important_parties=6,
-            transform_to_timeseries=True,
-            add_election_type=1,
-            add_born_abroad=True,
-            add_age_groups=True,
-            add_mean_income=True,
-            add_socioeconomic_index=True,
-        ).transform_data()
+        start_years = [2003, 2010]
+        add_election_types = [1, 2]
+        add_combinations = [
+            {
+                "add_born_abroad": False,
+                "add_age_groups": False,
+                "add_mean_income": False,
+                "add_socioeconomic_index": False,
+            },
+            {
+                "add_born_abroad": False,
+                "add_age_groups": True,
+                "add_mean_income": False,
+                "add_socioeconomic_index": True,
+            },
+            {
+                "add_born_abroad": True,
+                "add_age_groups": True,
+                "add_mean_income": True,
+                "add_socioeconomic_index": False,
+            },
+            {
+                "add_born_abroad": True,
+                "add_age_groups": True,
+                "add_mean_income": True,
+                "add_socioeconomic_index": True,
+            },
+        ]
+
+        for start_year in start_years:
+            for add_election_type in add_election_types:
+                for add_combination in add_combinations:
+                    TransformData(
+                        censal_sections_path="../data/raw/bseccenv10sh1f1_20210101_2/bseccenv10sh1f1_20210101_2.shp",
+                        results_path="../data/processed/catalan-elections-grouped-data.pkl",
+                        start_year=start_year,
+                        n_important_parties=6,
+                        transform_to_timeseries=True,
+                        add_election_type=add_election_type,
+                        add_born_abroad=add_combination["add_born_abroad"],
+                        add_age_groups=add_combination["add_age_groups"],
+                        add_mean_income=add_combination["add_mean_income"],
+                        add_socioeconomic_index=add_combination[
+                            "add_socioeconomic_index"
+                        ],
+                    ).transform_data()
 
     if train_model:
         experiments_configs: List[dict] = []

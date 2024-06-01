@@ -945,7 +945,7 @@ def main():
                     "max_depth": 12,  # Typically 3-10. Higher values can lead to overfitting
                     "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
                     "objective": "reg:squarederror",  # Regression with squared loss
-                    "eval_metric": "rmse",  # Root Mean Square Error for evaluation
+                    "eval_metric": "mse",  # Root Mean Square Error for evaluation
                     "tree_method": "hist",  # Fast histogram optimized approximate greedy algorithm
                     "multi_strategy": "multi_output_tree",
                     "early_stopping_rounds": 5,
@@ -1041,7 +1041,7 @@ def main():
                     "max_depth": 6,  # Typically 3-10. Higher values can lead to overfitting
                     "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
                     "objective": "reg:squarederror",  # Regression with squared loss
-                    "eval_metric": "rmse",  # Root Mean Square Error for evaluation
+                    "eval_metric": "mse",  # Root Mean Square Error for evaluation
                     "early_stopping_rounds": 10,
                     "reg_alpha": 10,  # L1 regularization term on weights
                     "reg_lambda": 100,  # L2 regularization term on weights

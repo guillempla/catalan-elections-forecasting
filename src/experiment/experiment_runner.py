@@ -118,6 +118,11 @@ class ExperimentRunner:
             "elapsed_time": end_date - start_date,
             "status": status,
             "error": error if error else "None",
+            "params": {
+                "model_type": self.experiment_attributes.model_type,
+                "model_params": self.experiment_attributes.model_params,
+                "fit_params": self.experiment_attributes.fit_params,
+            },
             "metrics": metrics if metrics else "None",
         }
 

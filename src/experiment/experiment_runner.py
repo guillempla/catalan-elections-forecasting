@@ -57,7 +57,7 @@ class ExperimentRunner:
             "start_date": start_date,
             "end_date": end_date,
             "elapsed_time": end_date - start_date,
-            "status": "completed",
+            "status": "finished",
             "error": error if error else "None",
             "dataset_metrics": datasets_metrics if datasets_metrics else "None",
         }
@@ -103,7 +103,7 @@ class ExperimentRunner:
             else:
                 X_test.fillna(0, inplace=True)
                 metrics = self.model_training.evaluate(X_test, y_test)
-            status = "completed"
+            status = "finished"
 
         except Exception as e:
             error = e

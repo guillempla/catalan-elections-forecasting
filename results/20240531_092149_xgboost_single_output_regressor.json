@@ -1,0 +1,82 @@
+{
+    "dataset_metrics": {
+        "complete": {
+            "dataset_name": "complete",
+            "elapsed_time": "0:00:00.446819",
+            "end_date": "2024-05-31 09:21:45.295214",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:44.848395",
+            "status": "error during loading data"
+        },
+        "complete_shifts_3": {
+            "dataset_name": "complete_shifts_3",
+            "elapsed_time": "0:00:00.948689",
+            "end_date": "2024-05-31 09:21:49.180848",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:48.232159",
+            "status": "error during loading data"
+        },
+        "ist": {
+            "dataset_name": "ist",
+            "elapsed_time": "0:00:00.423706",
+            "end_date": "2024-05-31 09:21:44.847367",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:44.423661",
+            "status": "error during loading data"
+        },
+        "ist_shifts_3": {
+            "dataset_name": "ist_shifts_3",
+            "elapsed_time": "0:00:00.949881",
+            "end_date": "2024-05-31 09:21:48.231174",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:47.281293",
+            "status": "error during loading data"
+        },
+        "no_ist": {
+            "dataset_name": "no_ist",
+            "elapsed_time": "0:00:00.426422",
+            "end_date": "2024-05-31 09:21:44.422646",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:43.996224",
+            "status": "error during loading data"
+        },
+        "no_ist_shifts_3": {
+            "dataset_name": "no_ist_shifts_3",
+            "elapsed_time": "0:00:00.959177",
+            "end_date": "2024-05-31 09:21:47.280283",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:46.321106",
+            "status": "error during loading data"
+        },
+        "only_votes": {
+            "dataset_name": "only_votes",
+            "elapsed_time": "0:00:00.424787",
+            "end_date": "2024-05-31 09:21:43.995224",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:43.570437",
+            "status": "error during loading data"
+        },
+        "only_votes_shifts_3": {
+            "dataset_name": "only_votes_shifts_3",
+            "elapsed_time": "0:00:01.024893",
+            "end_date": "2024-05-31 09:21:46.320107",
+            "error": "'NoneType' object has no attribute 'columns'",
+            "metrics": "None",
+            "start_date": "2024-05-31 09:21:45.295214",
+            "status": "error during loading data"
+        }
+    },
+    "elapsed_time": "0:00:10.457922",
+    "end_date": "2024-05-31 09:21:49.180848",
+    "error": "None",
+    "experiment_name": "XGBoost Single Output Regressor",
+    "start_date": "2024-05-31 09:21:38.722926",
+    "status": "completed"
+}

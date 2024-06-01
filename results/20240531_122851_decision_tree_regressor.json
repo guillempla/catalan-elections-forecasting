@@ -1,0 +1,82 @@
+{
+    "dataset_metrics": {
+        "complete": {
+            "dataset_name": "complete",
+            "elapsed_time": "0:00:00.559916",
+            "end_date": "2024-05-31 12:28:46.546661",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:45.986745",
+            "status": "completed"
+        },
+        "complete_shifts_3": {
+            "dataset_name": "complete_shifts_3",
+            "elapsed_time": "0:00:01.279967",
+            "end_date": "2024-05-31 12:28:51.615711",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:50.335744",
+            "status": "completed"
+        },
+        "ist": {
+            "dataset_name": "ist",
+            "elapsed_time": "0:00:00.633677",
+            "end_date": "2024-05-31 12:28:45.983750",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:45.350073",
+            "status": "completed"
+        },
+        "ist_shifts_3": {
+            "dataset_name": "ist_shifts_3",
+            "elapsed_time": "0:00:01.338946",
+            "end_date": "2024-05-31 12:28:50.329743",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:48.990797",
+            "status": "completed"
+        },
+        "no_ist": {
+            "dataset_name": "no_ist",
+            "elapsed_time": "0:00:00.634873",
+            "end_date": "2024-05-31 12:28:45.347074",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:44.712201",
+            "status": "completed"
+        },
+        "no_ist_shifts_3": {
+            "dataset_name": "no_ist_shifts_3",
+            "elapsed_time": "0:00:01.229954",
+            "end_date": "2024-05-31 12:28:48.985766",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:47.755812",
+            "status": "completed"
+        },
+        "only_votes": {
+            "dataset_name": "only_votes",
+            "elapsed_time": "0:00:00.707406",
+            "end_date": "2024-05-31 12:28:44.708197",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:44.000791",
+            "status": "completed"
+        },
+        "only_votes_shifts_3": {
+            "dataset_name": "only_votes_shifts_3",
+            "elapsed_time": "0:00:01.203144",
+            "end_date": "2024-05-31 12:28:47.751819",
+            "error": "None",
+            "metrics": "None",
+            "start_date": "2024-05-31 12:28:46.548675",
+            "status": "completed"
+        }
+    },
+    "elapsed_time": "0:00:14.338213",
+    "end_date": "2024-05-31 12:28:51.617611",
+    "error": "None",
+    "experiment_name": "Decision Tree Regressor",
+    "start_date": "2024-05-31 12:28:37.279398",
+    "status": "completed"
+}

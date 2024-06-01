@@ -2,6 +2,7 @@
 ExperimentRunner class to run the experiment with the given configuration.
 """
 
+import os
 import json
 from datetime import datetime
 from typing import Dict
@@ -132,8 +133,11 @@ class ExperimentRunner:
             filename (str, optional): The filename for the log file.
                 Defaults to "experiment_results".
         """
-        filename = (
-            datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + sentence_to_snake(filename)
-        )
-        with open(f"../results/{filename}.json", "w", encoding="utf-8") as fp:
+        folder_name = datetime.now().strftime("%Y%m%d_%H%M")
+        folder_path = f"../results/{folder_name}"
+        os.makedirs(folder_path, exist_ok=True)
+
+        with open(
+            f"{folder_path}/{sentence_to_snake(filename)}.json", "w", encoding="utf-8"
+        ) as fp:
             json.dump(metrics, fp, indent=4, sort_keys=True, default=str)

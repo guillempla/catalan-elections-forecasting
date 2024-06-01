@@ -92,7 +92,7 @@ class ExperimentRunner:
             status = "training model"
             if self.experiment_attributes.model_type == "xgboost":
                 self.model_training.train(X_train, y_train, X_test, y_test)
-            elif self.experiment_attributes.model_type == "knn":
+            else:
                 # If nan values are present in the data, fill them with 0
                 X_train.fillna(0, inplace=True)
                 self.model_training.train(X_train, y_train)
@@ -100,7 +100,7 @@ class ExperimentRunner:
             status = "evaluating model"
             if self.experiment_attributes.model_type == "xgboost":
                 metrics = self.model_training.evaluate(X_test, y_test)
-            elif self.experiment_attributes.model_type == "knn":
+            else:
                 X_test.fillna(0, inplace=True)
                 metrics = self.model_training.evaluate(X_test, y_test)
             status = "completed"

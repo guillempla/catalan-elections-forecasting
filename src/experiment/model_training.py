@@ -47,6 +47,8 @@ class ModelTraining:
             model = DecisionTreeRegressor(**self.model_params)
         elif self.model_type == "knn":
             model = KNeighborsRegressor(**self.model_params)
+        elif self.model_type == "linear_regression":
+            model = LinearRegression()
         else:
             raise ValueError(f"Model type {self.model_type} is not supported.")
         return model
@@ -90,7 +92,11 @@ class ModelTraining:
             predictions = self.model.predict(
                 X_test, iteration_range=(0, self.model.best_iteration + 1)
             )
-        elif self.model_type == "knn" or self.model_type == "decision_tree":
+        elif (
+            self.model_type == "knn"
+            or self.model_type == "decision_tree"
+            or self.model_type == "linear_regression"
+        ):
             # Predict on the test set
             predictions = self.model.predict(X_test)
         else:

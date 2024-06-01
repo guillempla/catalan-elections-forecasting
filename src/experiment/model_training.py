@@ -4,7 +4,7 @@ Module for training and evaluating machine learning models.
 
 import numpy as np
 import pandas as pd
-from statistics import LinearRegression
+from sklearn.linear_model import LinearRegression
 from typing import Dict, Any
 
 from sklearn.metrics import mean_squared_error, r2_score

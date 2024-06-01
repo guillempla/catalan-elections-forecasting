@@ -862,114 +862,282 @@ def main():
     if train_model:
         experiments_configs: List[dict] = []
 
-        # experiments_configs.append(
-        #     {
-        #         "experiment_name": "XGBoost Multi Output Regressor",
-        #         "model_type": "xgboost",
-        #         "dataset_params": [
-        #             {
-        #                 "name": "only_votes",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
-        #             },
-        #             {
-        #                 "name": "no_ist",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
-        #             },
-        #             {
-        #                 "name": "ist",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
-        #             },
-        #             {
-        #                 "name": "complete",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
-        #             },
-        #         ],
-        #         "model_params": {
-        #             "n_estimators": 400,  # Number of boosting rounds
-        #             "max_depth": 12,  # Typically 3-10. Higher values can lead to overfitting
-        #             "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
-        #             "objective": "reg:squarederror",  # Regression with squared loss
-        #             "eval_metric": "rmse",  # Root Mean Square Error for evaluation
-        #             "tree_method": "hist",  # Fast histogram optimized approximate greedy algorithm
-        #             "multi_strategy": "multi_output_tree",
-        #             "early_stopping_rounds": 5,
-        #             "reg_alpha": 100,  # L1 regularization term on weights
-        #             "reg_lambda": 50,  # L2 regularization term on weights
-        #             "n_jobs": -1,  # Use all available cores
-        #         },
-        #         "fit_params": {
-        #             "verbose": True,
-        #         },
-        #     }
-        # )
-        # experiments_configs.append(
-        #     {
-        #         "experiment_name": "XGBoost Single Output Regressor",
-        #         "model_type": "xgboost",
-        #         "dataset_params": [
-        #             {
-        #                 "name": "only_votes",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
-        #             },
-        #             {
-        #                 "name": "no_ist",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
-        #             },
-        #             {
-        #                 "name": "ist",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
-        #             },
-        #             {
-        #                 "name": "complete",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
-        #             },
-        #         ],
-        #         "model_params": {
-        #             "n_estimators": 400,  # Number of boosting rounds
-        #             "max_depth": 6,  # Typically 3-10. Higher values can lead to overfitting
-        #             "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
-        #             "objective": "reg:squarederror",  # Regression with squared loss
-        #             "eval_metric": "rmse",  # Root Mean Square Error for evaluation
-        #             "early_stopping_rounds": 10,
-        #             "reg_alpha": 10,  # L1 regularization term on weights
-        #             "reg_lambda": 100,  # L2 regularization term on weights
-        #             "n_jobs": -1,  # Use all available cores
-        #         },
-        #         "fit_params": {
-        #             "verbose": True,
-        #         },
-        #     },
-        # )
-        # experiments_configs.append(
-        #     {
-        #         "experiment_name": "KNN Regressor",
-        #         "model_type": "knn",
-        #         "dataset_params": [
-        #             {
-        #                 "name": "only_votes",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
-        #             },
-        #             {
-        #                 "name": "no_ist",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
-        #             },
-        #             {
-        #                 "name": "ist",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
-        #             },
-        #             {
-        #                 "name": "complete",
-        #                 "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
-        #             },
-        #         ],
-        #         "model_params": {
-        #             "algorithm": "kd_tree",
-        #             "n_neighbors": 29,
-        #             "weights": "distance",
-        #             "n_jobs": -1,  # Use all available cores
-        #         },
-        #     }
-        # )
+        experiments_configs.append(
+            {
+                "experiment_name": "XGBoost Multi Output Regressor",
+                "model_type": "xgboost",
+                "dataset_params": [
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                ],
+                "model_params": {
+                    "n_estimators": 400,  # Number of boosting rounds
+                    "max_depth": 12,  # Typically 3-10. Higher values can lead to overfitting
+                    "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
+                    "objective": "reg:squarederror",  # Regression with squared loss
+                    "eval_metric": "rmse",  # Root Mean Square Error for evaluation
+                    "tree_method": "hist",  # Fast histogram optimized approximate greedy algorithm
+                    "multi_strategy": "multi_output_tree",
+                    "early_stopping_rounds": 5,
+                    "reg_alpha": 100,  # L1 regularization term on weights
+                    "reg_lambda": 50,  # L2 regularization term on weights
+                    "n_jobs": -1,  # Use all available cores
+                },
+                "fit_params": {
+                    "verbose": True,
+                },
+            }
+        )
+        experiments_configs.append(
+            {
+                "experiment_name": "XGBoost Single Output Regressor",
+                "model_type": "xgboost",
+                "dataset_params": [
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                ],
+                "model_params": {
+                    "n_estimators": 400,  # Number of boosting rounds
+                    "max_depth": 6,  # Typically 3-10. Higher values can lead to overfitting
+                    "eta": 0.01,  # Learning rate, typically between 0.01 and 0.2
+                    "objective": "reg:squarederror",  # Regression with squared loss
+                    "eval_metric": "rmse",  # Root Mean Square Error for evaluation
+                    "early_stopping_rounds": 10,
+                    "reg_alpha": 10,  # L1 regularization term on weights
+                    "reg_lambda": 100,  # L2 regularization term on weights
+                    "n_jobs": -1,  # Use all available cores
+                },
+                "fit_params": {
+                    "verbose": True,
+                },
+            },
+        )
+        experiments_configs.append(
+            {
+                "experiment_name": "KNN Regressor",
+                "model_type": "knn",
+                "dataset_params": [
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_1_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                ],
+                "model_params": {
+                    "algorithm": "kd_tree",
+                    "n_neighbors": 29,
+                    "weights": "distance",
+                    "n_jobs": -1,  # Use all available cores
+                },
+            }
+        )
         experiments_configs.append(
             {
                 "experiment_name": "Decision Tree Regressor",
@@ -990,6 +1158,62 @@ def main():
                     {
                         "name": "complete",
                         "path": "../data/output/timeseries_2010_2024_6_1_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_1_True_True_True_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "only_votes",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_False_False_False.pkl",
+                    },
+                    {
+                        "name": "no_ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_False.pkl",
+                    },
+                    {
+                        "name": "ist",
+                        "path": "../data/output/timeseries_2010_2024_6_2_False_True_False_True.pkl",
+                    },
+                    {
+                        "name": "complete",
+                        "path": "../data/output/timeseries_2010_2024_6_2_True_True_True_True.pkl",
+                    },
+                    {
+                        "name": "only_votes_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_False_False_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "no_ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_False.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "ist_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_False_True_False_True.pkl",
+                        "num_shifts": 3,
+                    },
+                    {
+                        "name": "complete_shifts_3",
+                        "path": "../data/output/timeseries_2003_2024_6_2_True_True_True_True.pkl",
+                        "num_shifts": 3,
                     },
                 ],
                 "model_params": {

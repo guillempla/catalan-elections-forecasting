@@ -5,9 +5,12 @@ from typing import List
 from dotenv import load_dotenv
 from download_data import DownloadData
 from clean_data import CleanData
-from experiment.experiment_manager import ExperimentManager
+from adjacency_matrix_calculator.adjacency_matrix_calculator import (
+    AdjacencyMatrixCalculator,
+)
 from group_parties import GroupParties
 from transform_data.transform_data import TransformData
+from experiment.experiment_manager import ExperimentManager
 
 logging.basicConfig(
     level=logging.INFO,
@@ -41,6 +44,13 @@ def main():
         default=False,
         help="Group the parties from the Catalan Elections API.",
     )
+    # Add boolean argument for deciding if the adjacency matrix must be created or not.
+    parser.add_argument(
+        "--adjacency",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Create the adjacency matrix from the Catalan Elections API.",
+    )
     # Add boolean argument for deciding if the data must be transformed into ML formad or not.
     parser.add_argument(
         "--transform",
@@ -60,6 +70,7 @@ def main():
     download_data = args.download
     clean_data = args.clean
     group_parties = args.group
+    adjacency_matrix = args.adjacency
     transform_data = args.transform
     train_model = args.train
 
@@ -809,6 +820,12 @@ def main():
     if group_parties:
         GroupParties(threshold=0.10).group_parties()
 
+    if adjacency_matrix:
+        AdjacencyMatrixCalculator(
+            censal_sections_path="../data/raw/bseccenv10sh1f1_20210101_2/bseccenv10sh1f1_20210101_2.shp",
+            output_path="../data/processed/adjacency_matrix.pkl",
+        ).calculate_adjacency_matrix()
+
     if transform_data:
         start_years = [2003, 2010]
         add_election_types = [1, 2]
@@ -846,7 +863,6 @@ def main():
                         censal_sections_path="../data/raw/bseccenv10sh1f1_20210101_2/bseccenv10sh1f1_20210101_2.shp",
                         results_path="../data/processed/catalan-elections-grouped-data.pkl",
                         start_year=start_year,
-                        n_important_parties=6,
                         transform_to_timeseries=True,
                         add_election_type=add_election_type,
                         add_born_abroad=add_combination["add_born_abroad"],

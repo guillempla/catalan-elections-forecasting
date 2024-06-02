@@ -830,24 +830,24 @@ def main():
         start_years = [2003, 2010]
         add_election_types = [1, 2]
         add_combinations = [
-            {
-                "add_born_abroad": False,
-                "add_age_groups": False,
-                "add_mean_income": False,
-                "add_socioeconomic_index": False,
-            },
-            {
-                "add_born_abroad": False,
-                "add_age_groups": True,
-                "add_mean_income": False,
-                "add_socioeconomic_index": True,
-            },
-            {
-                "add_born_abroad": True,
-                "add_age_groups": True,
-                "add_mean_income": True,
-                "add_socioeconomic_index": False,
-            },
+            # {
+            #     "add_born_abroad": False,
+            #     "add_age_groups": False,
+            #     "add_mean_income": False,
+            #     "add_socioeconomic_index": False,
+            # },
+            # {
+            #     "add_born_abroad": False,
+            #     "add_age_groups": True,
+            #     "add_mean_income": False,
+            #     "add_socioeconomic_index": True,
+            # },
+            # {
+            #     "add_born_abroad": True,
+            #     "add_age_groups": True,
+            #     "add_mean_income": True,
+            #     "add_socioeconomic_index": False,
+            # },
             {
                 "add_born_abroad": True,
                 "add_age_groups": True,
@@ -862,6 +862,7 @@ def main():
                     TransformData(
                         censal_sections_path="../data/raw/bseccenv10sh1f1_20210101_2/bseccenv10sh1f1_20210101_2.shp",
                         results_path="../data/processed/catalan-elections-grouped-data.pkl",
+                        adjacency_matrix_path="../data/processed/adjacency_matrix.pkl",
                         start_year=start_year,
                         transform_to_timeseries=True,
                         add_election_type=add_election_type,

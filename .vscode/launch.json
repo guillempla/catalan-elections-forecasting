@@ -29,6 +29,15 @@
             "args": ["--group"]
         },
         {
+            "name": "Python: Launch App with --adjacency",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",
+            "args": ["--adjacency"]
+        },
+        {
             "name": "Python: Launch App with --transform",
             "type": "debugpy",
             "request": "launch",

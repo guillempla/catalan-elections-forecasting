@@ -439,13 +439,29 @@ class TransformData:
         self.results_df = manually_group_parties(
             self.results_df,
             {
-                1013: [71, 337, 1001, 1015, 739, 2003575, 2007380, 194],  # Comuns
-                1031: [12, 1007, 1000, 373],  # JxCat
-                1003: [1030, 2015673, 82064190],  # CUP
-                999999999: [3000000, 5000000],  # Other Parties
-                6: [2003191, 264],  # PSC-PSOE
-                10: [610, 431, 52, 111],  # ERC
-                86: [19, 31],  # PP
+                6: [264],  # PSC
+                10: [698, 610],  # ERC
+                1003: [649, 1030],  # CUP, Front Republicà
+                1013: [
+                    331,
+                    1008,
+                    1001,
+                    1015,
+                    1096,
+                    640,
+                    709,
+                    1099,
+                    739,
+                ],  # Comuns, Podemos, EUiA, ICV
+                10831: [
+                    12,
+                    373,
+                    1000,
+                    10841,
+                    1007,
+                    412,
+                    1097,
+                ],  # Junts, JxSí, CiU, CDC, PDeCAT
             },
         )
 
@@ -458,16 +474,15 @@ class TransformData:
         #     self.results_df, n_important_parties=self.n_important_parties
         # )
         important_parties = [
-            1013,
-            1031,
-            1003,
-            999999999,
-            6,
-            10,
-            86,
-            301,
-            693,
-        ]  # 301: Cs, 693: VOX
+            6,  # PSC
+            10,  # ERC
+            86,  # PP
+            301,  # Cs
+            693,  # VOX
+            1003,  # CUP, Front Republicà
+            1013,  # Comuns, Podemos, EUiA, ICV
+            10831,  # Junts, JxSí, CiU, CDC, PDeCAT
+        ]
         important_parties_df = select_important_parties_by_list(
             self.results_df, important_parties
         )

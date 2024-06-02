@@ -495,7 +495,7 @@ class TransformData:
             index="mundissec",
             columns=["joined_clean_abbr", "id_eleccio"],
             values=[
-                "vots",
+                # "vots",
                 "votants_percentage",
                 "vots_valids_percentage",
                 "cens_electoral_percentage",

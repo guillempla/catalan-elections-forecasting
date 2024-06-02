@@ -295,15 +295,22 @@ def ensure_joined_abbr_consistency(df):
 
     # Iterate through each group
     for name, group in grouped:
+        if name == 999999999:
+            consistent_clean_abbr = "OTH"
+            consistent_uppercased_abbr = "OTH"
+            consistent_name = "Other Parties"
+            consistent_abbr = "Other"
+        else:
+            consistent_clean_abbr = group["joined_clean_abbr"].iloc[-1]
+            consistent_uppercased_abbr = consistent_clean_abbr.upper()
+            consistent_name = group["joined_name"].iloc[-1]
+            consistent_abbr = group["joined_abbr"].iloc[-1]
+
         # Ensure consistency by keeping the first unique 'joined_clean_abbr' value
-        consistent_clean_abbr = group["joined_clean_abbr"].iloc[-1]
-        consistent_uppercased_abbr = consistent_clean_abbr.upper()
         df.loc[df["joined_code"] == name, "joined_clean_abbr"] = (
             consistent_uppercased_abbr
         )
-        consistent_name = group["joined_name"].iloc[-1]
         df.loc[df["joined_code"] == name, "joined_name"] = consistent_name
-        consistent_abbr = group["joined_abbr"].iloc[-1]
         df.loc[df["joined_code"] == name, "joined_abbr"] = consistent_abbr
 
     return df

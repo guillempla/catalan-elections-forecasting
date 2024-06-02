@@ -316,6 +316,62 @@ def ensure_joined_abbr_consistency(df):
     return df
 
 
+def shorten_column_name(column_name: str) -> str:
+    """
+    Shorten a column name according to the specified strategy:
+    1. Remove the word "percentage_"
+    2. Cap uppercase words surrounded by underscores to 2 characters
+    3. Replace lowercase words separated by underscores with their initials
+    4. Remove underscores
+
+    Args:
+        column_name (str): The original column name.
+
+    Returns:
+        str: The shortened column name.
+    """
+    # Step 1: Remove the word "percentage_"
+    column_name = column_name.replace("percentage_", "")
+
+    # Separate the suffix (anything after the last underscore)
+    parts = column_name.rsplit("_", 1)
+    main_part = parts[0]
+    suffix = parts[1] if len(parts) > 1 else ""
+
+    # Step 2: Cap uppercase words surrounded by underscores to 2 characters
+    parts = main_part.split("_")
+    new_parts = []
+    for part in parts:
+        if part.isupper():
+            new_parts.append(part[:2])
+        elif part.islower():
+            # Step 3: Replace lowercase words separated by an underscore with initials
+            initials = "".join([word[0] for word in part.split("_")])
+            new_parts.append(initials)
+        else:
+            new_parts.append(part)
+
+    # Step 4: Remove underscores
+    shortened_name = "".join(new_parts)
+
+    # Combine with suffix and ensure the name is within the 10 character limit
+    final_name = shortened_name + suffix
+    return final_name[:10]
+
+
+def shorten_column_names(columns: List[str]) -> Dict[str, str]:
+    """
+    Apply the column name shortening strategy to a list of column names.
+
+    Args:
+        columns (List[str]): The original list of column names.
+
+    Returns:
+        Dict[str, str]: A dictionary mapping original column names to shortened names.
+    """
+    return {col: shorten_column_name(col) for col in columns if len(col) > 10}
+
+
 class TransformData:
     """
     Transform censal sections data and results data into a single output dataframe

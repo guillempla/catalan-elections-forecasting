@@ -2,6 +2,7 @@
 Transform censal sections data and results data into a single output dataframe
 """
 
+import os
 from typing import Dict, List, Tuple
 
 import re
@@ -402,7 +403,8 @@ class TransformData:
         Args:
             censal_sections_path (str): Path to the censal sections data file
             results_path (str): Path to the election results data file
-            output_path (str, optional): Path to save the output dataframe. Defaults to "../data/output/censal_sections_results".
+            output_path (str, optional): Path to save the output dataframe.
+                Defaults to "../data/output/censal_sections_results".
         """
         self.censal_sections_gdf = load_data(censal_sections_path)
         self.results_df = load_data(results_path)
@@ -512,8 +514,6 @@ class TransformData:
 
         logging.info("Replacing 'Infinity' values done")
 
-        # save_data(results_wide_df, "../data/output/results_wide_df")
-
         # Merge censal sections and results data
         merged_gdf = self.censal_sections_gdf.merge(
             results_wide_df, left_on="MUNDISSEC", right_on="mundissec", how="inner"
@@ -580,7 +580,8 @@ class TransformData:
                 )
 
                 # Extract 'mundissec' from the index of timeseries_df
-                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                # This lambda function splits the index string at the underscore and takes the second part,
+                # which is 'mundissec'
                 timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
                     lambda x: x.split("_")[1]
                 )
@@ -588,7 +589,8 @@ class TransformData:
                 # Ensure data types are compatible
                 timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
 
-                # If last_born_abroad_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                # If last_born_abroad_df uses 'mundissec' as its index,
+                # reset this index and ensure it's named correctly
                 if (
                     last_born_abroad_df.index.name == "mundissec"
                     or "mundissec" in last_born_abroad_df.columns
@@ -643,7 +645,8 @@ class TransformData:
                 last_age_groups_df.rename(columns=rename_mapping, inplace=True)
 
                 # Extract 'mundissec' from the index of timeseries_df
-                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                # This lambda function splits the index string at the underscore and takes the second part,
+                # which is 'mundissec'
                 timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
                     lambda x: x.split("_")[1]
                 )
@@ -651,7 +654,8 @@ class TransformData:
                 # Ensure data types are compatible
                 timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
 
-                # If last_age_groups_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                # If last_age_groups_df uses 'mundissec' as its index,
+                # reset this index and ensure it's named correctly
                 if (
                     last_age_groups_df.index.name == "mundissec"
                     or "mundissec" in last_age_groups_df.columns
@@ -698,7 +702,8 @@ class TransformData:
                 )
 
                 # Extract 'mundissec' from the index of timeseries_df
-                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                # This lambda function splits the index string at the underscore and takes the second part,
+                # which is 'mundissec'
                 timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
                     lambda x: x.split("_")[1]
                 )
@@ -706,7 +711,8 @@ class TransformData:
                 # Ensure data types are compatible
                 timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
 
-                # If last_mean_income_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                # If last_mean_income_df uses 'mundissec' as its index,
+                # reset this index and ensure it's named correctly
                 if (
                     last_mean_income_df.index.name == "mundissec"
                     or "mundissec" in last_mean_income_df.columns
@@ -764,7 +770,8 @@ class TransformData:
                 )
 
                 # Extract 'mundissec' from the index of timeseries_df
-                # This lambda function splits the index string at the underscore and takes the second part, which is 'mundissec'
+                # This lambda function splits the index string at the underscore and takes the second part,
+                # which is 'mundissec'
                 timeseries_df["mundissec"] = timeseries_df.index.to_series().apply(
                     lambda x: x.split("_")[1]
                 )
@@ -772,7 +779,8 @@ class TransformData:
                 # Ensure data types are compatible
                 timeseries_df["mundissec"] = timeseries_df["mundissec"].astype(str)
 
-                # If last_socioeconomic_index_df uses 'mundissec' as its index, reset this index and ensure it's named correctly
+                # If last_socioeconomic_index_df uses 'mundissec' as its index,
+                # reset this index and ensure it's named correctly
                 if (
                     last_socioeconomic_index_df.index.name == "mundissec"
                     or "mundissec" in last_socioeconomic_index_df.columns
@@ -819,8 +827,15 @@ class TransformData:
             only_votes_df,
             f"../data/output/only_votes_{self.start_year}_{self.end_year}_{self.n_important_parties}",
         )
-
         logging.info("Saving output data with only past votes data done")
 
-        # merged_gdf.to_file("../data/output/merged_data.geojson", driver="GeoJSON")
+        # Apply the function to all columns in the GeoDataFrame
+        column_mapping = shorten_column_names(merged_gdf.columns)
+        # Rename the columns in the GeoDataFrame
+        merged_gdf = merged_gdf.rename(columns=column_mapping)
+        os.makedirs("../output/spatial", exist_ok=True)
+        merged_gdf.to_file(
+            f"../data/output/spatial/spatial_{self.start_year}_{self.end_year}_{self.n_important_parties}.shp"
+        )
+
         logging.info("Data transformation done")

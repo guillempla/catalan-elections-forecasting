@@ -94,7 +94,8 @@ class DataPreparation:
 
         Args:
             df (pd.DataFrame): The input DataFrame.
-            num_shifts (int, optional): The number of shifts to apply. Defaults to 1.
+            num_shifts (int, optional): The number of shifts to apply.
+                Defaults to 1.
         """
         # Extract 'mundissec' from the index
         df["mundissec"] = df.index.map(lambda x: x.split("_")[1])
@@ -118,6 +119,17 @@ class DataPreparation:
                     df[shifted_col_name] = df.groupby("mundissec")[col].shift(
                         -shift
                     )  # Shift within each group
+
+        # Identify election type columns
+        election_type_columns = [col for col in df.columns if "election_type" in col]
+
+        # Iterate over each election type column to create shifted columns group-wise
+        for col in election_type_columns:
+            for shift in range(1, num_shifts + 1):
+                # Create a new shifted column name
+                shifted_col_name = f"{col}_shifted_{shift}"
+                # Group by 'mundissec' and shift within each group
+                df[shifted_col_name] = df.groupby("mundissec")[col].shift(-shift)
 
         # Drop the temporary 'mundissec' column after shifting
         df.drop(columns="mundissec", inplace=True)
@@ -194,7 +206,11 @@ class DataPreparation:
         y_shifted_columns = [
             col
             for col in shifted_columns
-            if col.endswith(f"_shifted_{max_shift_value}")
+            if (
+                col.endswith(f"_shifted_{max_shift_value}")
+                and "adj_" not in col
+                and "election_type" not in col
+            )
         ]
         # Columns with other shift values
         x_shifted_columns = [

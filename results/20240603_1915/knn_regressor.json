@@ -1,0 +1,66 @@
+{
+    "dataset_metrics": {
+        "complete_adj": {
+            "dataset_name": "complete_adj",
+            "elapsed_time": "0:00:01.233399",
+            "end_date": "2024-06-03 19:15:24.365393",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 8.23478976650612,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 6.17526901861995,
+                    "R^2": -10.689916689589356
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 4.46025306611637,
+                    "R^2": -0.8235512906747471
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 2.426557003066099,
+                    "R^2": 0.5985421120854086
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 4.816595197398111,
+                    "R^2": 0.47770735627936955
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 0.7202474005331125,
+                    "R^2": 0.5062985664056163
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 1.9940348418475373,
+                    "R^2": 0.49300697073084976
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 3.7809081413754186,
+                    "R^2": 0.6376184155452593
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 3.9219965038831845,
+                    "R^2": -2.072226226594926
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "algorithm": "kd_tree",
+                    "n_jobs": -1,
+                    "n_neighbors": 29,
+                    "weights": "distance"
+                },
+                "model_type": "knn"
+            },
+            "start_date": "2024-06-03 19:15:23.131994",
+            "status": "finished"
+        }
+    },
+    "elapsed_time": "0:00:01.238400",
+    "end_date": "2024-06-03 19:15:24.369393",
+    "error": "None",
+    "experiment_name": "KNN Regressor",
+    "start_date": "2024-06-03 19:15:23.130993",
+    "status": "finished"
+}

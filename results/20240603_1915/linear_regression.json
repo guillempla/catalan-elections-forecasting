@@ -1,0 +1,61 @@
+{
+    "dataset_metrics": {
+        "complete_adj": {
+            "dataset_name": "complete_adj",
+            "elapsed_time": "0:00:00.831200",
+            "end_date": "2024-06-03 19:15:26.488526",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 2.1086980430815987,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 1.304098212463045,
+                    "R^2": 0.4786609556131579
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 1.8094312545766091,
+                    "R^2": 0.6998881405899573
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 1.463062368635236,
+                    "R^2": 0.8540565261107186
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 1.8628284820283605,
+                    "R^2": 0.9218769209940892
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 0.44004498899155886,
+                    "R^2": 0.8157128096088777
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 1.0291532689988638,
+                    "R^2": 0.8649493686034045
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 1.3630430091866397,
+                    "R^2": 0.9529030279276212
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 0.9717394809789586,
+                    "R^2": 0.8114013915156292
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": null,
+                "model_type": "linear_regression"
+            },
+            "start_date": "2024-06-03 19:15:25.657326",
+            "status": "finished"
+        }
+    },
+    "elapsed_time": "0:00:00.837091",
+    "end_date": "2024-06-03 19:15:26.493416",
+    "error": "None",
+    "experiment_name": "Linear Regression",
+    "start_date": "2024-06-03 19:15:25.656325",
+    "status": "finished"
+}

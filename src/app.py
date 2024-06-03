@@ -21,7 +21,7 @@ logging.basicConfig(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Download and trasnform data from the Catalan Elections API."
+        description="Download and transform data from the Catalan Elections API."
     )
     # Add boolean argument for deciding if the data must be downloaded or not.
     parser.add_argument(

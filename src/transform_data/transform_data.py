@@ -239,6 +239,8 @@ def manually_group_parties(
 
 
 def create_timeseries_df(df, columns_pattern_to_long: str = None):
+    logging.info("Creating timeseries DataFrame")
+
     # Set "MUNDISSEC" as index
     df = df.set_index("MUNDISSEC")
 
@@ -522,7 +524,7 @@ class TransformData:
         censal_sections_path: str,
         results_path: str,
         adjacency_matrix_path: str,
-        output_path: str = "../data/output/censal_sections_results",
+        output_path: str = "../data/output/",
         born_abroad_path: str = "../data/processed/place_of_birth_clean_data.pkl",
         age_groups_path: str = "../data/processed/age_groups_clean_data.pkl",
         mean_income_path: str = "../data/processed/mean_income_clean_data.pkl",
@@ -531,6 +533,7 @@ class TransformData:
         end_year: int = 2024,
         # n_important_parties: int = 9,
         transform_to_timeseries: bool = False,
+        add_adjecency_features: bool = False,
         add_election_type: int = 0,  # 0: no election type, 1: add election type as one column, 2: add election type as one column per election type
         add_born_abroad: bool = False,
         add_mean_income: bool = False,
@@ -544,7 +547,7 @@ class TransformData:
             censal_sections_path (str): Path to the censal sections data file
             results_path (str): Path to the election results data file
             output_path (str, optional): Path to save the output dataframe.
-                Defaults to "../data/output/censal_sections_results".
+                Defaults to "../data/output/".
         """
         self.censal_sections_gdf = load_data(censal_sections_path)
         self.results_df = load_data(results_path)
@@ -554,6 +557,7 @@ class TransformData:
         self.end_year = end_year
         # self.n_important_parties = n_important_parties
         self.transform_to_timeseries = transform_to_timeseries
+        self.add_adjacency_features = add_adjecency_features
         self.add_election_type = add_election_type
         self.add_born_abroad = add_born_abroad
         self.add_mean_income = add_mean_income
@@ -657,11 +661,12 @@ class TransformData:
 
         merged_gdf = add_missing_party_columns(merged_gdf)
 
-        merged_gdf = self.compute_adjacencies_features(
-            merged_gdf, "cens_electoral_percentage"
-        )
+        if self.add_adjacency_features:
+            merged_gdf = self.compute_adjacency_features(
+                merged_gdf, "cens_electoral_percentage"
+            )
 
-        logging.info("Computing adjacencies done")
+            logging.info("Computing adjacencies done")
 
         if self.add_born_abroad:
             # Resulting DataFrame with only columns that contain the max year
@@ -675,6 +680,8 @@ class TransformData:
             merged_gdf = merged_gdf.merge(
                 last_born_abroad_df, left_on="MUNDISSEC", right_index=True, how="left"
             )
+
+            logging.info("Adding born abroad done")
 
         if self.add_age_groups:
             # Resulting DataFrame with only columns that contain the max year
@@ -690,6 +697,8 @@ class TransformData:
                 last_age_groups_df, left_on="MUNDISSEC", right_index=True, how="left"
             )
 
+            logging.info("Adding age groups done")
+
         if self.add_mean_income:
             # Resulting DataFrame with only columns that contain the max year
             last_mean_income_df, max_year = get_max_columns_df(
@@ -702,6 +711,8 @@ class TransformData:
             merged_gdf = merged_gdf.merge(
                 last_mean_income_df, left_on="MUNDISSEC", right_index=True, how="left"
             )
+
+            logging.info("Adding mean income done")
 
         if self.add_socioeconomic_index:
             # Resulting DataFrame with only columns that contain the max year
@@ -718,6 +729,8 @@ class TransformData:
                 right_index=True,
                 how="left",
             )
+
+            logging.info("Adding IST done")
 
         if self.transform_to_timeseries:
             # Drop columns that are not necessary for the timeseries
@@ -766,9 +779,10 @@ class TransformData:
                     # Join the one-hot encoded columns back to the timeseries_df
                     timeseries_df = timeseries_df.join(type_dummies)
 
+            filename = self.create_filename("timeseries")
             save_data(
                 timeseries_df,
-                f"../data/output/timeseries_{self.start_year}_{self.end_year}_{self.add_election_type}_{self.add_born_abroad}_{self.add_age_groups}_{self.add_mean_income}_{self.add_socioeconomic_index}",
+                filename,
                 index=True,
             )
 
@@ -832,7 +846,7 @@ class TransformData:
 
         return result
 
-    def compute_adjacencies_features(
+    def compute_adjacency_features(
         self, df: pd.DataFrame, column_pattern: str
     ) -> pd.DataFrame:
         """
@@ -872,3 +886,71 @@ class TransformData:
         df_copy["MUNDISSEC"] = df["MUNDISSEC"]
 
         return df_copy
+
+    def create_filename(
+        self,
+        dataframe_type: str,
+        extension: str = None,
+    ) -> str:
+        """
+        Create a filename based on the given parameters.
+
+        Args:
+            dataframe_type (str): The type of the dataframe.
+            extension (str, optional): The file extension. Defaults to None.
+
+        Returns:
+            str: The generated filename.
+        """
+        filename = f"{dataframe_type}_{self.start_year}_{self.end_year}_{self.add_election_type}"
+        if (
+            self.add_born_abroad
+            and self.add_age_groups
+            and self.add_mean_income
+            and self.add_socioeconomic_index
+        ):
+            filename += "_complete"
+        elif (
+            self.add_born_abroad
+            and self.add_age_groups
+            and self.add_mean_income
+            and not self.add_socioeconomic_index
+        ):
+            filename += "_noist"
+        elif (
+            not self.add_born_abroad
+            and self.add_age_groups
+            and not self.add_mean_income
+            and self.add_socioeconomic_index
+        ):
+            filename += "_ist"
+        elif (
+            not self.add_born_abroad
+            and not self.add_age_groups
+            and not self.add_mean_income
+            and not self.add_socioeconomic_index
+        ):
+            filename += "_basic"
+        else:
+            if self.add_born_abroad:
+                filename += "_ba"
+            if self.add_age_groups:
+                filename += "_ag"
+            if self.add_mean_income:
+                filename += "_mi"
+            if self.add_socioeconomic_index:
+                filename += "_ist"
+
+        if self.add_adjacency_features:
+            filename += "_adj"
+        if extension is not None:
+            if extension.startswith("."):
+                filename += extension
+            else:
+                filename += f".{extension}"
+
+        if self.output_path and not self.output_path.endswith("/"):
+            filename = f"{self.output_path}/{filename}"
+        elif self.output_path:
+            filename = f"{self.output_path}{filename}"
+        return filename

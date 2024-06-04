@@ -816,7 +816,7 @@ class TransformData:
         adjacent_sections = self.adjacency_matrix.loc[census_section]
         return adjacent_sections[adjacent_sections == 1].index.tolist()
 
-    def calculate_adjacencies_values(
+    def calculate_adjacent_values(
         self, df: pd.DataFrame, census_section: str, column_pattern: str
     ) -> pd.Series:
         """
@@ -874,7 +874,7 @@ class TransformData:
 
         # Iterate over each section and compute adjacency values
         for census_section in df_copy.index:
-            adj_values = self.calculate_adjacencies_values(
+            adj_values = self.calculate_adjacent_values(
                 df_copy, census_section, column_pattern
             )
             adj_values.index = new_columns

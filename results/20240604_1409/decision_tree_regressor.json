@@ -1,0 +1,1866 @@
+{
+    "dataset_metrics": {
+        "basic": {
+            "dataset_name": "basic",
+            "elapsed_time": "0:00:01.051113",
+            "end_date": "2024-06-04 14:20:12.820853",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 5.983001958287087,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 5.201732916425712,
+                    "R^2": -7.294233470769557
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 4.682818433129606,
+                    "R^2": -1.0103231355909972
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 6.183076750341193,
+                    "R^2": -1.6065736732067388
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 5.829617857744359,
+                    "R^2": 0.23495668241136192
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.108807766602149,
+                    "R^2": -0.17003629044261936
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.447745060373873,
+                    "R^2": 0.2358987270360976
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 7.589988268249233,
+                    "R^2": -0.460041694995712
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 3.508543813625983,
+                    "R^2": -1.4590166606841386
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:11.769740",
+            "status": "finished"
+        },
+        "basic_adj": {
+            "dataset_name": "basic_adj",
+            "elapsed_time": "0:00:01.177600",
+            "end_date": "2024-06-04 14:20:36.044456",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 8.35850607331304,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 5.297527661521847,
+                    "R^2": -7.602924638418951
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 5.0891078558113305,
+                    "R^2": -1.374008625847515
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 4.945701627704153,
+                    "R^2": -0.6676880760207415
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 6.354182055347012,
+                    "R^2": 0.09102294643856401
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.3850356522361247,
+                    "R^2": -0.8256725876671402
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.335526758277585,
+                    "R^2": -0.4186176575647833
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 7.878372822948159,
+                    "R^2": -0.5734281827094834
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.7586872343737863,
+                    "R^2": -0.5200004562667082
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:34.866856",
+            "status": "finished"
+        },
+        "basic_dummy": {
+            "dataset_name": "basic_dummy",
+            "elapsed_time": "0:00:00.918725",
+            "end_date": "2024-06-04 14:20:24.510474",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 18.57047943219203,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 3.823645832712841,
+                    "R^2": -0.08828430503718598
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 1.9074912053454778,
+                    "R^2": -0.25420497618896976
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 6.681338250544256,
+                    "R^2": -1.3065083109353655
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 12.210520482642034,
+                    "R^2": -0.9371464076750313
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.6453499617348735,
+                    "R^2": -0.8401995804008671
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 4.185752707859303,
+                    "R^2": -3.738106939361707
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 6.875590326376628,
+                    "R^2": -0.0032000079986869157
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.7722369948338,
+                    "R^2": -2.8045881825630863
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:23.591749",
+            "status": "finished"
+        },
+        "basic_dummy_adj": {
+            "dataset_name": "basic_dummy_adj",
+            "elapsed_time": "0:00:01.216459",
+            "end_date": "2024-06-04 14:20:50.373246",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 36.29252440190478,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 4.822965192380601,
+                    "R^2": -0.7314087596526591
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 5.101917815511694,
+                    "R^2": -7.9707515838676635
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 6.9928711637323335,
+                    "R^2": -1.5268848828493846
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 20.543102459778044,
+                    "R^2": -4.482877552488209
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.6438177677588521,
+                    "R^2": -0.8371390106195098
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.8548813248120286,
+                    "R^2": -1.2038635930199688
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 11.18188878161148,
+                    "R^2": -1.6538774167831165
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.9976834732120508,
+                    "R^2": -3.4486703679361126
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:49.156787",
+            "status": "finished"
+        },
+        "basic_shifts_3": {
+            "dataset_name": "basic_shifts_3",
+            "elapsed_time": "0:00:01.803880",
+            "end_date": "2024-06-04 14:20:18.027053",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 7.935193457619383,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 3.6195778625992827,
+                    "R^2": -3.016021264491533
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.403749972171939,
+                    "R^2": -0.7778558257189614
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.1341075154609825,
+                    "R^2": -0.16526382409492402
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 8.82076846009345,
+                    "R^2": -0.7515345031492668
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.3943972182112034,
+                    "R^2": -0.850375327828119
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 3.458709368004699,
+                    "R^2": -0.525621140072561
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.762695801873406,
+                    "R^2": 0.4251047290141031
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 2.969567040427694,
+                    "R^2": -0.7615457677882012
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:16.223173",
+            "status": "finished"
+        },
+        "basic_shifts_3_adj": {
+            "dataset_name": "basic_shifts_3_adj",
+            "elapsed_time": "0:00:02.266122",
+            "end_date": "2024-06-04 14:20:41.932753",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 5.342413771812684,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 2.902039699873775,
+                    "R^2": -1.581703424808691
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.264175647386944,
+                    "R^2": -0.6667449710549174
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 3.5942353987835247,
+                    "R^2": 0.11921069240671411
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 9.245836398062515,
+                    "R^2": -0.9245359203747661
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.0886938741268881,
+                    "R^2": -0.12800895577407356
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 3.4706987414067503,
+                    "R^2": -0.5359261685973018
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 5.309253343370129,
+                    "R^2": 0.28543660354538836
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 2.9823796548029353,
+                    "R^2": -0.7764976768828666
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:39.666631",
+            "status": "finished"
+        },
+        "basic_shifts_3_dummy": {
+            "dataset_name": "basic_shifts_3_dummy",
+            "elapsed_time": "0:00:01.745297",
+            "end_date": "2024-06-04 14:20:29.278505",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 14.532168766771457,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 14.230866217203348,
+                    "R^2": -1.673283713385152
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 3.247638029606615,
+                    "R^2": -0.9363844976094327
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 8.498529001860868,
+                    "R^2": -8.440609020591989
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 12.76674530597909,
+                    "R^2": -3.197891500168426
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.559063993638655,
+                    "R^2": -1.8576932988272068
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 6.265241325423548,
+                    "R^2": -11.086012946487989
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.854382390386558,
+                    "R^2": 0.06968595827620128
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.0025126444738413556,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:27.533208",
+            "status": "finished"
+        },
+        "basic_shifts_3_dummy_adj": {
+            "dataset_name": "basic_shifts_3_dummy_adj",
+            "elapsed_time": "0:00:02.383844",
+            "end_date": "2024-06-04 14:20:56.389251",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 20.54371624967683,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 13.084693592891199,
+                    "R^2": -1.2598440364607923
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 2.4092786354636266,
+                    "R^2": -0.06551018564180122
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 5.834363396501558,
+                    "R^2": -3.45031399890345
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 12.90511904986501,
+                    "R^2": -3.289304162602967
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.767316964409005,
+                    "R^2": -2.124310786294644
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 4.364949080813935,
+                    "R^2": -4.865391670994258
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 5.141419523052668,
+                    "R^2": -0.04367875784953634
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.002480948291360466,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:54.005407",
+            "status": "finished"
+        },
+        "complete": {
+            "dataset_name": "complete",
+            "elapsed_time": "0:00:01.217462",
+            "end_date": "2024-06-04 14:20:16.221155",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 15.087022716866013,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 5.895351749400427,
+                    "R^2": -9.653678876963497
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 5.096292316714903,
+                    "R^2": -1.381002730838821
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 4.647129868953122,
+                    "R^2": -0.47241539158363977
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 4.849657005397432,
+                    "R^2": 0.4705464065285504
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.4389218840678184,
+                    "R^2": -0.9704310797855631
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.983448241080037,
+                    "R^2": -0.1351560631680122
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 6.835911714620405,
+                    "R^2": -0.18433875109287445
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.449228140074693,
+                    "R^2": -0.19830161295139082
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:15.003693",
+            "status": "finished"
+        },
+        "complete_adj": {
+            "dataset_name": "complete_adj",
+            "elapsed_time": "0:00:01.275532",
+            "end_date": "2024-06-04 14:20:39.663633",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 7.452532453627677,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 3.1470229186352974,
+                    "R^2": -2.035983897453681
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 4.04767336224912,
+                    "R^2": -0.5017923912221263
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 3.95403391395096,
+                    "R^2": -0.0659572297343416
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 6.750505814099772,
+                    "R^2": -0.025902867510679606
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 2.3852161841354946,
+                    "R^2": -4.41447663758345
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.461887873111229,
+                    "R^2": -0.5281377279085138
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 4.907409281181443,
+                    "R^2": 0.3895101789862423
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 3.934514550550937,
+                    "R^2": -2.091869102820944
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:38.388101",
+            "status": "finished"
+        },
+        "complete_dummy": {
+            "dataset_name": "complete_dummy",
+            "elapsed_time": "0:00:01.049028",
+            "end_date": "2024-06-04 14:20:27.530292",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 36.84205894433644,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 5.025163217098874,
+                    "R^2": -0.8796950290202235
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 4.155629504136474,
+                    "R^2": -4.952742177854053
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 6.075915741688759,
+                    "R^2": -0.9074430978251329
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 18.8409434428605,
+                    "R^2": -3.612107107138357
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.5812030904159289,
+                    "R^2": -0.699509769514276
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.7854415025816643,
+                    "R^2": -1.0981948139288034
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 9.06979113754844,
+                    "R^2": -0.7456698669209219
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.7667554274756414,
+                    "R^2": -2.7895573695816593
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:26.481264",
+            "status": "finished"
+        },
+        "complete_dummy_adj": {
+            "dataset_name": "complete_dummy_adj",
+            "elapsed_time": "0:00:01.221921",
+            "end_date": "2024-06-04 14:20:54.002871",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 11.820445625814996,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 5.783602410389233,
+                    "R^2": -1.4898215141292352
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 2.7151853896506175,
+                    "R^2": -1.540743888506233
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 5.485130033705428,
+                    "R^2": -0.5547059433502628
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 11.785592612039508,
+                    "R^2": -0.8045932660490553
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 2.0276432443136936,
+                    "R^2": -1.7952314148369224
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.137444263944251,
+                    "R^2": -1.6617093491425083
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 8.174059117691874,
+                    "R^2": -0.41816274038656776
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.8632746971294223,
+                    "R^2": -3.058679059452067
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:52.780950",
+            "status": "finished"
+        },
+        "complete_shifts_3": {
+            "dataset_name": "complete_shifts_3",
+            "elapsed_time": "0:00:01.862056",
+            "end_date": "2024-06-04 14:20:23.588500",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 28.536771466698035,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 2.8108161012111474,
+                    "R^2": -1.4218376261082604
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.3063458799669885,
+                    "R^2": -0.700078793101329
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.301524735639635,
+                    "R^2": -0.26155322725207775
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 12.647624795935762,
+                    "R^2": -2.6010056186882746
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.3628702372243855,
+                    "R^2": -0.7676481720268165
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 2.385902962104865,
+                    "R^2": 0.2740209131075766
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 9.566581989500525,
+                    "R^2": -1.3195121135042367
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 4.830749636977969,
+                    "R^2": -3.6616184353458205
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:21.726444",
+            "status": "finished"
+        },
+        "complete_shifts_3_adj": {
+            "dataset_name": "complete_shifts_3_adj",
+            "elapsed_time": "0:00:02.416067",
+            "end_date": "2024-06-04 14:20:49.152787",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 17.070018634269992,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 4.221953327671938,
+                    "R^2": -4.46419901073065
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 5.633318876514791,
+                    "R^2": -1.9088923732524488
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 5.364215979280192,
+                    "R^2": -0.9618758021255278
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 6.20598461658391,
+                    "R^2": 0.13292831965027385
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 2.595080082032052,
+                    "R^2": -5.409180725805673
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 3.0882339927255607,
+                    "R^2": -0.21606531409798535
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 6.732256818125983,
+                    "R^2": -0.14893435811915912
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 4.164302772149699,
+                    "R^2": -2.4635653317884403
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:46.736720",
+            "status": "finished"
+        },
+        "complete_shifts_3_dummy": {
+            "dataset_name": "complete_shifts_3_dummy",
+            "elapsed_time": "0:00:01.818904",
+            "end_date": "2024-06-04 14:20:34.863950",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 15.929658535646537,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 14.73657144564536,
+                    "R^2": -1.866654073276934
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 3.4779271676726524,
+                    "R^2": -1.2207380130812764
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.966275274636449,
+                    "R^2": -2.223844359746906
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 12.05293471559896,
+                    "R^2": -2.741592007410248
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.841846463618039,
+                    "R^2": -2.22319267456619
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 4.828332667203703,
+                    "R^2": -6.177972947158606
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.775255550794359,
+                    "R^2": 0.0997671742142987
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.01667132686716717,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:33.045046",
+            "status": "finished"
+        },
+        "complete_shifts_3_dummy_adj": {
+            "dataset_name": "complete_shifts_3_dummy_adj",
+            "elapsed_time": "0:00:02.339057",
+            "end_date": "2024-06-04 14:21:03.632252",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 11.566885541872184,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 17.06974617966592,
+                    "R^2": -2.84596634715343
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.141180181517738,
+                    "R^2": -2.147978811671637
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.81495550432589,
+                    "R^2": -2.031016208654433
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 10.019932792011211,
+                    "R^2": -1.5857851113641854
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.985110506879856,
+                    "R^2": -2.4162980448682925
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 4.124871766519405,
+                    "R^2": -4.237928406896864
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.179761027887945,
+                    "R^2": 0.310231012583952
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.12796667780965024,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:21:01.293195",
+            "status": "finished"
+        },
+        "ist": {
+            "dataset_name": "ist",
+            "elapsed_time": "0:00:01.057232",
+            "end_date": "2024-06-04 14:20:15.000684",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 8.98463030443429,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 6.874510885878452,
+                    "R^2": -13.48650981262443
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 5.311678696278839,
+                    "R^2": -1.5865139532741015
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 5.683974598908424,
+                    "R^2": -1.2027488671258024
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 7.584762348217988,
+                    "R^2": -0.29505975536239903
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.4617549113287729,
+                    "R^2": -1.0334614197553558
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.314172830865952,
+                    "R^2": -0.40077655076051366
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 9.135307276374395,
+                    "R^2": -1.1150925177020894
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.775396927779572,
+                    "R^2": -0.5387138723163749
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:13.943452",
+            "status": "finished"
+        },
+        "ist_adj": {
+            "dataset_name": "ist_adj",
+            "elapsed_time": "0:00:01.225825",
+            "end_date": "2024-06-04 14:20:38.385190",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 3.3051818037611262,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 12.804547033022923,
+                    "R^2": -49.26064894294671
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 3.8837882878808965,
+                    "R^2": -0.3826430587745917
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 5.080431947973778,
+                    "R^2": -0.7597876938407875
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 5.194149990496843,
+                    "R^2": 0.39261706555151554
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.9345442283564231,
+                    "R^2": -2.56170803177577
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.210060077455857,
+                    "R^2": -0.31390154748805155
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 6.101577275555503,
+                    "R^2": 0.05624753473731625
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 4.582038242536607,
+                    "R^2": -3.193302634961409
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:37.159365",
+            "status": "finished"
+        },
+        "ist_dummy": {
+            "dataset_name": "ist_dummy",
+            "elapsed_time": "0:00:00.924952",
+            "end_date": "2024-06-04 14:20:26.479264",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 37.55079732550937,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 4.577813039258035,
+                    "R^2": -0.5599229666541905
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 5.0394264746969695,
+                    "R^2": -7.7539821644499085
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 6.732187135024119,
+                    "R^2": -1.341749655622284
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 21.01458997809008,
+                    "R^2": -4.737674859113285
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.497687492153835,
+                    "R^2": -0.5247223348873113
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.0397787506481633,
+                    "R^2": -1.4988585566023196
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 10.717292274524992,
+                    "R^2": -1.437461094761042
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.9969272401900438,
+                    "R^2": -3.446305953160631
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:25.554312",
+            "status": "finished"
+        },
+        "ist_dummy_adj": {
+            "dataset_name": "ist_dummy_adj",
+            "elapsed_time": "0:00:01.183227",
+            "end_date": "2024-06-04 14:20:52.777996",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 17.003393896560738,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 10.26987526151884,
+                    "R^2": -6.850579077295804
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 2.283964111099202,
+                    "R^2": -0.7977962253386341
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 6.895003613020261,
+                    "R^2": -1.4566506383812912
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 10.53912615739461,
+                    "R^2": -0.44306432061596546
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 3.1643236038124067,
+                    "R^2": -5.807638099292292
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 1.8519244563232458,
+                    "R^2": 0.07262555286564065
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 9.181828653783635,
+                    "R^2": -0.7894060034564978
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.995731212237855,
+                    "R^2": -3.442877803408435
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:51.594769",
+            "status": "finished"
+        },
+        "ist_shifts_3": {
+            "dataset_name": "ist_shifts_3",
+            "elapsed_time": "0:00:01.759147",
+            "end_date": "2024-06-04 14:20:21.722444",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 8.460771476837527,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 4.173685377417272,
+                    "R^2": -4.339733377617722
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 5.774680288126273,
+                    "R^2": -2.0570822384222374
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 6.8602898743043985,
+                    "R^2": -2.2088222705689264
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 9.034813313974405,
+                    "R^2": -0.8375713822109787
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.4632211033393618,
+                    "R^2": -1.0375427334035474
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 4.1431988759691745,
+                    "R^2": -1.189223583428959
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.580325487935143,
+                    "R^2": 0.4682888946757159
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 4.484634585040996,
+                    "R^2": -3.017554588446324
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:19.963297",
+            "status": "finished"
+        },
+        "ist_shifts_3_adj": {
+            "dataset_name": "ist_shifts_3_adj",
+            "elapsed_time": "0:00:02.350721",
+            "end_date": "2024-06-04 14:20:46.732718",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 10.683340106043989,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 5.421033982007713,
+                    "R^2": -8.008737068725532
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 3.6313766084608106,
+                    "R^2": -0.20876413521876613
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.521063723999576,
+                    "R^2": -0.39360679883222494
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 9.44611693051394,
+                    "R^2": -1.008816407620159
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.5074776688610203,
+                    "R^2": -1.1627322883613846
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 3.1133030118970737,
+                    "R^2": -0.23588848773791038
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 6.576798802941925,
+                    "R^2": -0.09648571878323953
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 4.412078232723969,
+                    "R^2": -2.887990516400899
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:44.381997",
+            "status": "finished"
+        },
+        "ist_shifts_3_dummy": {
+            "dataset_name": "ist_shifts_3_dummy",
+            "elapsed_time": "0:00:01.878469",
+            "end_date": "2024-06-04 14:20:33.041047",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 23.596477244936434,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 12.938192405654092,
+                    "R^2": -1.209681050313745
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.168907620586949,
+                    "R^2": -2.190809700743303
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 7.46376598370103,
+                    "R^2": -6.281628512135509
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 13.412486332134645,
+                    "R^2": -3.63328916562459
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.720404225914894,
+                    "R^2": -2.0635334093957525
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 3.6351640869102066,
+                    "R^2": -3.068698283655877
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.34945611431767,
+                    "R^2": 0.2531532162049095
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.009801252074004459,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:31.162578",
+            "status": "finished"
+        },
+        "ist_shifts_3_dummy_adj": {
+            "dataset_name": "ist_shifts_3_dummy_adj",
+            "elapsed_time": "0:00:02.467428",
+            "end_date": "2024-06-04 14:21:01.288246",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 14.568567942637884,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 17.640517294634027,
+                    "R^2": -3.107466080248841
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.10393399241653,
+                    "R^2": -2.091606990640707
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 3.7793768723183065,
+                    "R^2": -0.8674290256185437
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 10.751904022157094,
+                    "R^2": -1.9773752325300755
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 5.054906898658057,
+                    "R^2": -2.5126307176308846
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 2.7716775937017752,
+                    "R^2": -1.3649615075194625
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 6.525918542467888,
+                    "R^2": -0.6814503840582513
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.1417579089777025,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:58.820818",
+            "status": "finished"
+        },
+        "no_ist": {
+            "dataset_name": "no_ist",
+            "elapsed_time": "0:00:01.117696",
+            "end_date": "2024-06-04 14:20:13.940551",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 4.391446090910066,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 6.367879958141581,
+                    "R^2": -11.429964623567551
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 4.89541130254477,
+                    "R^2": -1.196997712420131
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 5.764761272297262,
+                    "R^2": -1.2658094514999458
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 6.566478083989877,
+                    "R^2": 0.029331691412587957
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.2855842524622574,
+                    "R^2": -0.5728521547467118
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.4893570921285764,
+                    "R^2": 0.20969822627025958
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 9.057400082101593,
+                    "R^2": -1.0791707295913624
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.949164511968496,
+                    "R^2": -0.737423379834302
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:12.822855",
+            "status": "finished"
+        },
+        "no_ist_adj": {
+            "dataset_name": "no_ist_adj",
+            "elapsed_time": "0:00:01.109820",
+            "end_date": "2024-06-04 14:20:37.156281",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 18.917778816098668,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 2.3213227473247833,
+                    "R^2": -0.651850376679451
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 5.585867213345702,
+                    "R^2": -1.8600932776994559
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 5.926459837991014,
+                    "R^2": -1.3946921517974178
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 6.789033333601812,
+                    "R^2": -0.03764666473010503
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.6720247898511296,
+                    "R^2": -1.6606418225857555
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.3849385613817,
+                    "R^2": -0.4609591878190089
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 6.081831309507667,
+                    "R^2": 0.06234600713130545
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 3.7941329252487495,
+                    "R^2": -1.8751722756347604
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:36.046461",
+            "status": "finished"
+        },
+        "no_ist_dummy": {
+            "dataset_name": "no_ist_dummy",
+            "elapsed_time": "0:00:01.040122",
+            "end_date": "2024-06-04 14:20:25.552595",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 23.638382719462804,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 4.583533183203367,
+                    "R^2": -0.5638237632279448
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 2.9831408102706365,
+                    "R^2": -2.067544967635464
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 4.438565984357883,
+                    "R^2": -0.017919577028288503
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 15.317627429661357,
+                    "R^2": -2.04843610410121
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 1.6230820067479497,
+                    "R^2": -0.7907265924220452
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 3.9951687429061935,
+                    "R^2": -3.316462569655175
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 8.29584281494463,
+                    "R^2": -0.4604563204543095
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.9651261595979825,
+                    "R^2": -3.3524450596845847
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:24.512473",
+            "status": "finished"
+        },
+        "no_ist_dummy_adj": {
+            "dataset_name": "no_ist_dummy_adj",
+            "elapsed_time": "0:00:01.216606",
+            "end_date": "2024-06-04 14:20:51.591848",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_1": {
+                    "RMSE": 19.9598175042527,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 6.727042446564837,
+                    "R^2": -2.3683692284584827
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 2.6211838237332077,
+                    "R^2": -1.3678646377089403
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 5.786651529472815,
+                    "R^2": -0.7303305021667372
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 15.924902377402832,
+                    "R^2": -2.2948074551939115
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 2.0888810918788177,
+                    "R^2": -1.9666213376397867
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.21952543133795,
+                    "R^2": -0.33207550501062677
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 11.296884276630355,
+                    "R^2": -1.7087434992643624
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 2.9577764563806026,
+                    "R^2": -3.3310118831901034
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:50.375242",
+            "status": "finished"
+        },
+        "no_ist_shifts_3": {
+            "dataset_name": "no_ist_shifts_3",
+            "elapsed_time": "0:00:01.930308",
+            "end_date": "2024-06-04 14:20:19.960318",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 13.186885702245895,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 6.352413099182003,
+                    "R^2": -11.369656002429842
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 5.160213132056319,
+                    "R^2": -1.4411052884414488
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 7.64473400071004,
+                    "R^2": -2.98460694016561
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 8.465697178681598,
+                    "R^2": -0.6133600969084034
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.7100834604624355,
+                    "R^2": -1.783052678791361
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 3.9679667966644483,
+                    "R^2": -1.0079579621227808
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 3.6705738454989176,
+                    "R^2": 0.6585312375954682
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 4.599037969641309,
+                    "R^2": -3.225145342507596
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:18.030010",
+            "status": "finished"
+        },
+        "no_ist_shifts_3_adj": {
+            "dataset_name": "no_ist_shifts_3_adj",
+            "elapsed_time": "0:00:02.441393",
+            "end_date": "2024-06-04 14:20:44.378091",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 1.5913135581276292,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 9.034043158992665,
+                    "R^2": -24.018655920349097
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.776473007217148,
+                    "R^2": -1.0912870004766222
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.810380640898035,
+                    "R^2": -0.5776762422277864
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 7.443347183338549,
+                    "R^2": -0.24729782582558357
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 1.2067175044506009,
+                    "R^2": -0.38583719843557596
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 2.9471024230231113,
+                    "R^2": -0.10745722858769202
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 9.50499950823445,
+                    "R^2": -1.2902245445415397
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 2.6719508643797787,
+                    "R^2": -0.4259218461895109
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:41.936698",
+            "status": "finished"
+        },
+        "no_ist_shifts_3_dummy": {
+            "dataset_name": "no_ist_shifts_3_dummy",
+            "elapsed_time": "0:00:01.872061",
+            "end_date": "2024-06-04 14:20:31.159591",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 19.87309562203274,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 10.266318610378057,
+                    "R^2": -0.3912713988972698
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 2.2943102421266004,
+                    "R^2": 0.03359170674407386
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 4.279591333495828,
+                    "R^2": -1.3939610988142626
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 18.16913977350727,
+                    "R^2": -7.502361233575467
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.5694681517193585,
+                    "R^2": -1.8707511625369881
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 5.058333160828596,
+                    "R^2": -6.878114850120065
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 4.213978830945563,
+                    "R^2": 0.29895433544647054
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.0005954875805177339,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:29.287530",
+            "status": "finished"
+        },
+        "no_ist_shifts_3_dummy_adj": {
+            "dataset_name": "no_ist_shifts_3_dummy_adj",
+            "elapsed_time": "0:00:02.408819",
+            "end_date": "2024-06-04 14:20:58.803123",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CDC_shifted_3": {
+                    "RMSE": 16.38646049951746,
+                    "R^2": 0.0
+                },
+                "cens_electoral_percentage_CS_shifted_3": {
+                    "RMSE": 18.220286892092204,
+                    "R^2": -3.3818930658163575
+                },
+                "cens_electoral_percentage_CUP_shifted_3": {
+                    "RMSE": 4.4179075285621225,
+                    "R^2": -2.5827523494283087
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_3": {
+                    "RMSE": 7.911846033953353,
+                    "R^2": -7.18388196601015
+                },
+                "cens_electoral_percentage_ERC_shifted_3": {
+                    "RMSE": 11.357902324585517,
+                    "R^2": -2.3224547322553875
+                },
+                "cens_electoral_percentage_OTH_shifted_3": {
+                    "RMSE": 4.959292552146163,
+                    "R^2": -2.381003569880405
+                },
+                "cens_electoral_percentage_PP_shifted_3": {
+                    "RMSE": 4.229515725027148,
+                    "R^2": -4.507061702320721
+                },
+                "cens_electoral_percentage_PSC_shifted_3": {
+                    "RMSE": 3.969047999355074,
+                    "R^2": 0.3780242367221356
+                },
+                "cens_electoral_percentage_VOX_shifted_3": {
+                    "RMSE": 0.01310494894448584,
+                    "R^2": 0.0
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-04 14:20:56.394304",
+            "status": "finished"
+        }
+    },
+    "elapsed_time": "0:00:51.865624",
+    "end_date": "2024-06-04 14:21:03.634253",
+    "error": "None",
+    "experiment_name": "Decision Tree Regressor",
+    "start_date": "2024-06-04 14:20:11.768629",
+    "status": "finished"
+}

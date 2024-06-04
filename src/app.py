@@ -917,330 +917,42 @@ def main():
                 "path": "../data/output/timeseries_2003_2024_1_complete.pkl",
                 "num_shifts": 3,
             },
-            {
-                "name": "basic_dummy",
-                "path": "../data/output/timeseries_2010_2024_2_basic.pkl",
-            },
-            {
-                "name": "no_ist_dummy",
-                "path": "../data/output/timeseries_2010_2024_2_noist.pkl",
-            },
-            {
-                "name": "ist_dummy",
-                "path": "../data/output/timeseries_2010_2024_2_ist.pkl",
-            },
-            {
-                "name": "complete_dummy",
-                "path": "../data/output/timeseries_2010_2024_2_complete.pkl",
-            },
-            {
-                "name": "basic_shifts_3_dummy",
-                "path": "../data/output/timeseries_2003_2024_2_basic.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_dummy",
-                "path": "../data/output/timeseries_2003_2024_2_noist.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_dummy",
-                "path": "../data/output/timeseries_2003_2024_2_ist.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_dummy",
-                "path": "../data/output/timeseries_2003_2024_2_complete.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_adj",
-                "path": "../data/output/timeseries_2010_2024_1_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_noist_adj.pkl",
-            },
-            {
-                "name": "ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_ist_adj.pkl",
-            },
-            {
-                "name": "complete_adj",
-                "path": "../data/output/timeseries_2010_2024_1_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_noist_adj.pkl",
-            },
-            {
-                "name": "ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_ist_adj.pkl",
-            },
-            {
-                "name": "complete_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_adj",
-                "path": "../data/output/timeseries_2010_2024_1_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_noist_adj.pkl",
-            },
-            {
-                "name": "ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_ist_adj.pkl",
-            },
-            {
-                "name": "complete_adj",
-                "path": "../data/output/timeseries_2010_2024_1_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_noist_adj.pkl",
-            },
-            {
-                "name": "ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_ist_adj.pkl",
-            },
-            {
-                "name": "complete_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_adj",
-                "path": "../data/output/timeseries_2010_2024_1_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_noist_adj.pkl",
-            },
-            {
-                "name": "ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_ist_adj.pkl",
-            },
-            {
-                "name": "complete_adj",
-                "path": "../data/output/timeseries_2010_2024_1_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_noist_adj.pkl",
-            },
-            {
-                "name": "ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_ist_adj.pkl",
-            },
-            {
-                "name": "complete_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_adj",
-                "path": "../data/output/timeseries_2010_2024_1_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_noist_adj.pkl",
-            },
-            {
-                "name": "ist_adj",
-                "path": "../data/output/timeseries_2010_2024_1_ist_adj.pkl",
-            },
-            {
-                "name": "complete_adj",
-                "path": "../data/output/timeseries_2010_2024_1_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_adj",
-                "path": "../data/output/timeseries_2003_2024_1_complete_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "basic_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_basic_adj.pkl",
-            },
-            {
-                "name": "no_ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_noist_adj.pkl",
-            },
-            {
-                "name": "ist_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_ist_adj.pkl",
-            },
-            {
-                "name": "complete_dummy_adj",
-                "path": "../data/output/timeseries_2010_2024_2_complete_adj.pkl",
-            },
-            {
-                "name": "basic_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_basic_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "no_ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_noist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "ist_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_ist_adj.pkl",
-                "num_shifts": 3,
-            },
-            {
-                "name": "complete_shifts_3_dummy_adj",
-                "path": "../data/output/timeseries_2003_2024_2_complete_adj.pkl",
-                "num_shifts": 3,
-            },
+            # {
+            #     "name": "basic_dummy",
+            #     "path": "../data/output/timeseries_2010_2024_2_basic.pkl",
+            # },
+            # {
+            #     "name": "no_ist_dummy",
+            #     "path": "../data/output/timeseries_2010_2024_2_noist.pkl",
+            # },
+            # {
+            #     "name": "ist_dummy",
+            #     "path": "../data/output/timeseries_2010_2024_2_ist.pkl",
+            # },
+            # {
+            #     "name": "complete_dummy",
+            #     "path": "../data/output/timeseries_2010_2024_2_complete.pkl",
+            # },
+            # {
+            #     "name": "basic_shifts_3_dummy",
+            #     "path": "../data/output/timeseries_2003_2024_2_basic.pkl",
+            #     "num_shifts": 3,
+            # },
+            # {
+            #     "name": "no_ist_shifts_3_dummy",
+            #     "path": "../data/output/timeseries_2003_2024_2_noist.pkl",
+            #     "num_shifts": 3,
+            # },
+            # {
+            #     "name": "ist_shifts_3_dummy",
+            #     "path": "../data/output/timeseries_2003_2024_2_ist.pkl",
+            #     "num_shifts": 3,
+            # },
+            # {
+            #     "name": "complete_shifts_3_dummy",
+            #     "path": "../data/output/timeseries_2003_2024_2_complete.pkl",
+            #     "num_shifts": 3,
+            # },
             {
                 "name": "basic_adj",
                 "path": "../data/output/timeseries_2010_2024_1_basic_adj.pkl",
@@ -1334,7 +1046,7 @@ def main():
                     "n_jobs": -1,  # Use all available cores
                 },
                 "fit_params": {
-                    "verbose": True,
+                    "verbose": False,
                 },
             }
         )
@@ -1355,7 +1067,7 @@ def main():
                     "n_jobs": -1,  # Use all available cores
                 },
                 "fit_params": {
-                    "verbose": True,
+                    "verbose": False,
                 },
             },
         )

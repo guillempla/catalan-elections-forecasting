@@ -588,7 +588,7 @@ class TransformData:
             {
                 6: [264],  # PSC
                 10: [698, 610],  # ERC
-                1003: [649, 1030],  # CUP, Front Republicà
+                1003: [649, 1098, 1030],  # CUP, Front Republicà
                 1013: [
                     331,
                     1008,
@@ -599,16 +599,19 @@ class TransformData:
                     709,
                     1099,
                     739,
+                    337,
                 ],  # Comuns, Podemos, EUiA, ICV
                 10831: [
                     12,
                     373,
                     1000,
+                    1016,
                     10841,
                     1007,
                     412,
                     1097,
-                ],  # Junts, JxSí, CiU, CDC, PDeCAT
+                    1031,
+                ],  # Junts, JxCAT, JxSí, CiU, CDC, PDeCAT
             },
         )
 

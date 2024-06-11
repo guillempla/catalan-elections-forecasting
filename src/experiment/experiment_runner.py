@@ -4,6 +4,7 @@ ExperimentRunner class to run the experiment with the given configuration.
 
 import os
 import json
+import logging
 from datetime import datetime
 from typing import Dict
 
@@ -11,6 +12,12 @@ from experiment.data_preparation import DataPreparation
 from experiment.experiment_attributes import ExperimentAttributes
 from experiment.model_training import ModelTraining
 from utils.rw_files import sentence_to_snake
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - Experiment Manager - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 class ExperimentRunner:
@@ -25,6 +32,8 @@ class ExperimentRunner:
         Args:
             experiment_config (Dict): The experiment configuration.
         """
+        logging.info("Initializing the Experiment Runner.")
+
         self.experiment_attributes = ExperimentAttributes(experiment_config)
         self.datasets_params = self.experiment_attributes.dataset_params
         self.model_training = ModelTraining(
@@ -40,6 +49,10 @@ class ExperimentRunner:
         Returns:
             Dict: The experiment results.
         """
+        logging.info(
+            "Running the experiment %s.", self.experiment_attributes.experiment_name
+        )
+
         start_date = datetime.now()
         datasets_metrics = {}
         error = None

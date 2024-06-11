@@ -2,11 +2,19 @@
 Module to execute multiple experiments and store the results.
 """
 
+import logging
 from typing import Dict, List
 import pandas as pd
 
 from experiment.experiment_runner import ExperimentRunner
 from utils.rw_files import save_data
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - Experiment Manager - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 class ExperimentManager:
@@ -18,6 +26,8 @@ class ExperimentManager:
     """
 
     def __init__(self, experiments: List[Dict]):
+        logging.info("Initializing the Experiment Manager.")
+
         self.experiments = experiments
         self.results = []
 
@@ -25,6 +35,8 @@ class ExperimentManager:
         """
         Run all experiments and store the results.
         """
+        logging.info("Running all experiments.")
+
         for experiment in self.experiments:
             runner = ExperimentRunner(experiment)
             results = runner.run_experiment()

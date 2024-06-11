@@ -2,7 +2,7 @@
 
 This project is a data pipeline to download, clean, and transform Catalan Elections data. It is currently a work in progress.
 
-This is part of my master's thesis in Data Science at UOC.
+This is part of my master's thesis "**Incorporació del Context Espacial en Models Predictius de les Eleccions Catalanes**" in Data Science at UOC.
 
 ## Abstract
 

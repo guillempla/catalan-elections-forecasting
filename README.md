@@ -1,4 +1,4 @@
-# Catalan Elections Data
+# Catalan Elections Forecasting
 
 This project is a data pipeline to download, clean, and transform Catalan Elections data. It is currently a work in progress.
 

@@ -220,7 +220,8 @@ class DataPreparation:
         # Ensure new_data only contains non-shifted columns
         new_data = new_data[non_shifted_columns]
 
-        # Split test and train data into X (non-shifted and lower shift values) and y (highest shift values)
+        # Split test and train data into X (non-shifted and lower shift values)
+        # and y (highest shift values)
         X_test = test_data[non_shifted_columns + x_shifted_columns]
         y_test = test_data[y_shifted_columns]
         X_train = train_data[non_shifted_columns + x_shifted_columns]

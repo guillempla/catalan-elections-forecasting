@@ -66,10 +66,9 @@ python src/app.py --download --clean
 
 The project is structured as follows:
 
-- `src/`: Contains the source code of the application
-- `data/`: Contains the raw and processed data
-- `results/`: Contains the results of the experiments
-- `.vscode/`: Contains the configuration for Visual Studio Code
+- `README.md`: Describes the project and instructions to execute it, including Python and version control configuration files.
+- `data/`: Organized into `raw/` for unmodified downloaded data, `processed/` for processed files, and `output/` for data used to train and validate machine learning models.
+- `src/`: Contains `app.py` controlling the application, various Python modules organized by functionality, and a `study_data` folder with Jupyter notebooks for preliminary analyses.
 
 ## Built with
 
@@ -77,13 +76,13 @@ The project is structured as follows:
 - [Scikit-Learn](https://scikit-learn.org)
 - [XGBoost](https://xgboost.readthedocs.io/)
 
-## Autor
+## Author
 
 - **Guillem Pla Bertran** - [guillempla@protonmail.com]()
 
 ## License
 
-This project is open source. The specific licensing details are to be determined.
+This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. For more details, see [here](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ## Project Status
 

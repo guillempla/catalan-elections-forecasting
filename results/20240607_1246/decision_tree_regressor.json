@@ -1,0 +1,68 @@
+{
+    "dataset_metrics": {
+        "basic_adj": {
+            "dataset_name": "basic_adj",
+            "elapsed_time": "0:00:01.144920",
+            "end_date": "2024-06-07 12:46:06.096827",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 5.399509368740992,
+                    "R^2": -7.9373393922098305
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 4.539079254433954,
+                    "R^2": -0.8885762064291991
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 4.154330239114582,
+                    "R^2": -0.17668721086469885
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 5.16485330248037,
+                    "R^2": 0.39944941561409486
+                },
+                "cens_electoral_percentage_JXCATJUNTS_shifted_1": {
+                    "RMSE": 5.992006570494261,
+                    "R^2": 0.44468746196719455
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 0.13690189909314485,
+                    "R^2": -0.08079675604770875
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 2.6747367908522555,
+                    "R^2": 0.08778206605487604
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 6.934759217860729,
+                    "R^2": -0.21909244621582658
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 3.1248123504855356,
+                    "R^2": -0.9502337718714542
+                }
+            },
+            "params": {
+                "fit_params": null,
+                "model_params": {
+                    "criterion": "poisson",
+                    "max_depth": 10,
+                    "max_features": "sqrt",
+                    "min_samples_leaf": 4,
+                    "min_samples_split": 10,
+                    "splitter": "best"
+                },
+                "model_type": "decision_tree"
+            },
+            "start_date": "2024-06-07 12:46:04.951907",
+            "status": "finished"
+        }
+    },
+    "elapsed_time": "0:00:01.145923",
+    "end_date": "2024-06-07 12:46:06.096827",
+    "error": "None",
+    "experiment_name": "Decision Tree Regressor",
+    "start_date": "2024-06-07 12:46:04.950904",
+    "status": "finished"
+}

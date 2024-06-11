@@ -1,0 +1,73 @@
+{
+    "dataset_metrics": {
+        "basic_adj": {
+            "dataset_name": "basic_adj",
+            "elapsed_time": "0:00:12.314939",
+            "end_date": "2024-06-07 12:46:02.149743",
+            "error": "None",
+            "metrics": {
+                "cens_electoral_percentage_CS_shifted_1": {
+                    "RMSE": 2.471621269902905,
+                    "R^2": -0.8726796890828346
+                },
+                "cens_electoral_percentage_CUP_shifted_1": {
+                    "RMSE": 1.8619631108709376,
+                    "R^2": 0.682209341233604
+                },
+                "cens_electoral_percentage_ECPGUANYEM_shifted_1": {
+                    "RMSE": 1.790849404989347,
+                    "R^2": 0.7813360779707694
+                },
+                "cens_electoral_percentage_ERC_shifted_1": {
+                    "RMSE": 2.849646325897239,
+                    "R^2": 0.8171834381189492
+                },
+                "cens_electoral_percentage_JXCATJUNTS_shifted_1": {
+                    "RMSE": 2.5760743435577056,
+                    "R^2": 0.8973616405006986
+                },
+                "cens_electoral_percentage_OTH_shifted_1": {
+                    "RMSE": 0.493514254741843,
+                    "R^2": -13.045088819759162
+                },
+                "cens_electoral_percentage_PP_shifted_1": {
+                    "RMSE": 1.3293799962466608,
+                    "R^2": 0.7746618200776236
+                },
+                "cens_electoral_percentage_PSC_shifted_1": {
+                    "RMSE": 2.2808698636595772,
+                    "R^2": 0.8681212319871685
+                },
+                "cens_electoral_percentage_VOX_shifted_1": {
+                    "RMSE": 1.354207644359057,
+                    "R^2": 0.6337232855089414
+                }
+            },
+            "params": {
+                "fit_params": {
+                    "verbose": false
+                },
+                "model_params": {
+                    "early_stopping_rounds": 10,
+                    "eta": 0.01,
+                    "eval_metric": "rmse",
+                    "max_depth": 6,
+                    "n_estimators": 10000,
+                    "n_jobs": -1,
+                    "objective": "reg:squarederror",
+                    "reg_alpha": 10,
+                    "reg_lambda": 100
+                },
+                "model_type": "xgboost"
+            },
+            "start_date": "2024-06-07 12:45:49.834804",
+            "status": "finished"
+        }
+    },
+    "elapsed_time": "0:00:12.319945",
+    "end_date": "2024-06-07 12:46:02.154749",
+    "error": "None",
+    "experiment_name": "XGBoost Single Output Regressor",
+    "start_date": "2024-06-07 12:45:49.834804",
+    "status": "finished"
+}

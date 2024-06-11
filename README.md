@@ -2,6 +2,12 @@
 
 This project is a data pipeline to download, clean, and transform Catalan Elections data. It is currently a work in progress.
 
+This is part of my master's thesis "**Incorporació del Context Espacial en Models Predictius de les Eleccions Catalanes**" in Data Science at UOC.
+
+## Abstract
+
+This master's thesis explores the influence of spatial context in improving electoral forecasts using machine learning models, focusing on the Catalan elections. The main objective is to demonstrate whether incorporating the electoral spatial context at the census section level can increase the accuracy of predictive models. The employed methodology models the dataset as a spatio-temporal problem, utilizing data from previous elections, including voting percentages, economic and demographic variables, as well as the average voting percentage of adjacent census sections. Various machine learning models have been tested, such as Linear Regression, decision trees, k-nearest neighbors, and XGBoost. The results prove that it is feasible to use these algorithms to predict elections, and that variables from adjacent sections significantly improve the quality of the models. The implications of this study are relevant to the field of electoral forecasting, providing valuable insights into the Catalan political dynamics and offering a powerful tool for electoral planning and strategy.
+
 ## Getting Started
 
 To get started with this project, clone the repository and install the necessary dependencies listed in the `requirements.txt` file.
@@ -37,7 +43,7 @@ source venv/bin/activate
 5. Install the dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 ```
 
 ## Usage
@@ -60,18 +66,32 @@ python src/app.py --download --clean
 
 The project is structured as follows:
 
-- `src/`: Contains the source code of the application
-- `data/`: Contains the raw and processed data
-- `results/`: Contains the results of the experiments
-- `.vscode/`: Contains the configuration for Visual Studio Code
+- `README.md`: Describes the project and instructions to execute it, including Python and version control configuration files.
+- `data/`: Organized into `raw/` for unmodified downloaded data, `processed/` for processed files, and `output/` for data used to train and validate machine learning models.
+- `src/`: Contains `app.py` controlling the application, various Python modules organized by functionality, and a `study_data` folder with Jupyter notebooks for preliminary analyses.
 
-## Authors and Acknowledgment
+## Built with
 
-This project was created by Guillem Pla Bertran.
+- [Sodapy](https://pypi.org/project/sodapy/)
+- [Scikit-Learn](https://scikit-learn.org)
+- [XGBoost](https://xgboost.readthedocs.io/)
+
+## Author
+
+- **Guillem Pla Bertran** - [guillempla@protonmail.com]()
 
 ## License
 
-This project is open source. The specific licensing details are to be determined.
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
 ## Project Status
 
